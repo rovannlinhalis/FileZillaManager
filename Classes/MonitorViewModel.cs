@@ -30,7 +30,7 @@ namespace FileZillaManager.Classes
         private bool processZipIsRunning = false;
         private bool processContract = false;
         private string hashAtual = null;
-        public DateTime UltimoProcessamento { get; set; }  = DateTime.MinValue;
+        public DateTime UltimoProcessamento { get; set; } = DateTime.MinValue;
 
         public bool ForceCheck { get; set; } = false;
 
@@ -46,7 +46,7 @@ namespace FileZillaManager.Classes
             this.senhaZip = _senhaZip;
             this.status = "Aguardando Processamento";
             this.Contrato = _contrato;
-                 
+
             Processa();
         }
 
@@ -62,10 +62,12 @@ namespace FileZillaManager.Classes
         public string Login { get => login; set { login = value; RaisePropertyChanged("Login"); } }
 
         public long Tamanho { get => tamanho; set { tamanho = value; RaisePropertyChanged("Tamanho"); } }
-        public bool VerificandoZip { get => processZipIsRunning || ( verificaZip != null && (verificaZip.Status == TaskStatus.Running || verificaZip.Status == TaskStatus.WaitingToRun));  }
+        public bool VerificandoZip { get => processZipIsRunning || (verificaZip != null && (verificaZip.Status == TaskStatus.Running || verificaZip.Status == TaskStatus.WaitingToRun)); }
         public string TamanhoF { get => this.Tamanho.ToSizeString(); }
         public string MsgZipValido { get => ZipValido == ZipCheckState.Erro ? msgZipValido : ZipValido.ToString(); set { msgZipValido = value; RaisePropertyChanged("MsgZipValido"); } }
 
+        public string HashFile { get => hashAtual; set { hashAtual = value; RaisePropertyChanged("HashFile"); } }
+        public string Observacao { get => observacao; set { observacao = value; RaisePropertyChanged("Observacao"); } }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void RaisePropertyChanged(string prop)
@@ -76,16 +78,26 @@ namespace FileZillaManager.Classes
 
         public void Processa()
         {
+            
             processContract = true;
             try
             {
                 DirectoryInfo dir = new DirectoryInfo(this.Pasta);
 
+                if (!dir.Exists)
+                {
+                    try
+                    {
+                        dir.Create();
+                    }
+                    catch { }
+                }
+
                 if (dir.Exists)
                 {
                     FileInfo[] files = dir.GetFiles("*.*", subPasta ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
 
-                    FileInfo file = files?.Where(x=> !ignorarExtensoes.Contains(x.Extension.ToLower()))?.OrderByDescending(x => x.LastWriteTime)?.FirstOrDefault();
+                    FileInfo file = files?.Where(x => !ignorarExtensoes.Contains(x.Extension.ToLower()))?.OrderByDescending(x => x.LastWriteTime)?.FirstOrDefault();
                     if (file != null)
                     {
                         this.Arquivo = file.Name;
@@ -105,12 +117,12 @@ namespace FileZillaManager.Classes
                         else if (file.LastWriteTime.Date >= DateTime.Now.Date.AddDays(-3))
                         {
                             this.Cor = Color.Orange;
-                            this.Status = "Último arquivo recebido à 2 ou 3 dias";
+                            this.Status = "Último arquivo recebido há 2 ou 3 dias";
                         }
                         else
                         {
                             this.Cor = Color.Red;
-                            this.Status = "Último arquivo recebido à mais de 3 dias";
+                            this.Status = "Último arquivo recebido há mais de 3 dias";
                         }
 
                         //VerificarCompactacao();
@@ -146,9 +158,11 @@ namespace FileZillaManager.Classes
         string lastCheckName = null;
         long lastCheckSize = -1;
         DateTime lastCheckDate = DateTime.MinValue;
+        private string observacao;
 
         public void VerificarCompactacao()
         {
+            this.Observacao = String.Empty;
             if (!String.IsNullOrEmpty(this.Arquivo) && !String.IsNullOrWhiteSpace(this.Pasta))
             {
                 try
@@ -175,7 +189,7 @@ namespace FileZillaManager.Classes
                                       {
                                           FileCheck fileDb = null;
                                           this.ZipValido = ZipCheckState.GerandoHash;
-                                          string HashFile = Funcoes.SHA1FromFile(file);  //  Funcoes.Md5FromFile(file.FullName);
+                                          HashFile = Funcoes.SHA1FromFile(file);  //  Funcoes.Md5FromFile(file.FullName);
                                           using (Repositorio.FileCheckRepositorio rep = new Repositorio.FileCheckRepositorio())
                                           {
                                               var filesdb = rep.SelectAll(HashFile, file.FullName);
@@ -183,7 +197,7 @@ namespace FileZillaManager.Classes
                                               if (filesdb.Count > 0)
                                                   fileDb = filesdb.FirstOrDefault();
 
-                                              if (fileDb == null || HashFile != fileDb?.Hash || this.ForceCheck || fileDb.State != ZipCheckState.Valido)
+                                              if (fileDb == null || HashFile.ToUpper() != fileDb?.Hash.ToUpper() || this.ForceCheck || (fileDb.State != ZipCheckState.Valido))
                                               {
                                                   ForceCheck = false;
                                                   if (file.Extension.ToLower() == ".zip" && (String.IsNullOrWhiteSpace(this.exe7z) || !File.Exists(this.exe7z)))
@@ -207,6 +221,7 @@ namespace FileZillaManager.Classes
                                                       }
                                                       else
                                                       {
+                                                          this.Observacao =
                                                           this.MsgZipValido = "7z.exe não encontrado";
                                                           this.ZipValido = ZipCheckState.NaoAplicavel;
                                                       }
@@ -227,6 +242,7 @@ namespace FileZillaManager.Classes
                                               else
                                               {
                                                   this.ZipValido = fileDb.State;
+                                                  this.Observacao = "Arquivo validado pelo hash no banco de dados";
                                               }
                                           }
                                       }
@@ -254,7 +270,7 @@ namespace FileZillaManager.Classes
                 }
                 catch (Exception ex)
                 {
-                    this.MsgZipValido= ex.Message;
+                    this.MsgZipValido = ex.Message;
                     this.ZipValido = ZipCheckState.Erro;
                 }
             }

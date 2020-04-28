@@ -37,9 +37,11 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panelDev = new System.Windows.Forms.Panel();
+            this.buttonSendToServer = new System.Windows.Forms.Button();
+            this.buttonMonitorarTodos = new System.Windows.Forms.Button();
             this.textBoxDevInput = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.buttonMonitorarTodos = new System.Windows.Forms.Button();
+            this.buttonApagarHash = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panelDev.SuspendLayout();
@@ -147,6 +149,8 @@
             // 
             // panelDev
             // 
+            this.panelDev.Controls.Add(this.buttonApagarHash);
+            this.panelDev.Controls.Add(this.buttonSendToServer);
             this.panelDev.Controls.Add(this.buttonMonitorarTodos);
             this.panelDev.Controls.Add(this.textBoxDevInput);
             this.panelDev.Controls.Add(this.button1);
@@ -155,6 +159,26 @@
             this.panelDev.Size = new System.Drawing.Size(157, 267);
             this.panelDev.TabIndex = 2;
             this.panelDev.Visible = false;
+            // 
+            // buttonSendToServer
+            // 
+            this.buttonSendToServer.Location = new System.Drawing.Point(3, 114);
+            this.buttonSendToServer.Name = "buttonSendToServer";
+            this.buttonSendToServer.Size = new System.Drawing.Size(151, 35);
+            this.buttonSendToServer.TabIndex = 3;
+            this.buttonSendToServer.Text = "Enviar Tudo ao Server";
+            this.buttonSendToServer.UseVisualStyleBackColor = true;
+            this.buttonSendToServer.Click += new System.EventHandler(this.buttonSendToServer_Click);
+            // 
+            // buttonMonitorarTodos
+            // 
+            this.buttonMonitorarTodos.Location = new System.Drawing.Point(3, 73);
+            this.buttonMonitorarTodos.Name = "buttonMonitorarTodos";
+            this.buttonMonitorarTodos.Size = new System.Drawing.Size(151, 35);
+            this.buttonMonitorarTodos.TabIndex = 2;
+            this.buttonMonitorarTodos.Text = "Habilitar Monitorar";
+            this.buttonMonitorarTodos.UseVisualStyleBackColor = true;
+            this.buttonMonitorarTodos.Click += new System.EventHandler(this.buttonMonitorarTodos_Click);
             // 
             // textBoxDevInput
             // 
@@ -173,15 +197,15 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.buttonSetSenhaCompactacao_Click);
             // 
-            // buttonMonitorarTodos
+            // buttonApagarHash
             // 
-            this.buttonMonitorarTodos.Location = new System.Drawing.Point(3, 73);
-            this.buttonMonitorarTodos.Name = "buttonMonitorarTodos";
-            this.buttonMonitorarTodos.Size = new System.Drawing.Size(151, 35);
-            this.buttonMonitorarTodos.TabIndex = 2;
-            this.buttonMonitorarTodos.Text = "Habilitar Monitorar";
-            this.buttonMonitorarTodos.UseVisualStyleBackColor = true;
-            this.buttonMonitorarTodos.Click += new System.EventHandler(this.buttonMonitorarTodos_Click);
+            this.buttonApagarHash.Location = new System.Drawing.Point(3, 155);
+            this.buttonApagarHash.Name = "buttonApagarHash";
+            this.buttonApagarHash.Size = new System.Drawing.Size(151, 35);
+            this.buttonApagarHash.TabIndex = 4;
+            this.buttonApagarHash.Text = "Apagar Hash";
+            this.buttonApagarHash.UseVisualStyleBackColor = true;
+            this.buttonApagarHash.Click += new System.EventHandler(this.buttonApagarHash_Click);
             // 
             // FormPrincipal
             // 
@@ -217,6 +241,8 @@
         private System.Windows.Forms.TextBox textBoxDevInput;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button buttonMonitorarTodos;
+        private System.Windows.Forms.Button buttonSendToServer;
+        private System.Windows.Forms.Button buttonApagarHash;
     }
 }
 

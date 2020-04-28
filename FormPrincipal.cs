@@ -77,5 +77,34 @@ namespace FileZillaManager
             int i = db.ExecuteNonQuery(sql);
             MessageBox.Show(i + " Registros alterados");
         }
+
+        private void buttonSendToServer_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (Repositorio.ContratoRepositorio rep = new Repositorio.ContratoRepositorio())
+                {
+                    var contratos = rep.SelectAll(null);
+                    foreach (Contrato c in contratos)
+                        rep.ProcessaFileZilla(c);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void buttonApagarHash_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Tem certeza que deseja apagar toda a tabela de hash?","Apagar registros", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                using (Repositorio.FileCheckRepositorio rep = new Repositorio.FileCheckRepositorio())
+                {
+                    int i = rep.DeleteAll();
+                    MessageBox.Show(i + " registros apagados");
+                }
+            }
+        }
     }
 }

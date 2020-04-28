@@ -236,6 +236,11 @@ namespace FileZillaManager
                     //{
 
                     //}
+
+                    if (ee.PropertyName == "Tamanho")
+                    {
+                        toolStripStatusLabelTamanhoArquivos.Text = source.Sum(x => x.Tamanho).ToSizeString();
+                    }
                 };
             }
 
@@ -398,6 +403,46 @@ namespace FileZillaManager
         private void dataGridView2_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             e.Cancel = true;
+        }
+
+
+
+        private SortOrder getSortOrder(int columnIndex)
+        {
+            if (dataGridView2.Columns[columnIndex].HeaderCell.SortGlyphDirection == SortOrder.None ||
+                dataGridView2.Columns[columnIndex].HeaderCell.SortGlyphDirection == SortOrder.Descending)
+            {
+                dataGridView2.Columns[columnIndex].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
+                return SortOrder.Ascending;
+            }
+            else
+            {
+                dataGridView2.Columns[columnIndex].HeaderCell.SortGlyphDirection = SortOrder.Descending;
+                return SortOrder.Descending;
+            }
+        }
+
+        private void dataGridView2_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            string strColumnName = dataGridView2.Columns[e.ColumnIndex].DataPropertyName;
+            if (!String.IsNullOrWhiteSpace(strColumnName))
+            {
+                if (strColumnName == "TamanhoF")
+                    strColumnName = "Tamanho";
+
+                SortOrder strSortOrder = getSortOrder(e.ColumnIndex);
+
+                if (strSortOrder == SortOrder.Ascending)
+                {
+                    source = source.OrderBy(x => typeof(MonitorViewModel).GetProperty(strColumnName).GetValue(x, null)).ToList();
+                }
+                else
+                {
+                    source = source.OrderByDescending(x => typeof(MonitorViewModel).GetProperty(strColumnName).GetValue(x, null)).ToList();
+                }
+                dataGridView2.DataSource = source;
+                dataGridView2.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = strSortOrder;
+            }
         }
     }
 }

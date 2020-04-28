@@ -3236,11 +3236,21 @@ namespace FileZillaManager
             //return sBuilder.ToString();
         }
 
-        public static string SHA1FromFile(FileInfo input)
+        public static string SHA1FromFile(FileInfo input, bool limiteSize = true)
         {
             string hash = null;
             using (FileStream fop = File.OpenRead(input.FullName))
             {
+                if (limiteSize)
+                {
+                    long limite = (1024 * 1024);
+
+                    if (fop.Length > limite)
+                    {
+                        fop.Position = fop.Length - limite;
+                    }
+                }
+                
                 //string chksum = BitConverter.ToString(System.Security.Cryptography.SHA1.Create().ComputeHash(fop));
                 using (var cryptoProvider = new SHA1CryptoServiceProvider())
                 {

@@ -47,5 +47,17 @@ USING INDEX PK_FILECHECK_IDX;"
         {
             return this.SelectAll("lower(NOME) = '" + fileName.ToLower() + "' and lower(FILEHASH) = '" + md5Hash.ToLower() + "'");
         }
+
+        public int DeleteAll()
+        {
+            int i = 0;
+            string sql = "DELETE FROM FILE_CHECK";
+            using (FbConnection conexao = this.Context.CreateConnection())
+            {
+                conexao.Open();
+                i = this.Context.ExecuteNonQuery(conexao, sql);
+            }
+            return i;
+        }
     }
 }

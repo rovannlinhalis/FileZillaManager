@@ -130,7 +130,7 @@ ADD MONITORAR SMALLINT;",
         
         }
 
-        protected void ProcessaFileZilla(Contrato C)
+        public void ProcessaFileZilla(Contrato C)
         {
             if (byPassFileZilla)
                 return;

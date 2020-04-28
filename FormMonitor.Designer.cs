@@ -30,8 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.checkBoxOcultarPastasVazias = new System.Windows.Forms.CheckBox();
@@ -41,14 +42,6 @@
             this.buttonRefresh = new System.Windows.Forms.Button();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
-            this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.labelUltimaVerificacao3 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.timerRefresh = new System.Windows.Forms.Timer(this.components);
-            this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
-            this.dataGridViewImageColumn2 = new System.Windows.Forms.DataGridViewImageColumn();
             this.ColumnNome = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnLogin = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -63,6 +56,18 @@
             this.ColumnCor = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnTamanho = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnUltimoProcessamento = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnFileHash = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnFileObservacao = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.labelUltimaVerificacao3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabelTamanhoArquivos = new System.Windows.Forms.ToolStripStatusLabel();
+            this.timerRefresh = new System.Windows.Forms.Timer(this.components);
+            this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
+            this.dataGridViewImageColumn2 = new System.Windows.Forms.DataGridViewImageColumn();
             this.panel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
@@ -184,15 +189,17 @@
             this.ColumnAbrirPasta,
             this.ColumnCor,
             this.ColumnTamanho,
-            this.ColumnUltimoProcessamento});
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Roboto", 8.25F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.MistyRose;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle3;
+            this.ColumnUltimoProcessamento,
+            this.ColumnFileHash,
+            this.ColumnFileObservacao});
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Roboto", 8.25F);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.MistyRose;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle4;
             this.dataGridView2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView2.Location = new System.Drawing.Point(0, 74);
             this.dataGridView2.MultiSelect = false;
@@ -204,68 +211,9 @@
             this.dataGridView2.TabIndex = 4;
             this.dataGridView2.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellContentDoubleClick);
             this.dataGridView2.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dataGridView2_CellPainting);
+            this.dataGridView2.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView2_ColumnHeaderMouseClick);
             this.dataGridView2.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dataGridView2_DataBindingComplete);
             this.dataGridView2.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView2_DataError);
-            // 
-            // backgroundWorker2
-            // 
-            this.backgroundWorker2.WorkerReportsProgress = true;
-            this.backgroundWorker2.WorkerSupportsCancellation = true;
-            this.backgroundWorker2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker2_DoWork);
-            this.backgroundWorker2.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker2_ProgressChanged);
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.BackColor = System.Drawing.SystemColors.Control;
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1,
-            this.toolStripStatusLabel2,
-            this.labelUltimaVerificacao3});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 428);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(800, 22);
-            this.statusStrip1.TabIndex = 5;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // toolStripStatusLabel1
-            // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(17, 17);
-            this.toolStripStatusLabel1.Text = "--";
-            // 
-            // toolStripStatusLabel2
-            // 
-            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(134, 17);
-            this.toolStripStatusLabel2.Text = "    /    Última Verificação:";
-            // 
-            // labelUltimaVerificacao3
-            // 
-            this.labelUltimaVerificacao3.Name = "labelUltimaVerificacao3";
-            this.labelUltimaVerificacao3.Size = new System.Drawing.Size(20, 17);
-            this.labelUltimaVerificacao3.Text = "-:-";
-            // 
-            // timerRefresh
-            // 
-            this.timerRefresh.Interval = 300;
-            this.timerRefresh.Tick += new System.EventHandler(this.timerRefresh_Tick);
-            // 
-            // dataGridViewImageColumn1
-            // 
-            this.dataGridViewImageColumn1.HeaderText = "";
-            this.dataGridViewImageColumn1.Image = global::FileZillaManager.Properties.Resources.folder_red;
-            this.dataGridViewImageColumn1.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
-            this.dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
-            this.dataGridViewImageColumn1.Width = 5;
-            // 
-            // dataGridViewImageColumn2
-            // 
-            this.dataGridViewImageColumn2.HeaderText = "";
-            this.dataGridViewImageColumn2.Image = global::FileZillaManager.Properties.Resources.folder_red;
-            this.dataGridViewImageColumn2.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
-            this.dataGridViewImageColumn2.MinimumWidth = 24;
-            this.dataGridViewImageColumn2.Name = "dataGridViewImageColumn2";
-            this.dataGridViewImageColumn2.Width = 24;
             // 
             // ColumnNome
             // 
@@ -389,10 +337,102 @@
             // ColumnUltimoProcessamento
             // 
             this.ColumnUltimoProcessamento.DataPropertyName = "UltimoProcessamento";
+            dataGridViewCellStyle3.Format = "G";
+            dataGridViewCellStyle3.NullValue = null;
+            this.ColumnUltimoProcessamento.DefaultCellStyle = dataGridViewCellStyle3;
             this.ColumnUltimoProcessamento.HeaderText = "Último Processamento";
             this.ColumnUltimoProcessamento.Name = "ColumnUltimoProcessamento";
             this.ColumnUltimoProcessamento.ReadOnly = true;
+            this.ColumnUltimoProcessamento.Visible = false;
             this.ColumnUltimoProcessamento.Width = 134;
+            // 
+            // ColumnFileHash
+            // 
+            this.ColumnFileHash.DataPropertyName = "HashFile";
+            this.ColumnFileHash.HeaderText = "Hash";
+            this.ColumnFileHash.Name = "ColumnFileHash";
+            this.ColumnFileHash.ReadOnly = true;
+            // 
+            // ColumnFileObservacao
+            // 
+            this.ColumnFileObservacao.DataPropertyName = "Observacao";
+            this.ColumnFileObservacao.HeaderText = "Observação";
+            this.ColumnFileObservacao.Name = "ColumnFileObservacao";
+            this.ColumnFileObservacao.ReadOnly = true;
+            // 
+            // backgroundWorker2
+            // 
+            this.backgroundWorker2.WorkerReportsProgress = true;
+            this.backgroundWorker2.WorkerSupportsCancellation = true;
+            this.backgroundWorker2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker2_DoWork);
+            this.backgroundWorker2.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker2_ProgressChanged);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.BackColor = System.Drawing.SystemColors.Control;
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1,
+            this.toolStripStatusLabel2,
+            this.labelUltimaVerificacao3,
+            this.toolStripStatusLabel3,
+            this.toolStripStatusLabelTamanhoArquivos});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 428);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(800, 22);
+            this.statusStrip1.TabIndex = 5;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(17, 17);
+            this.toolStripStatusLabel1.Text = "--";
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(134, 17);
+            this.toolStripStatusLabel2.Text = "    /    Última Verificação:";
+            // 
+            // labelUltimaVerificacao3
+            // 
+            this.labelUltimaVerificacao3.Name = "labelUltimaVerificacao3";
+            this.labelUltimaVerificacao3.Size = new System.Drawing.Size(20, 17);
+            this.labelUltimaVerificacao3.Text = "-:-";
+            // 
+            // toolStripStatusLabel3
+            // 
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(148, 17);
+            this.toolStripStatusLabel3.Text = "  /  Tamanho dos Arquivos:";
+            // 
+            // toolStripStatusLabelTamanhoArquivos
+            // 
+            this.toolStripStatusLabelTamanhoArquivos.Name = "toolStripStatusLabelTamanhoArquivos";
+            this.toolStripStatusLabelTamanhoArquivos.Size = new System.Drawing.Size(32, 17);
+            this.toolStripStatusLabelTamanhoArquivos.Text = "--GB";
+            // 
+            // timerRefresh
+            // 
+            this.timerRefresh.Interval = 300;
+            this.timerRefresh.Tick += new System.EventHandler(this.timerRefresh_Tick);
+            // 
+            // dataGridViewImageColumn1
+            // 
+            this.dataGridViewImageColumn1.HeaderText = "";
+            this.dataGridViewImageColumn1.Image = global::FileZillaManager.Properties.Resources.folder_red;
+            this.dataGridViewImageColumn1.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
+            this.dataGridViewImageColumn1.Width = 5;
+            // 
+            // dataGridViewImageColumn2
+            // 
+            this.dataGridViewImageColumn2.HeaderText = "";
+            this.dataGridViewImageColumn2.Image = global::FileZillaManager.Properties.Resources.folder_red;
+            this.dataGridViewImageColumn2.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
+            this.dataGridViewImageColumn2.MinimumWidth = 24;
+            this.dataGridViewImageColumn2.Name = "dataGridViewImageColumn2";
+            this.dataGridViewImageColumn2.Width = 24;
             // 
             // FormMonitor
             // 
@@ -450,5 +490,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnCor;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnTamanho;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnUltimoProcessamento;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnFileHash;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnFileObservacao;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelTamanhoArquivos;
     }
 }
