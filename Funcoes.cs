@@ -3122,6 +3122,9 @@ namespace FileZillaManager
         /// <returns>cor da fonte</returns>
         public static Color GetForeColor(Color c)
         {
+            if (c == Color.Empty)
+                return Color.Black;
+
             //float brilho = c.GetBrightness();
             float brilho = ((c.R * 299) + (c.G * 587) + (c.B * 114)) / 1000;
 

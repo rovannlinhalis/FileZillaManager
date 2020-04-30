@@ -106,5 +106,16 @@ namespace FileZillaManager
                 }
             }
         }
+
+        private void buttonSetArmazenamento_Click(object sender, EventArgs e)
+        {
+            if (decimal.TryParse(textBoxDevInput.Text, out decimal d ))
+            {
+                string sql = "update CONTRATO set ARMAZENAMENTO = "+d+";";
+                FbDataBase.FbDataBase db = new FbDataBase.FbDataBase(Program.ConnectionString());
+                int i = db.ExecuteNonQuery(sql);
+                MessageBox.Show(i + " Registros alterados");
+            }
+        }
     }
 }

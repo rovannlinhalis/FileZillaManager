@@ -20,6 +20,7 @@ namespace FileZillaManager.Classes
         public int? GrupoId { get; set; }
         public bool Monitorar { get; set; } = true;
         public string SenhaCompactacao { get; set; }
+        public decimal Armazenamento { get; set; } = 0;
 
         //if (Enum.TryParse<AccessRights>("DirCreate, DirList, FileAppend, FileRead, FileWrite, IsHome", out AccessRights ac))
     }

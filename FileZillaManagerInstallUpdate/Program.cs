@@ -32,92 +32,99 @@ namespace FileZillaManagerInstallUpdate
             }
 
             DirectoryInfo dir = new DirectoryInfo(Application.StartupPath + "\\Update\\");
-
             FileInfo exe = new FileInfo(Application.ExecutablePath);
 
-            if (dir.Exists)
+            try
             {
+                
 
-
-                DialogResult diag = DialogResult.Retry;
-                bool sucess = false;
-                while (diag == DialogResult.Retry && !sucess)
+                if (dir.Exists)
                 {
-                    Process[] ps = Process.GetProcessesByName("FileZillaManager");
 
-                    while (ps.Length > 0)
+
+                    DialogResult diag = DialogResult.Retry;
+                    bool sucess = false;
+                    while (diag == DialogResult.Retry && !sucess)
                     {
-                        //MessageBox.Show("A aplicação FileZillaManager será finalizada.", "Instalar Atualização", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        Process[] ps = Process.GetProcessesByName("FileZillaManager");
 
-                        foreach (Process p in ps)
+                        while (ps.Length > 0)
                         {
-                            p.Kill();
-                            Thread.Sleep(500);
-                        }
+                            //MessageBox.Show("A aplicação FileZillaManager será finalizada.", "Instalar Atualização", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                        ps = Process.GetProcessesByName("FileZillaManager");
-                    }
-
-                    try
-                    {
-                        DirectoryInfo[] subDirs = dir.GetDirectories("*", SearchOption.AllDirectories);
-                        foreach (DirectoryInfo sdir in subDirs)
-                        {
-                            try
+                            foreach (Process p in ps)
                             {
-                                if (!sdir.Exists)
-                                {
-                                    sdir.Create();
-                                }
+                                p.Kill();
+                                Thread.Sleep(500);
                             }
-                            catch { }
+
+                            ps = Process.GetProcessesByName("FileZillaManager");
                         }
 
-                        FileInfo[] files = dir.GetFiles("*", SearchOption.AllDirectories);
-                        FileInfo local;
-                        foreach (FileInfo file in files)
+                        try
                         {
-                            try
+                            DirectoryInfo[] subDirs = dir.GetDirectories("*", SearchOption.AllDirectories);
+                            foreach (DirectoryInfo sdir in subDirs)
                             {
-                                string fUpdate = dir.FullName;
-                                fUpdate = fUpdate.EndsWith("\\") ? fUpdate : fUpdate + "\\";
-                                string xdir = Application.StartupPath;
-                                xdir = xdir.EndsWith("\\") ? xdir : xdir + "\\";
-
-                                FileInfo newFile = new FileInfo(file.FullName.Replace(fUpdate, xdir));
-
-                                if (!newFile.Directory.Exists)
-                                    newFile.Directory.Create();
-
-                                if (newFile.Exists)
-                                    newFile.Delete();
-
-                                file.CopyTo(newFile.FullName, true);
-
                                 try
                                 {
-                                    file.Delete();
+                                    if (!sdir.Exists)
+                                    {
+                                        sdir.Create();
+                                    }
                                 }
-                                catch (Exception exx)
-                                { }
+                                catch { }
                             }
-                            catch (Exception ex)
-                            { }
 
-                            Thread.Sleep(100);
+                            FileInfo[] files = dir.GetFiles("*", SearchOption.AllDirectories);
+                            FileInfo local;
+                            foreach (FileInfo file in files)
+                            {
+                                try
+                                {
+                                    string fUpdate = dir.FullName;
+                                    fUpdate = fUpdate.EndsWith("\\") ? fUpdate : fUpdate + "\\";
+                                    string xdir = Application.StartupPath;
+                                    xdir = xdir.EndsWith("\\") ? xdir : xdir + "\\";
+
+                                    FileInfo newFile = new FileInfo(file.FullName.Replace(fUpdate, xdir));
+
+                                    if (!newFile.Directory.Exists)
+                                        newFile.Directory.Create();
+
+                                    if (newFile.Exists)
+                                        newFile.Delete();
+
+                                    file.CopyTo(newFile.FullName, true);
+
+                                    try
+                                    {
+                                        file.Delete();
+                                    }
+                                    catch (Exception exx)
+                                    { }
+                                }
+                                catch (Exception ex)
+                                { }
+
+                                Thread.Sleep(100);
+                            }
+                            sucess = true;
                         }
-                        sucess = true;
+                        catch (Exception ex)
+                        {
+                            diag = MessageBox.Show(new Form() { TopMost = true }, ex.Message, "Erro ao atualizar arquivo", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
+                            sucess = false;
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        diag = MessageBox.Show(new Form() { TopMost = true }, ex.Message, "Erro ao atualizar arquivo", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error);
-                        sucess = false;
-                    }
+
+                    dir.Delete();
                 }
-
-                dir.Delete();
             }
-
+            catch  (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Erro ao atualizar aplicação.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
             if (exe.Exists)
             {

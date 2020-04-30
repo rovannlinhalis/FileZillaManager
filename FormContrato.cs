@@ -110,6 +110,7 @@ namespace FileZillaManager
             campoAtivo.Checked = c.Ativo;
             campoSenhaCompactacao.Text = c.SenhaCompactacao;
             checkBoxMonitorar.Checked = c.Monitorar;
+            campoArmazenamento.Value = c.Armazenamento < campoArmazenamento.Minimum ? campoArmazenamento.Minimum : c.Armazenamento > campoArmazenamento.Maximum ? campoArmazenamento.Maximum : c.Armazenamento;
             if (c.GrupoId.HasValue)
                 campoGrupo.SelectedValue = c.GrupoId;
             else
@@ -170,6 +171,7 @@ namespace FileZillaManager
                 c.GrupoId = campoGrupo.SelectedValue as int?;
                 c.SenhaCompactacao = campoSenhaCompactacao.Text;
                 c.Monitorar = checkBoxMonitorar.Checked;
+                c.Armazenamento = campoArmazenamento.Value;
 
                 AccessRights ac = AccessRights.IsHome;
                 if (FileRead.Checked)

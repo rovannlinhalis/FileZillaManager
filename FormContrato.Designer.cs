@@ -29,8 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.label1 = new System.Windows.Forms.Label();
             this.campoNome = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -43,6 +44,9 @@
             this.buttonCancelar = new System.Windows.Forms.Button();
             this.buttonGravar = new System.Windows.Forms.Button();
             this.panelCadastro = new System.Windows.Forms.Panel();
+            this.campoArmazenamento = new System.Windows.Forms.NumericUpDown();
+            this.label10 = new System.Windows.Forms.Label();
+            this.checkBoxMonitorar = new System.Windows.Forms.CheckBox();
             this.campoSenhaCompactacao = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
@@ -70,13 +74,14 @@
             this.label6 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.timerFiltro = new System.Windows.Forms.Timer(this.components);
             this.ColumnLogin = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnDescricao = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnValor = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnAtivo = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.timerFiltro = new System.Windows.Forms.Timer(this.components);
-            this.checkBoxMonitorar = new System.Windows.Forms.CheckBox();
+            this.ColumnArmazenamento = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panelCadastro.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.campoArmazenamento)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -198,7 +203,7 @@
             this.buttonCancelar.Name = "buttonCancelar";
             this.buttonCancelar.Size = new System.Drawing.Size(107, 43);
             this.buttonCancelar.TabIndex = 15;
-            this.buttonCancelar.Text = "Cancelar";
+            this.buttonCancelar.Text = "Limpar";
             this.buttonCancelar.UseVisualStyleBackColor = false;
             this.buttonCancelar.Click += new System.EventHandler(this.buttonCancelar_Click);
             // 
@@ -222,6 +227,8 @@
             // 
             // panelCadastro
             // 
+            this.panelCadastro.Controls.Add(this.campoArmazenamento);
+            this.panelCadastro.Controls.Add(this.label10);
             this.panelCadastro.Controls.Add(this.checkBoxMonitorar);
             this.panelCadastro.Controls.Add(this.campoSenhaCompactacao);
             this.panelCadastro.Controls.Add(this.label9);
@@ -254,24 +261,61 @@
             this.panelCadastro.Size = new System.Drawing.Size(657, 251);
             this.panelCadastro.TabIndex = 0;
             // 
+            // campoArmazenamento
+            // 
+            this.campoArmazenamento.DecimalPlaces = 1;
+            this.campoArmazenamento.Font = new System.Drawing.Font("Roboto", 12.25F);
+            this.campoArmazenamento.Location = new System.Drawing.Point(274, 166);
+            this.campoArmazenamento.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.campoArmazenamento.Name = "campoArmazenamento";
+            this.campoArmazenamento.Size = new System.Drawing.Size(112, 27);
+            this.campoArmazenamento.TabIndex = 30;
+            this.campoArmazenamento.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("Roboto", 8.25F);
+            this.label10.Location = new System.Drawing.Point(271, 150);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(115, 13);
+            this.label10.TabIndex = 29;
+            this.label10.Text = "Armazenamento (GB)";
+            // 
+            // checkBoxMonitorar
+            // 
+            this.checkBoxMonitorar.AutoSize = true;
+            this.checkBoxMonitorar.Checked = true;
+            this.checkBoxMonitorar.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxMonitorar.Font = new System.Drawing.Font("Roboto", 11.25F);
+            this.checkBoxMonitorar.Location = new System.Drawing.Point(83, 208);
+            this.checkBoxMonitorar.Name = "checkBoxMonitorar";
+            this.checkBoxMonitorar.Size = new System.Drawing.Size(93, 22);
+            this.checkBoxMonitorar.TabIndex = 28;
+            this.checkBoxMonitorar.Tag = "+";
+            this.checkBoxMonitorar.Text = "Monitorar";
+            this.checkBoxMonitorar.UseVisualStyleBackColor = true;
+            // 
             // campoSenhaCompactacao
             // 
-            this.campoSenhaCompactacao.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.campoSenhaCompactacao.Font = new System.Drawing.Font("Roboto", 12.25F);
-            this.campoSenhaCompactacao.Location = new System.Drawing.Point(140, 165);
+            this.campoSenhaCompactacao.Location = new System.Drawing.Point(140, 166);
             this.campoSenhaCompactacao.MaxLength = 100;
             this.campoSenhaCompactacao.Name = "campoSenhaCompactacao";
             this.campoSenhaCompactacao.PasswordChar = '*';
-            this.campoSenhaCompactacao.Size = new System.Drawing.Size(187, 27);
+            this.campoSenhaCompactacao.Size = new System.Drawing.Size(125, 27);
             this.campoSenhaCompactacao.TabIndex = 27;
             this.campoSenhaCompactacao.Tag = "";
             // 
             // label9
             // 
-            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Roboto", 8.25F);
-            this.label9.Location = new System.Drawing.Point(140, 149);
+            this.label9.Location = new System.Drawing.Point(140, 150);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(125, 13);
             this.label9.TabIndex = 26;
@@ -290,6 +334,7 @@
             // 
             // campoGrupo
             // 
+            this.campoGrupo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.campoGrupo.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.campoGrupo.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.campoGrupo.BackColor = System.Drawing.Color.Snow;
@@ -590,18 +635,24 @@
             this.ColumnLogin,
             this.ColumnDescricao,
             this.ColumnValor,
-            this.ColumnAtivo});
+            this.ColumnAtivo,
+            this.ColumnArmazenamento});
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.Location = new System.Drawing.Point(0, 295);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
-            this.dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.Black;
+            this.dataGridView1.RowsDefaultCellStyle = dataGridViewCellStyle3;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView1.Size = new System.Drawing.Size(657, 212);
             this.dataGridView1.TabIndex = 2;
             this.dataGridView1.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_RowEnter);
+            // 
+            // timerFiltro
+            // 
+            this.timerFiltro.Interval = 300;
+            this.timerFiltro.Tick += new System.EventHandler(this.timerFiltro_Tick);
             // 
             // ColumnLogin
             // 
@@ -641,24 +692,16 @@
             this.ColumnAtivo.TrueValue = "1";
             this.ColumnAtivo.Width = 57;
             // 
-            // timerFiltro
+            // ColumnArmazenamento
             // 
-            this.timerFiltro.Interval = 300;
-            this.timerFiltro.Tick += new System.EventHandler(this.timerFiltro_Tick);
-            // 
-            // checkBoxMonitorar
-            // 
-            this.checkBoxMonitorar.AutoSize = true;
-            this.checkBoxMonitorar.Checked = true;
-            this.checkBoxMonitorar.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxMonitorar.Font = new System.Drawing.Font("Roboto", 11.25F);
-            this.checkBoxMonitorar.Location = new System.Drawing.Point(83, 208);
-            this.checkBoxMonitorar.Name = "checkBoxMonitorar";
-            this.checkBoxMonitorar.Size = new System.Drawing.Size(93, 22);
-            this.checkBoxMonitorar.TabIndex = 28;
-            this.checkBoxMonitorar.Tag = "+";
-            this.checkBoxMonitorar.Text = "Monitorar";
-            this.checkBoxMonitorar.UseVisualStyleBackColor = true;
+            this.ColumnArmazenamento.DataPropertyName = "Armazenamento";
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle2.Format = "N1";
+            this.ColumnArmazenamento.DefaultCellStyle = dataGridViewCellStyle2;
+            this.ColumnArmazenamento.HeaderText = "Armazenamento (GB)";
+            this.ColumnArmazenamento.Name = "ColumnArmazenamento";
+            this.ColumnArmazenamento.ReadOnly = true;
+            this.ColumnArmazenamento.Width = 128;
             // 
             // FormContrato
             // 
@@ -674,6 +717,7 @@
             this.Load += new System.EventHandler(this.FormContrato_Load);
             this.panelCadastro.ResumeLayout(false);
             this.panelCadastro.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.campoArmazenamento)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -722,15 +766,18 @@
         private System.Windows.Forms.CheckBox FileAppend;
         private System.Windows.Forms.CheckBox FileWrite;
         private System.Windows.Forms.CheckBox FileRead;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnLogin;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnDescricao;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnValor;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnAtivo;
         private System.Windows.Forms.Button buttonVerSenha;
         private System.Windows.Forms.ComboBox campoGrupo;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox campoSenhaCompactacao;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.CheckBox checkBoxMonitorar;
+        private System.Windows.Forms.NumericUpDown campoArmazenamento;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnLogin;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnDescricao;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnValor;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnAtivo;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnArmazenamento;
     }
 }

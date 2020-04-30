@@ -36,7 +36,7 @@ namespace FileZillaManager.Classes
 
         List<string> ignorarExtensoes = new List<string>() { ".ini", ".db", ".txt" };
 
-        public MonitorViewModel(string nome, string login, string pasta, bool subPastas, string _exe7Z, string _senhaZip, int _contrato)
+        public MonitorViewModel(string nome, string login, string pasta, bool subPastas, string _exe7Z, string _senhaZip, Contrato _contrato)
         {
             this.Login = login;
             this.Nome = nome;
@@ -56,7 +56,7 @@ namespace FileZillaManager.Classes
         public string Status { get => status; set { status = value; RaisePropertyChanged("Status"); } }
         public DateTime LastWrite { get => lastWrite; set { lastWrite = value; RaisePropertyChanged("LastWrite"); } }
         public Color Cor { get => cor; set { cor = value; RaisePropertyChanged("Cor"); } }
-        public int Contrato { get; set; }
+        public Contrato Contrato { get; set; }
         public bool ProcessandoContrato { get => processContract; }
         public ZipCheckState ZipValido { get => zipValido; set { zipValido = value; RaisePropertyChanged("ZipValido"); } }
         public string Login { get => login; set { login = value; RaisePropertyChanged("Login"); } }
@@ -68,6 +68,10 @@ namespace FileZillaManager.Classes
 
         public string HashFile { get => hashAtual; set { hashAtual = value; RaisePropertyChanged("HashFile"); } }
         public string Observacao { get => observacao; set { observacao = value; RaisePropertyChanged("Observacao"); } }
+        public long FolderSize { get => folderSize; set { folderSize = value; RaisePropertyChanged("FolderSize"); } }
+        public string FolderSizeF { get => FolderSize.ToSizeString(); }
+        public Color FolderSizeColor { get => Contrato.Armazenamento <=0 ? Color.Empty :  (FolderSize / 1024 / 1024 / 1024) > Contrato.Armazenamento ? Color.IndianRed : Color.LightBlue; }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void RaisePropertyChanged(string prop)
@@ -78,7 +82,7 @@ namespace FileZillaManager.Classes
 
         public void Processa()
         {
-            
+
             processContract = true;
             try
             {
@@ -103,6 +107,7 @@ namespace FileZillaManager.Classes
                         this.Arquivo = file.Name;
                         this.LastWrite = file.LastWriteTime;
                         this.Tamanho = file.Length;
+                        this.FolderSize = files.Sum(x => x.Length);
 
                         if (file.LastWriteTime.Date == DateTime.Now.Date)
                         {
@@ -130,6 +135,8 @@ namespace FileZillaManager.Classes
                     }
                     else
                     {
+                        this.Arquivo = String.Empty;
+                        this.Tamanho = 0;
                         this.ZipValido = ZipCheckState.NaoAplicavel;
                         this.Cor = Color.Gray;
                         Status = "Nenhum arquivo na pasta cliente";
@@ -159,6 +166,7 @@ namespace FileZillaManager.Classes
         long lastCheckSize = -1;
         DateTime lastCheckDate = DateTime.MinValue;
         private string observacao;
+        private long folderSize;
 
         public void VerificarCompactacao()
         {
@@ -229,7 +237,7 @@ namespace FileZillaManager.Classes
 
 
                                                   if (fileDb == null)
-                                                      rep.Insert(new FileCheck() { Contrato = this.Contrato, Data = DateTime.Now, Hash = HashFile.ToLower(), Nome = file.FullName.ToLower(), State = this.ZipValido });
+                                                      rep.Insert(new FileCheck() { Contrato = this.Contrato.Codigo, Data = DateTime.Now, Hash = HashFile.ToLower(), Nome = file.FullName.ToLower(), State = this.ZipValido });
                                                   else
                                                   {
                                                       fileDb.State = this.ZipValido;

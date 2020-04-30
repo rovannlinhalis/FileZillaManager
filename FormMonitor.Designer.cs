@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.checkBoxOcultarPastasVazias = new System.Windows.Forms.CheckBox();
@@ -58,6 +58,8 @@
             this.ColumnUltimoProcessamento = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnFileHash = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnFileObservacao = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnFolderSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnArmazenamentoColor = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -68,14 +70,20 @@
             this.timerRefresh = new System.Windows.Forms.Timer(this.components);
             this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
             this.dataGridViewImageColumn2 = new System.Windows.Forms.DataGridViewImageColumn();
+            this.timerServer = new System.Windows.Forms.Timer(this.components);
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.labelStatusServer = new System.Windows.Forms.Label();
+            this.labelConexoes = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.statusStrip1.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.groupBox3);
             this.panel1.Controls.Add(this.groupBox2);
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Controls.Add(this.buttonRefresh);
@@ -91,7 +99,7 @@
             this.groupBox2.Controls.Add(this.checkBoxSubPastasIndividuais);
             this.groupBox2.Controls.Add(this.checkBoxSubPastas);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Left;
-            this.groupBox2.Location = new System.Drawing.Point(379, 0);
+            this.groupBox2.Location = new System.Drawing.Point(114, 0);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(269, 74);
             this.groupBox2.TabIndex = 4;
@@ -139,7 +147,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Left;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(379, 74);
+            this.groupBox1.Size = new System.Drawing.Size(114, 74);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filtrar";
@@ -171,8 +179,8 @@
             this.dataGridView2.AllowUserToAddRows = false;
             this.dataGridView2.AllowUserToDeleteRows = false;
             this.dataGridView2.AllowUserToOrderColumns = true;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(244)))), ((int)(((byte)(244)))), ((int)(((byte)(244)))));
-            this.dataGridView2.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(244)))), ((int)(((byte)(244)))), ((int)(((byte)(244)))));
+            this.dataGridView2.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle9;
             this.dataGridView2.BackgroundColor = System.Drawing.Color.White;
             this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -191,15 +199,17 @@
             this.ColumnTamanho,
             this.ColumnUltimoProcessamento,
             this.ColumnFileHash,
-            this.ColumnFileObservacao});
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Roboto", 8.25F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.MistyRose;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle4;
+            this.ColumnFileObservacao,
+            this.ColumnFolderSize,
+            this.ColumnArmazenamentoColor});
+            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle12.Font = new System.Drawing.Font("Roboto", 8.25F);
+            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.Color.MistyRose;
+            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle12;
             this.dataGridView2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView2.Location = new System.Drawing.Point(0, 74);
             this.dataGridView2.MultiSelect = false;
@@ -326,8 +336,8 @@
             // ColumnTamanho
             // 
             this.ColumnTamanho.DataPropertyName = "TamanhoF";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.ColumnTamanho.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.ColumnTamanho.DefaultCellStyle = dataGridViewCellStyle10;
             this.ColumnTamanho.HeaderText = "Tamanho";
             this.ColumnTamanho.MinimumWidth = 50;
             this.ColumnTamanho.Name = "ColumnTamanho";
@@ -337,9 +347,9 @@
             // ColumnUltimoProcessamento
             // 
             this.ColumnUltimoProcessamento.DataPropertyName = "UltimoProcessamento";
-            dataGridViewCellStyle3.Format = "G";
-            dataGridViewCellStyle3.NullValue = null;
-            this.ColumnUltimoProcessamento.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle11.Format = "G";
+            dataGridViewCellStyle11.NullValue = null;
+            this.ColumnUltimoProcessamento.DefaultCellStyle = dataGridViewCellStyle11;
             this.ColumnUltimoProcessamento.HeaderText = "Último Processamento";
             this.ColumnUltimoProcessamento.Name = "ColumnUltimoProcessamento";
             this.ColumnUltimoProcessamento.ReadOnly = true;
@@ -352,6 +362,7 @@
             this.ColumnFileHash.HeaderText = "Hash";
             this.ColumnFileHash.Name = "ColumnFileHash";
             this.ColumnFileHash.ReadOnly = true;
+            this.ColumnFileHash.Visible = false;
             // 
             // ColumnFileObservacao
             // 
@@ -359,6 +370,22 @@
             this.ColumnFileObservacao.HeaderText = "Observação";
             this.ColumnFileObservacao.Name = "ColumnFileObservacao";
             this.ColumnFileObservacao.ReadOnly = true;
+            this.ColumnFileObservacao.Visible = false;
+            // 
+            // ColumnFolderSize
+            // 
+            this.ColumnFolderSize.DataPropertyName = "FolderSizeF";
+            this.ColumnFolderSize.HeaderText = "Armazenamento";
+            this.ColumnFolderSize.Name = "ColumnFolderSize";
+            this.ColumnFolderSize.ReadOnly = true;
+            // 
+            // ColumnArmazenamentoColor
+            // 
+            this.ColumnArmazenamentoColor.DataPropertyName = "FolderSizeColor";
+            this.ColumnArmazenamentoColor.HeaderText = "ColorF";
+            this.ColumnArmazenamentoColor.Name = "ColumnArmazenamentoColor";
+            this.ColumnArmazenamentoColor.ReadOnly = true;
+            this.ColumnArmazenamentoColor.Visible = false;
             // 
             // backgroundWorker2
             // 
@@ -434,6 +461,44 @@
             this.dataGridViewImageColumn2.Name = "dataGridViewImageColumn2";
             this.dataGridViewImageColumn2.Width = 24;
             // 
+            // timerServer
+            // 
+            this.timerServer.Interval = 2000;
+            this.timerServer.Tick += new System.EventHandler(this.timerServer_Tick);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.labelConexoes);
+            this.groupBox3.Controls.Add(this.labelStatusServer);
+            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Left;
+            this.groupBox3.Location = new System.Drawing.Point(383, 0);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(200, 74);
+            this.groupBox3.TabIndex = 5;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Servidor";
+            // 
+            // labelStatusServer
+            // 
+            this.labelStatusServer.AutoSize = true;
+            this.labelStatusServer.Dock = System.Windows.Forms.DockStyle.Top;
+            this.labelStatusServer.Font = new System.Drawing.Font("Roboto", 14.25F);
+            this.labelStatusServer.Location = new System.Drawing.Point(3, 17);
+            this.labelStatusServer.Name = "labelStatusServer";
+            this.labelStatusServer.Size = new System.Drawing.Size(20, 23);
+            this.labelStatusServer.TabIndex = 0;
+            this.labelStatusServer.Text = "--";
+            // 
+            // labelConexoes
+            // 
+            this.labelConexoes.AutoSize = true;
+            this.labelConexoes.Dock = System.Windows.Forms.DockStyle.Top;
+            this.labelConexoes.Location = new System.Drawing.Point(3, 40);
+            this.labelConexoes.Name = "labelConexoes";
+            this.labelConexoes.Size = new System.Drawing.Size(13, 13);
+            this.labelConexoes.TabIndex = 1;
+            this.labelConexoes.Text = "--";
+            // 
             // FormMonitor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -452,6 +517,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -476,6 +543,8 @@
         private System.Windows.Forms.ToolStripStatusLabel labelUltimaVerificacao3;
         private System.Windows.Forms.DataGridViewImageColumn dataGridViewImageColumn2;
         private System.Windows.Forms.CheckBox checkBoxOcultarPastasVazias;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelTamanhoArquivos;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnNome;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnLogin;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnStatus;
@@ -492,7 +561,11 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnUltimoProcessamento;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnFileHash;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnFileObservacao;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelTamanhoArquivos;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnFolderSize;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnArmazenamentoColor;
+        private System.Windows.Forms.Timer timerServer;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Label labelConexoes;
+        private System.Windows.Forms.Label labelStatusServer;
     }
 }

@@ -30,6 +30,7 @@ namespace FileZillaManager.Repositorio
             AddField(x => x.GrupoId, "GRUPO", FbDbType.Integer);
             AddField(x => x.SenhaCompactacao, "SENHACOMPACTACAO", FbDbType.VarChar);
             AddField(x => x.Monitorar, "MONITORAR", FbDbType.Boolean);
+            AddField(x => x.Armazenamento, "ARMAZENAMENTO", FbDbType.Numeric);
         }
 
         public static string[] DDL()
@@ -78,6 +79,10 @@ ADD SENHACOMPACTACAO VARCHAR(512);",
 
 @"ALTER TABLE CONTRATO
 ADD MONITORAR SMALLINT;",
+
+@"ALTER TABLE CONTRATO
+ADD ARMAZENAMENTO NUMERIC(6,1);",
+
 
             };
         }
@@ -149,6 +154,7 @@ ADD MONITORAR SMALLINT;",
                             if (fileZillaApi.IsConnected)
                             {
                                 var accountSettings = fileZillaApi.GetAccountSettings();
+
 
                                 AccessRights ac;
                                 if (!Enum.TryParse<AccessRights>(C.Permissao, out ac))
