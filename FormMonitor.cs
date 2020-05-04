@@ -22,9 +22,11 @@ namespace FileZillaManager
 
 
         List<MonitorViewModel> source = new List<MonitorViewModel>();
+        
         string erroBkg1;
         int interval = 1000;
         LocalConfig config = new LocalConfig(true, "FileZillaManager");
+        IFileZillaApi fileZillaApi = null;
         Empresa Empresa { get; set; }
         public FormMonitor(Empresa emp)
         {
@@ -91,8 +93,10 @@ namespace FileZillaManager
             Program.listaProcessosMonitor = new List<Process>();
 
             bool subPastas = true, subPastasIndividuais = true;//, ocultarPastasVazias = false;
+            DateTime dataRef = DateTime.MinValue;
             checkBoxSubPastas.Invoke((MethodInvoker)delegate { subPastas = checkBoxSubPastas.Checked; });
             checkBoxSubPastasIndividuais.Invoke((MethodInvoker)delegate { subPastasIndividuais = checkBoxSubPastasIndividuais.Checked; });
+            dateTimePickerDataRef.Invoke((MethodInvoker)delegate { dataRef = dateTimePickerDataRef.Checked ? dateTimePickerDataRef.Value : DateTime.MinValue; });
             //checkBoxOcultarPastasVazias.Invoke((MethodInvoker)delegate { ocultarPastasVazias = checkBoxOcultarPastasVazias.Checked; });
 
             source.Clear();// = new SortableBindingList<MonitorViewModel>();
@@ -109,15 +113,15 @@ namespace FileZillaManager
                             DirectoryInfo dir = new DirectoryInfo(c.Pasta);
                             foreach (DirectoryInfo d in dir.GetDirectories("*", subPastas ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
                             {
-                                model = new MonitorViewModel(c.Nome, c.Login, d.FullName, false, this.Empresa.Exe7zPath, c.SenhaCompactacao, c);
+                                model = new MonitorViewModel(c.Nome, c.Login, d.FullName, false, this.Empresa.Exe7zPath, c.SenhaCompactacao, c, dataRef);
                                 source.Add(model);
                             }
-                            model = new MonitorViewModel(c.Nome, c.Login, c.Pasta, false, this.Empresa.Exe7zPath, c.SenhaCompactacao, c);
+                            model = new MonitorViewModel(c.Nome, c.Login, c.Pasta, false, this.Empresa.Exe7zPath, c.SenhaCompactacao, c, dataRef);
                             source.Add(model);
                         }
                         else
                         {
-                            model = new MonitorViewModel(c.Nome, c.Login, c.Pasta, subPastas, this.Empresa.Exe7zPath, c.SenhaCompactacao, c);
+                            model = new MonitorViewModel(c.Nome, c.Login, c.Pasta, subPastas, this.Empresa.Exe7zPath, c.SenhaCompactacao, c, dataRef);
                             source.Add(model);
                         }
                     }
@@ -138,7 +142,8 @@ namespace FileZillaManager
                 {
                     #region Vencimento
 
-                    Color cBottom = (Color)dataGridView2.Rows[e.RowIndex].Cells[ColumnCor.Name].Value;
+                    Color? aux = dataGridView2.Rows[e.RowIndex].Cells[ColumnCor.Name].Value as Color?;
+                    Color cBottom = aux.HasValue ? aux.Value : Color.Magenta;
 
                     if ((e.State & DataGridViewElementStates.Selected) != DataGridViewElementStates.Selected)
                     {
@@ -160,7 +165,7 @@ namespace FileZillaManager
                 else if (dataGridView2.Columns[e.ColumnIndex] == dataGridView2.Columns[ColumnMsgIntegridade.Name])
                 {
                     ZipCheckState state = (ZipCheckState)dataGridView2.Rows[e.RowIndex].Cells[ColumnZipValido.Name].Value;
-                    Color cBottom = state == ZipCheckState.Erro ? Color.Brown : state == ZipCheckState.NaoAplicavel ? Color.Gray : state == ZipCheckState.Valido ? Color.LightGreen : state == ZipCheckState.Invalido ? Color.Red : state == ZipCheckState.GerandoHash ? Color.Purple : state == ZipCheckState.AguardandoVerificacao ? Color.Yellow : Color.Blue;
+                    Color cBottom = state == ZipCheckState.Erro ? Color.Brown : state == ZipCheckState.NaoAplicavel ? Color.Gray : state == ZipCheckState.Valido ? Color.LightGreen : state == ZipCheckState.Invalido ? Color.Red : state == ZipCheckState.GerandoHash ? Color.Purple : state == ZipCheckState.AguardandoProcesso ? Color.Yellow : state == ZipCheckState.AguardandoVerificacao ? Color.Purple : Color.Blue;
 
 
                     if ((e.State & DataGridViewElementStates.Selected) != DataGridViewElementStates.Selected)
@@ -218,6 +223,12 @@ namespace FileZillaManager
 
         private void FormMonitor_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (fileZillaApi != null)
+            {
+                if (fileZillaApi.IsConnected)
+                    fileZillaApi.Dispose();
+            }
+
             if (backgroundWorker1.IsBusy)
                 backgroundWorker1.CancelAsync();
             if (backgroundWorker2.IsBusy)
@@ -233,57 +244,72 @@ namespace FileZillaManager
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            //MessageBox.Show("Acabou o primeiro processo, " + (source == null ? "source é null" : " source:: "+ source.Count));
-
-            config.SubPastas = checkBoxSubPastas.Checked;
-            config.SubPastasIndividuais = checkBoxSubPastasIndividuais.Checked;
-            config.OcultarVazias = checkBoxOcultarPastasVazias.Checked;
-
-
-            foreach (var model in source)
+            if (e.Cancelled)
             {
-                model.PropertyChanged += (ss, ee) =>
+                timerRefresh.Enabled = false;
+                timerRefresh.Enabled = true;
+            }
+            else
+            {
+                //MessageBox.Show("Acabou o primeiro processo, " + (source == null ? "source é null" : " source:: "+ source.Count));
+
+                config.SubPastas = checkBoxSubPastas.Checked;
+                config.SubPastasIndividuais = checkBoxSubPastasIndividuais.Checked;
+                config.OcultarVazias = checkBoxOcultarPastasVazias.Checked;
+
+
+                foreach (var model in source)
                 {
-                    dataGridView2.Invalidate();
-                    //if (ee.PropertyName == "ZipValido")
-                    //{
-                    //    if (dataGridView2.Columns.Contains(ColumnMsgIntegridade.Name))
-                    //        dataGridView2.InvalidateColumn(dataGridView2.Columns[ColumnMsgIntegridade.Name].Index);
-                    //}
-                    //else if (ee.PropertyName == "Status")
-                    //{
-                    //    if (dataGridView2.Columns.Contains(ColumnStatus.Name))
-                    //        dataGridView2.InvalidateColumn(dataGridView2.Columns[ColumnStatus.Name].Index);
-                    //}
-                    //else if (ee.PropertyName == "Arquivo")
-                    //{
-
-                    //}
-
-                    if (ee.PropertyName == "Tamanho")
+                    model.PropertyChanged += (ss, ee) =>
                     {
-                        toolStripStatusLabelTamanhoArquivos.Text = source.Sum(x => x.Tamanho).ToSizeString();
-                    }
-                };
+                        dataGridView2.Invalidate();
+                        //if (ee.PropertyName == "ZipValido")
+                        //{
+                        //    if (dataGridView2.Columns.Contains(ColumnMsgIntegridade.Name))
+                        //        dataGridView2.InvalidateColumn(dataGridView2.Columns[ColumnMsgIntegridade.Name].Index);
+                        //}
+                        //else if (ee.PropertyName == "Status")
+                        //{
+                        //    if (dataGridView2.Columns.Contains(ColumnStatus.Name))
+                        //        dataGridView2.InvalidateColumn(dataGridView2.Columns[ColumnStatus.Name].Index);
+                        //}
+                        //else if (ee.PropertyName == "Arquivo")
+                        //{
+
+                        //}
+
+                        if (ee.PropertyName == "Tamanho")
+                        {
+                            toolStripStatusLabelTamanhoArquivos.Text = source.Sum(x => x.Tamanho).ToSizeString();
+                        }
+                        else if (ee.PropertyName == "FolderSize")
+                        {
+                            toolStripStatusLabelTotalArmazenamento.Text = source.Sum(x => x.FolderSize).ToSizeString();
+                        }
+                        else if (ee.PropertyName == "Arquivo")
+                        {
+                            timerVisibleRows.Enabled = false;
+                            timerVisibleRows.Enabled = true;
+                        }
+                    };
+                }
+
+                //if (checkBoxOcultarPastasVazias.Checked)
+                //    auxSource = source.Where(x => !String.IsNullOrWhiteSpace(x.Arquivo)).ToList();
+
+                dataGridView2.DataSource = source;
+
+                if (e.Error != null)
+                {
+                    MessageBox.Show(e.Error.Message, "Erro ao carregar contratos", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+                if (!String.IsNullOrWhiteSpace(erroBkg1))
+                    toolStripStatusLabel1.Text = erroBkg1;
+
+                if (!backgroundWorker2.IsBusy)
+                    backgroundWorker2.RunWorkerAsync();
             }
-
-            if (checkBoxOcultarPastasVazias.Checked)
-                source = source.Where(x => !String.IsNullOrWhiteSpace(x.Arquivo)).ToList();
-
-
-            dataGridView2.DataSource = source;
-
-
-            if (e.Error != null)
-            {
-                MessageBox.Show(e.Error.Message, "Erro ao carregar contratos", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-            if (!String.IsNullOrWhiteSpace(erroBkg1))
-                toolStripStatusLabel1.Text = erroBkg1;
-
-            if (!backgroundWorker2.IsBusy)
-                backgroundWorker2.RunWorkerAsync();
         }
 
         private void MatarProcessos()
@@ -317,18 +343,26 @@ namespace FileZillaManager
                             if (!c.ProcessandoContrato)
                                 c.Processa();
 
-                            if (source.Where(x => x.VerificandoZip)?.Count() < 3)
+                            if (source.Where(x => x.VerificandoHash)?.Count() < 6)
                             {
-                                if (!c.VerificandoZip)
+                                if (!c.VerificandoHash)
                                 {
-                                    c.VerificarCompactacao();
+                                    c.VerificarHash();
+                                }
+                            }
+
+                            if (source.Where(x=>x.VerificandoZip)?.Count() < 3)
+                            {
+                                if (!c.VerificandoZip && c.ZipValido == ZipCheckState.AguardandoVerificacao)
+                                {
+                                    c.VerificarIntegridade();
                                     c.UltimoProcessamento = DateTime.Now;
                                 }
                             }
 
                             if (source.Any(x => x.UltimoProcessamento == DateTime.MinValue))
                             {
-                                interval = 3000;
+                                interval = 2000;
                             }
                         }
                         catch { }
@@ -346,11 +380,22 @@ namespace FileZillaManager
 
         private void dataGridView2_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-            toolStripStatusLabel1.Text = dataGridView2.Rows.Count + " Registros";
+            //if (checkBoxOcultarPastasVazias.Checked)
+            //{
+            //    dataGridView2.ClearSelection();
+            //    foreach (DataGridViewRow r in dataGridView2.Rows)
+            //    {
+            //        if (String.IsNullOrWhiteSpace(source[r.Index].Arquivo))
+            //            dataGridView2.Rows[r.Index].Visible = false;
+            //    }
+            //}
+            timerVisibleRows.Enabled = false;
+            timerVisibleRows.Enabled = true;
         }
 
         private void dataGridView2_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
+            if (e.RowIndex >=0)
             if (e.ColumnIndex == ColumnAbrirPasta.Index)
             {
 
@@ -379,7 +424,7 @@ namespace FileZillaManager
                 List<MonitorViewModel> lista = dataGridView2.DataSource as List<MonitorViewModel>;
                 if (lista != null)
                 {
-                    lista[e.RowIndex].ZipValido = ZipCheckState.AguardandoVerificacao;
+                    lista[e.RowIndex].ZipValido = ZipCheckState.AguardandoProcesso;
                     lista[e.RowIndex].ForceCheck = true;
                 }
             }
@@ -409,12 +454,15 @@ namespace FileZillaManager
             timerRefresh.Enabled = false;
             if (!backgroundWorker1.IsBusy)
                 backgroundWorker1.RunWorkerAsync();
+            else
+                backgroundWorker1.CancelAsync();
+            
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            timerRefresh.Enabled = false;
-            timerRefresh.Enabled = true;
+            timerVisibleRows.Enabled = false;
+            timerVisibleRows.Enabled = true;
         }
 
         private void backgroundWorker2_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -464,63 +512,108 @@ namespace FileZillaManager
                 {
                     source = source.OrderByDescending(x => typeof(MonitorViewModel).GetProperty(strColumnName).GetValue(x, null)).ToList();
                 }
-                dataGridView2.DataSource = source;
+                
+               dataGridView2.DataSource = source;
                 dataGridView2.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = strSortOrder;
             }
         }
 
+        
 
 
         private void timerServer_Tick(object sender, EventArgs e)
         {
             timerServer.Enabled = false;
+            int r = dataGridView2.Rows.Count;
+            if (checkBoxOcultarPastasVazias.Checked)
+                r = r - source.Where(x => String.IsNullOrWhiteSpace(x.Arquivo)).Count();
+            toolStripStatusLabel1.Text = r + " Registros";
             try
             {
-                if (IPAddress.TryParse(this.Empresa.Host, out IPAddress ip))
+                if (fileZillaApi == null)
                 {
-                    using (IFileZillaApi fileZillaApi = new FileZillaApi(ip, this.Empresa.Port))
+                    if (IPAddress.TryParse(this.Empresa.Host, out IPAddress ip))
                     {
-                        fileZillaApi.Connect(this.Empresa.Pass);
-                        if (fileZillaApi.IsConnected)
+                        fileZillaApi = new FileZillaApi(ip, this.Empresa.Port);
+                    }
+                }
+
+                if (!fileZillaApi.IsConnected)
+                    fileZillaApi.Connect(this.Empresa.Pass);
+
+
+                if (fileZillaApi.IsConnected)
+                {
+                    var connections = fileZillaApi.GetConnections();
+                    var state = fileZillaApi.GetServerState();
+
+                    labelStatusServer.Text = "Conectado / " + state;
+                    labelStatusServer.ForeColor = Color.Green;
+                    labelConexoes.Text = connections.Count + " Conexões ativas";
+                    List<MonitorViewModel> lista = dataGridView2.DataSource as List<MonitorViewModel>;
+                    if (lista != null)
+                    {
+                        foreach (var c in connections)
                         {
-                            var connections = fileZillaApi.GetConnections();
-                            var state = fileZillaApi.GetServerState();
-                            
-                            labelStatusServer.Text = "Conectado / "+ state;
-                            labelStatusServer.ForeColor = Color.Green;
-                            labelConexoes.Text = connections.Count + " Conexões ativas";
-                            List<MonitorViewModel> lista = dataGridView2.DataSource as List<MonitorViewModel>;
-                            if (lista != null)
+                            var contratos = lista.Where(x => x.Login == c.UserName).ToList();
+                            contratos.ForEach(x =>
                             {
-                                foreach (var c in connections)
-                                {
-                                    var contratos = lista.Where(x => x.Login == c.UserName).ToList();
-                                    contratos.ForEach(x =>
-                                    {
-                                        x.Status = c.TransferMode == TransferMode.Receive ? "Recebendo..." : c.TransferMode == TransferMode.Send ? "Enviando..." : "Conectado";
-                                        x.Cor = Color.Pink;
-                                        x.Tamanho = c.TotalSize.HasValue ? c.TotalSize.Value : x.Tamanho;
-                                    });
-                                }
-                            }
-                        }
-                        else
-                        {
-                            labelStatusServer.Text = "Desconectado";
-                            labelStatusServer.ForeColor = Color.Red;
-                            labelConexoes.Text = String.Empty;
+                                x.Status = c.TransferMode == TransferMode.Receive ? "Recebendo..." : c.TransferMode == TransferMode.Send ? "Enviando..." : "Conectado";
+                                x.Cor = Color.Pink;
+                                x.Tamanho = c.TotalSize.HasValue ? c.TotalSize.Value : x.Tamanho;
+                            });
                         }
                     }
+                }
+                else
+                {
+                    labelStatusServer.Text = "Desconectado";
+                    labelStatusServer.ForeColor = Color.Red;
+                    labelConexoes.Text = String.Empty;
                 }
             }
             catch (Exception ex)
             {
+                fileZillaApi.Dispose();
+                fileZillaApi = null;
+
                 labelStatusServer.Text = ex.Message;
                 labelStatusServer.ForeColor = Color.Red;
                 labelConexoes.Text = String.Empty;
                 timerServer.Interval = 10000;
             }
             timerServer.Enabled = true;
+        }
+
+        private void labelStatusServer_DoubleClick(object sender, EventArgs e)
+        {
+            MessageBox.Show(labelStatusServer.Text,"Status do Servidor", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void timerVisibleRows_Tick(object sender, EventArgs e)
+        {
+            timerVisibleRows.Enabled = false;
+            foreach (DataGridViewRow r in dataGridView2.Rows)
+            {
+                if (checkBoxOcultarPastasVazias.Checked)
+                {
+                    if (String.IsNullOrWhiteSpace(r.Cells[ColumnArquivo.Name].Value?.ToString()))
+                    {
+                        if (dataGridView2.SelectedRows.Count > 0)
+                            if (dataGridView2.SelectedRows[0].Index == r.Index)
+                            {
+                                dataGridView2.ClearSelection();
+                                dataGridView2.CurrentCell = null;
+                            }
+                        r.Visible = false;
+                    }
+                    else
+                        r.Visible = true;
+                }
+                else
+                    r.Visible = true;
+            }
+            timerVisibleRows.Enabled = false;
         }
     }
 }

@@ -29,16 +29,22 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.labelConexoes = new System.Windows.Forms.Label();
+            this.labelStatusServer = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.dateTimePickerDataRef = new System.Windows.Forms.DateTimePicker();
+            this.label1 = new System.Windows.Forms.Label();
             this.checkBoxOcultarPastasVazias = new System.Windows.Forms.CheckBox();
-            this.checkBoxSubPastasIndividuais = new System.Windows.Forms.CheckBox();
             this.checkBoxSubPastas = new System.Windows.Forms.CheckBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkBoxSubPastasIndividuais = new System.Windows.Forms.CheckBox();
             this.buttonRefresh = new System.Windows.Forms.Button();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
@@ -67,98 +73,165 @@
             this.labelUltimaVerificacao3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabelTamanhoArquivos = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabelTotalArmazenamento = new System.Windows.Forms.ToolStripStatusLabel();
             this.timerRefresh = new System.Windows.Forms.Timer(this.components);
             this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
             this.dataGridViewImageColumn2 = new System.Windows.Forms.DataGridViewImageColumn();
             this.timerServer = new System.Windows.Forms.Timer(this.components);
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.labelStatusServer = new System.Windows.Forms.Label();
-            this.labelConexoes = new System.Windows.Forms.Label();
+            this.timerVisibleRows = new System.Windows.Forms.Timer(this.components);
             this.panel1.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.statusStrip1.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.Controls.Add(this.groupBox3);
             this.panel1.Controls.Add(this.groupBox2);
-            this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Controls.Add(this.buttonRefresh);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(800, 74);
+            this.panel1.Size = new System.Drawing.Size(859, 74);
             this.panel1.TabIndex = 0;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.labelConexoes);
+            this.groupBox3.Controls.Add(this.labelStatusServer);
+            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Left;
+            this.groupBox3.Location = new System.Drawing.Point(473, 0);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(214, 74);
+            this.groupBox3.TabIndex = 5;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Servidor";
+            // 
+            // labelConexoes
+            // 
+            this.labelConexoes.AutoSize = true;
+            this.labelConexoes.Dock = System.Windows.Forms.DockStyle.Top;
+            this.labelConexoes.Location = new System.Drawing.Point(3, 40);
+            this.labelConexoes.Name = "labelConexoes";
+            this.labelConexoes.Size = new System.Drawing.Size(13, 13);
+            this.labelConexoes.TabIndex = 1;
+            this.labelConexoes.Text = "--";
+            // 
+            // labelStatusServer
+            // 
+            this.labelStatusServer.AutoSize = true;
+            this.labelStatusServer.Dock = System.Windows.Forms.DockStyle.Top;
+            this.labelStatusServer.Font = new System.Drawing.Font("Roboto", 14.25F);
+            this.labelStatusServer.Location = new System.Drawing.Point(3, 17);
+            this.labelStatusServer.Name = "labelStatusServer";
+            this.labelStatusServer.Size = new System.Drawing.Size(20, 23);
+            this.labelStatusServer.TabIndex = 0;
+            this.labelStatusServer.Text = "--";
+            this.labelStatusServer.DoubleClick += new System.EventHandler(this.labelStatusServer_DoubleClick);
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.checkBoxOcultarPastasVazias);
-            this.groupBox2.Controls.Add(this.checkBoxSubPastasIndividuais);
-            this.groupBox2.Controls.Add(this.checkBoxSubPastas);
+            this.groupBox2.Controls.Add(this.flowLayoutPanel1);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Left;
-            this.groupBox2.Location = new System.Drawing.Point(114, 0);
+            this.groupBox2.Location = new System.Drawing.Point(0, 0);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(269, 74);
+            this.groupBox2.Size = new System.Drawing.Size(473, 74);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Opções";
             // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Controls.Add(this.panel2);
+            this.flowLayoutPanel1.Controls.Add(this.checkBoxOcultarPastasVazias);
+            this.flowLayoutPanel1.Controls.Add(this.checkBoxSubPastas);
+            this.flowLayoutPanel1.Controls.Add(this.checkBoxSubPastasIndividuais);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 17);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(467, 54);
+            this.flowLayoutPanel1.TabIndex = 0;
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.dateTimePickerDataRef);
+            this.panel2.Controls.Add(this.label1);
+            this.panel2.Location = new System.Drawing.Point(3, 3);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(111, 36);
+            this.panel2.TabIndex = 3;
+            // 
+            // dateTimePickerDataRef
+            // 
+            this.dateTimePickerDataRef.Checked = false;
+            this.dateTimePickerDataRef.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dateTimePickerDataRef.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dateTimePickerDataRef.Location = new System.Drawing.Point(0, 13);
+            this.dateTimePickerDataRef.Name = "dateTimePickerDataRef";
+            this.dateTimePickerDataRef.ShowCheckBox = true;
+            this.dateTimePickerDataRef.Size = new System.Drawing.Size(111, 21);
+            this.dateTimePickerDataRef.TabIndex = 1;
+            this.dateTimePickerDataRef.ValueChanged += new System.EventHandler(this.checkBoxSubPastas_CheckedChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label1.Location = new System.Drawing.Point(0, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(53, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Data Ref.";
+            // 
             // checkBoxOcultarPastasVazias
             // 
             this.checkBoxOcultarPastasVazias.AutoSize = true;
-            this.checkBoxOcultarPastasVazias.Dock = System.Windows.Forms.DockStyle.Top;
-            this.checkBoxOcultarPastasVazias.Location = new System.Drawing.Point(3, 51);
+            this.checkBoxOcultarPastasVazias.Location = new System.Drawing.Point(118, 1);
+            this.checkBoxOcultarPastasVazias.Margin = new System.Windows.Forms.Padding(1);
             this.checkBoxOcultarPastasVazias.Name = "checkBoxOcultarPastasVazias";
-            this.checkBoxOcultarPastasVazias.Size = new System.Drawing.Size(263, 17);
+            this.checkBoxOcultarPastasVazias.Size = new System.Drawing.Size(137, 17);
             this.checkBoxOcultarPastasVazias.TabIndex = 2;
             this.checkBoxOcultarPastasVazias.Text = "Ocultar Pastas Vazias";
             this.checkBoxOcultarPastasVazias.UseVisualStyleBackColor = true;
             this.checkBoxOcultarPastasVazias.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
-            // checkBoxSubPastasIndividuais
-            // 
-            this.checkBoxSubPastasIndividuais.AutoSize = true;
-            this.checkBoxSubPastasIndividuais.Dock = System.Windows.Forms.DockStyle.Top;
-            this.checkBoxSubPastasIndividuais.Location = new System.Drawing.Point(3, 34);
-            this.checkBoxSubPastasIndividuais.Name = "checkBoxSubPastasIndividuais";
-            this.checkBoxSubPastasIndividuais.Size = new System.Drawing.Size(263, 17);
-            this.checkBoxSubPastasIndividuais.TabIndex = 1;
-            this.checkBoxSubPastasIndividuais.Text = "Monitorar SubPastas Individualmente";
-            this.checkBoxSubPastasIndividuais.UseVisualStyleBackColor = true;
-            this.checkBoxSubPastasIndividuais.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            // 
             // checkBoxSubPastas
             // 
             this.checkBoxSubPastas.AutoSize = true;
-            this.checkBoxSubPastas.Dock = System.Windows.Forms.DockStyle.Top;
-            this.checkBoxSubPastas.Location = new System.Drawing.Point(3, 17);
+            this.checkBoxSubPastas.Location = new System.Drawing.Point(118, 20);
+            this.checkBoxSubPastas.Margin = new System.Windows.Forms.Padding(1);
             this.checkBoxSubPastas.Name = "checkBoxSubPastas";
-            this.checkBoxSubPastas.Size = new System.Drawing.Size(263, 17);
+            this.checkBoxSubPastas.Size = new System.Drawing.Size(132, 17);
             this.checkBoxSubPastas.TabIndex = 0;
             this.checkBoxSubPastas.Text = "Monitorar SubPastas";
             this.checkBoxSubPastas.UseVisualStyleBackColor = true;
             this.checkBoxSubPastas.CheckedChanged += new System.EventHandler(this.checkBoxSubPastas_CheckedChanged);
             // 
-            // groupBox1
+            // checkBoxSubPastasIndividuais
             // 
-            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.groupBox1.Location = new System.Drawing.Point(0, 0);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(114, 74);
-            this.groupBox1.TabIndex = 3;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Filtrar";
-            this.groupBox1.Visible = false;
+            this.checkBoxSubPastasIndividuais.AutoSize = true;
+            this.checkBoxSubPastasIndividuais.Location = new System.Drawing.Point(257, 1);
+            this.checkBoxSubPastasIndividuais.Margin = new System.Windows.Forms.Padding(1);
+            this.checkBoxSubPastasIndividuais.Name = "checkBoxSubPastasIndividuais";
+            this.checkBoxSubPastasIndividuais.Size = new System.Drawing.Size(214, 17);
+            this.checkBoxSubPastasIndividuais.TabIndex = 1;
+            this.checkBoxSubPastasIndividuais.Text = "Monitorar SubPastas Individualmente";
+            this.checkBoxSubPastasIndividuais.UseVisualStyleBackColor = true;
+            this.checkBoxSubPastasIndividuais.CheckedChanged += new System.EventHandler(this.checkBoxSubPastas_CheckedChanged);
             // 
             // buttonRefresh
             // 
             this.buttonRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonRefresh.ForeColor = System.Drawing.Color.IndianRed;
-            this.buttonRefresh.Location = new System.Drawing.Point(671, 16);
+            this.buttonRefresh.Location = new System.Drawing.Point(730, 16);
             this.buttonRefresh.Name = "buttonRefresh";
             this.buttonRefresh.Size = new System.Drawing.Size(117, 35);
             this.buttonRefresh.TabIndex = 2;
@@ -179,8 +252,8 @@
             this.dataGridView2.AllowUserToAddRows = false;
             this.dataGridView2.AllowUserToDeleteRows = false;
             this.dataGridView2.AllowUserToOrderColumns = true;
-            dataGridViewCellStyle9.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(244)))), ((int)(((byte)(244)))), ((int)(((byte)(244)))));
-            this.dataGridView2.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(244)))), ((int)(((byte)(244)))), ((int)(((byte)(244)))));
+            this.dataGridView2.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle5;
             this.dataGridView2.BackgroundColor = System.Drawing.Color.White;
             this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -202,14 +275,14 @@
             this.ColumnFileObservacao,
             this.ColumnFolderSize,
             this.ColumnArmazenamentoColor});
-            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle12.Font = new System.Drawing.Font("Roboto", 8.25F);
-            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.Color.MistyRose;
-            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Roboto", 8.25F);
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.MistyRose;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView2.DefaultCellStyle = dataGridViewCellStyle8;
             this.dataGridView2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView2.Location = new System.Drawing.Point(0, 74);
             this.dataGridView2.MultiSelect = false;
@@ -217,7 +290,7 @@
             this.dataGridView2.ReadOnly = true;
             this.dataGridView2.RowHeadersVisible = false;
             this.dataGridView2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView2.Size = new System.Drawing.Size(800, 354);
+            this.dataGridView2.Size = new System.Drawing.Size(859, 354);
             this.dataGridView2.TabIndex = 4;
             this.dataGridView2.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellContentDoubleClick);
             this.dataGridView2.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dataGridView2_CellPainting);
@@ -336,8 +409,8 @@
             // ColumnTamanho
             // 
             this.ColumnTamanho.DataPropertyName = "TamanhoF";
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.ColumnTamanho.DefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.ColumnTamanho.DefaultCellStyle = dataGridViewCellStyle6;
             this.ColumnTamanho.HeaderText = "Tamanho";
             this.ColumnTamanho.MinimumWidth = 50;
             this.ColumnTamanho.Name = "ColumnTamanho";
@@ -347,9 +420,9 @@
             // ColumnUltimoProcessamento
             // 
             this.ColumnUltimoProcessamento.DataPropertyName = "UltimoProcessamento";
-            dataGridViewCellStyle11.Format = "G";
-            dataGridViewCellStyle11.NullValue = null;
-            this.ColumnUltimoProcessamento.DefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle7.Format = "G";
+            dataGridViewCellStyle7.NullValue = null;
+            this.ColumnUltimoProcessamento.DefaultCellStyle = dataGridViewCellStyle7;
             this.ColumnUltimoProcessamento.HeaderText = "Último Processamento";
             this.ColumnUltimoProcessamento.Name = "ColumnUltimoProcessamento";
             this.ColumnUltimoProcessamento.ReadOnly = true;
@@ -402,10 +475,12 @@
             this.toolStripStatusLabel2,
             this.labelUltimaVerificacao3,
             this.toolStripStatusLabel3,
-            this.toolStripStatusLabelTamanhoArquivos});
+            this.toolStripStatusLabelTamanhoArquivos,
+            this.toolStripStatusLabel4,
+            this.toolStripStatusLabelTotalArmazenamento});
             this.statusStrip1.Location = new System.Drawing.Point(0, 428);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(800, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(859, 22);
             this.statusStrip1.TabIndex = 5;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -439,6 +514,18 @@
             this.toolStripStatusLabelTamanhoArquivos.Size = new System.Drawing.Size(32, 17);
             this.toolStripStatusLabelTamanhoArquivos.Text = "--GB";
             // 
+            // toolStripStatusLabel4
+            // 
+            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(134, 17);
+            this.toolStripStatusLabel4.Text = "/ Total Armazenamento:";
+            // 
+            // toolStripStatusLabelTotalArmazenamento
+            // 
+            this.toolStripStatusLabelTotalArmazenamento.Name = "toolStripStatusLabelTotalArmazenamento";
+            this.toolStripStatusLabelTotalArmazenamento.Size = new System.Drawing.Size(32, 17);
+            this.toolStripStatusLabelTotalArmazenamento.Text = "--GB";
+            // 
             // timerRefresh
             // 
             this.timerRefresh.Interval = 300;
@@ -463,47 +550,19 @@
             // 
             // timerServer
             // 
-            this.timerServer.Interval = 2000;
+            this.timerServer.Interval = 1000;
             this.timerServer.Tick += new System.EventHandler(this.timerServer_Tick);
             // 
-            // groupBox3
+            // timerVisibleRows
             // 
-            this.groupBox3.Controls.Add(this.labelConexoes);
-            this.groupBox3.Controls.Add(this.labelStatusServer);
-            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Left;
-            this.groupBox3.Location = new System.Drawing.Point(383, 0);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(200, 74);
-            this.groupBox3.TabIndex = 5;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Servidor";
-            // 
-            // labelStatusServer
-            // 
-            this.labelStatusServer.AutoSize = true;
-            this.labelStatusServer.Dock = System.Windows.Forms.DockStyle.Top;
-            this.labelStatusServer.Font = new System.Drawing.Font("Roboto", 14.25F);
-            this.labelStatusServer.Location = new System.Drawing.Point(3, 17);
-            this.labelStatusServer.Name = "labelStatusServer";
-            this.labelStatusServer.Size = new System.Drawing.Size(20, 23);
-            this.labelStatusServer.TabIndex = 0;
-            this.labelStatusServer.Text = "--";
-            // 
-            // labelConexoes
-            // 
-            this.labelConexoes.AutoSize = true;
-            this.labelConexoes.Dock = System.Windows.Forms.DockStyle.Top;
-            this.labelConexoes.Location = new System.Drawing.Point(3, 40);
-            this.labelConexoes.Name = "labelConexoes";
-            this.labelConexoes.Size = new System.Drawing.Size(13, 13);
-            this.labelConexoes.TabIndex = 1;
-            this.labelConexoes.Text = "--";
+            this.timerVisibleRows.Interval = 300;
+            this.timerVisibleRows.Tick += new System.EventHandler(this.timerVisibleRows_Tick);
             // 
             // FormMonitor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(859, 450);
             this.Controls.Add(this.dataGridView2);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.panel1);
@@ -512,13 +571,16 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMonitor_FormClosing);
             this.Load += new System.EventHandler(this.FormMonitor_Load);
             this.panel1.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -534,7 +596,6 @@
         private System.Windows.Forms.DataGridView dataGridView2;
         private System.ComponentModel.BackgroundWorker backgroundWorker2;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.DataGridViewImageColumn dataGridViewImageColumn1;
@@ -567,5 +628,12 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Label labelConexoes;
         private System.Windows.Forms.Label labelStatusServer;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelTotalArmazenamento;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.DateTimePicker dateTimePickerDataRef;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Timer timerVisibleRows;
     }
 }

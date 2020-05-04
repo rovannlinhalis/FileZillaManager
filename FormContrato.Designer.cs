@@ -74,12 +74,12 @@
             this.label6 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.timerFiltro = new System.Windows.Forms.Timer(this.components);
             this.ColumnLogin = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnDescricao = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnValor = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnAtivo = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.ColumnArmazenamento = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.timerFiltro = new System.Windows.Forms.Timer(this.components);
             this.panelCadastro.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.campoArmazenamento)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -649,11 +649,6 @@
             this.dataGridView1.TabIndex = 2;
             this.dataGridView1.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_RowEnter);
             // 
-            // timerFiltro
-            // 
-            this.timerFiltro.Interval = 300;
-            this.timerFiltro.Tick += new System.EventHandler(this.timerFiltro_Tick);
-            // 
             // ColumnLogin
             // 
             this.ColumnLogin.DataPropertyName = "Login";
@@ -702,6 +697,11 @@
             this.ColumnArmazenamento.Name = "ColumnArmazenamento";
             this.ColumnArmazenamento.ReadOnly = true;
             this.ColumnArmazenamento.Width = 128;
+            // 
+            // timerFiltro
+            // 
+            this.timerFiltro.Interval = 300;
+            this.timerFiltro.Tick += new System.EventHandler(this.timerFiltro_Tick);
             // 
             // FormContrato
             // 

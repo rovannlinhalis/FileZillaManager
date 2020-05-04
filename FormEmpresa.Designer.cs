@@ -46,6 +46,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.textBox7ZPath = new System.Windows.Forms.TextBox();
             this.buttonBrowse7z = new System.Windows.Forms.Button();
+            this.buttonEnviarDados = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -209,7 +210,7 @@
             this.buttonTestarConexao.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.buttonTestarConexao.Location = new System.Drawing.Point(12, 206);
             this.buttonTestarConexao.Name = "buttonTestarConexao";
-            this.buttonTestarConexao.Size = new System.Drawing.Size(107, 28);
+            this.buttonTestarConexao.Size = new System.Drawing.Size(95, 28);
             this.buttonTestarConexao.TabIndex = 13;
             this.buttonTestarConexao.Text = "Testar Conexão";
             this.buttonTestarConexao.UseVisualStyleBackColor = false;
@@ -272,11 +273,30 @@
             this.buttonBrowse7z.UseVisualStyleBackColor = false;
             this.buttonBrowse7z.Click += new System.EventHandler(this.buttonBrowse7z_Click);
             // 
+            // buttonEnviarDados
+            // 
+            this.buttonEnviarDados.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonEnviarDados.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.buttonEnviarDados.BackColor = System.Drawing.SystemColors.Window;
+            this.buttonEnviarDados.FlatAppearance.BorderColor = System.Drawing.Color.IndianRed;
+            this.buttonEnviarDados.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonEnviarDados.Font = new System.Drawing.Font("Roboto", 8.25F);
+            this.buttonEnviarDados.ForeColor = System.Drawing.Color.IndianRed;
+            this.buttonEnviarDados.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.buttonEnviarDados.Location = new System.Drawing.Point(132, 206);
+            this.buttonEnviarDados.Name = "buttonEnviarDados";
+            this.buttonEnviarDados.Size = new System.Drawing.Size(107, 28);
+            this.buttonEnviarDados.TabIndex = 18;
+            this.buttonEnviarDados.Text = "Enviar Dados";
+            this.buttonEnviarDados.UseVisualStyleBackColor = false;
+            this.buttonEnviarDados.Click += new System.EventHandler(this.buttonEnviarDados_Click);
+            // 
             // FormEmpresa
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(363, 307);
+            this.Controls.Add(this.buttonEnviarDados);
             this.Controls.Add(this.buttonBrowse7z);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.textBox7ZPath);
@@ -323,5 +343,6 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox textBox7ZPath;
         private System.Windows.Forms.Button buttonBrowse7z;
+        private System.Windows.Forms.Button buttonEnviarDados;
     }
 }

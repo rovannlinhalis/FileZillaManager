@@ -1,4 +1,5 @@
-﻿using Miracle.FileZilla.Api;
+﻿using FileZillaManager.Classes;
+using Miracle.FileZilla.Api;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -262,6 +263,23 @@ namespace FileZillaManager
             if (diag.ShowDialog() == DialogResult.OK)
             {
                 textBox7ZPath.Text = diag.FileName;
+            }
+        }
+
+        private void buttonEnviarDados_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (Repositorio.ContratoRepositorio rep = new Repositorio.ContratoRepositorio())
+                {
+                    var contratos = rep.SelectAll(null);
+                    foreach (Contrato c in contratos)
+                        rep.ProcessaFileZilla(c);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
     }

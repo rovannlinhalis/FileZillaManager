@@ -22,6 +22,12 @@ namespace FileZillaManager
 
         private void buttonContratos_Click(object sender, EventArgs e)
         {
+            //var monitor = Application.OpenForms.OfType<FormMonitor>().Count();
+            //if (monitor > 0)
+            //{
+            //    MessageBox.Show("Feche a janela de Monitor para editar um contrato. Poderá haver erros ao enviar os dados para o servidor FileZilla", "Monitor em Execução", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            //}
+
             FormContrato form = new FormContrato();
             form.Show();
         }
@@ -78,22 +84,7 @@ namespace FileZillaManager
             MessageBox.Show(i + " Registros alterados");
         }
 
-        private void buttonSendToServer_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                using (Repositorio.ContratoRepositorio rep = new Repositorio.ContratoRepositorio())
-                {
-                    var contratos = rep.SelectAll(null);
-                    foreach (Contrato c in contratos)
-                        rep.ProcessaFileZilla(c);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
+       
 
         private void buttonApagarHash_Click(object sender, EventArgs e)
         {
