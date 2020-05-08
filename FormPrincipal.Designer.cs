@@ -42,6 +42,7 @@
             this.buttonMonitorarTodos = new System.Windows.Forms.Button();
             this.textBoxDevInput = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
+            this.buttonMonitor2 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panelDev.SuspendLayout();
@@ -150,6 +151,7 @@
             // 
             // panelDev
             // 
+            this.panelDev.Controls.Add(this.buttonMonitor2);
             this.panelDev.Controls.Add(this.buttonSetArmazenamento);
             this.panelDev.Controls.Add(this.buttonApagarHash);
             this.panelDev.Controls.Add(this.buttonMonitorarTodos);
@@ -208,6 +210,16 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.buttonSetSenhaCompactacao_Click);
             // 
+            // buttonMonitor2
+            // 
+            this.buttonMonitor2.Location = new System.Drawing.Point(3, 383);
+            this.buttonMonitor2.Name = "buttonMonitor2";
+            this.buttonMonitor2.Size = new System.Drawing.Size(151, 35);
+            this.buttonMonitor2.TabIndex = 6;
+            this.buttonMonitor2.Text = "Monitor2";
+            this.buttonMonitor2.UseVisualStyleBackColor = true;
+            this.buttonMonitor2.Click += new System.EventHandler(this.buttonMonitor2_Click);
+            // 
             // FormPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -244,6 +256,7 @@
         private System.Windows.Forms.Button buttonMonitorarTodos;
         private System.Windows.Forms.Button buttonApagarHash;
         private System.Windows.Forms.Button buttonSetArmazenamento;
+        private System.Windows.Forms.Button buttonMonitor2;
     }
 }
 

@@ -216,5 +216,22 @@ namespace FileZillaManager
             }
 
         }
+
+        public static void MatarProcessosMonitor()
+        {
+            if (Program.listaProcessosMonitor.Count > 0)
+                foreach (var p in Program.listaProcessosMonitor)
+                {
+                    try
+                    {
+                        Process px = Process.GetProcessById(p.Id);
+                        if (!px.HasExited)
+                        {
+                            px.Kill();
+                        }
+                    }
+                    catch { }
+                }
+        }
     }
 }

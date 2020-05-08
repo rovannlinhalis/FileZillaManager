@@ -1,422 +1,226 @@
-﻿using System;
+﻿using Miracle.FileZilla.Api;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FileZillaManager.Classes
 {
     public class MonitorViewModel : INotifyPropertyChanged
     {
-        private string nome;
-        private string status;
-        private DateTime lastWrite;
-        private string arquivo;
-        private string pasta;
-        private Color cor = Color.Gray;
-        private bool subPasta;
-        private long tamanho;
-        private string login;
-        private string exe7z;
-        private string msgZipValido;
-        private ZipCheckState zipValido = ZipCheckState.AguardandoProcesso;
-        private string senhaZip;
-        Task verificaZip = null;
-        Task verificaHash = null;
-        private bool processHashIsRunning = false;
-        private bool processZipIsRunning = false;
-        private bool processContract = false;
-        private string hashAtual = null;
-        public DateTime UltimoProcessamento { get; set; } = DateTime.MinValue;
-        DateTime DataRef;
-        public bool ForceCheck { get; set; } = false;
-
-        List<string> ignorarExtensoes = new List<string>() { ".ini", ".db", ".txt" };
-
-        public MonitorViewModel(string nome, string login, string pasta, bool subPastas, string _exe7Z, string _senhaZip, Contrato _contrato, DateTime? _dataRef = null)
+        public MonitorViewModel(Empresa _emp)
         {
-            this.Login = login;
-            this.Nome = nome;
-            this.Pasta = pasta;
-            this.subPasta = subPastas;
-            this.exe7z = _exe7Z;
-            this.senhaZip = _senhaZip;
-            this.status = "Aguardando Processamento";
-            this.Contrato = _contrato;
-            this.DataRef =  _dataRef.HasValue ? _dataRef.Value : DateTime.MinValue;
-            Processa();
+            this.Empresa = _emp;
         }
 
-        public string Nome { get => nome; set { nome = value; RaisePropertyChanged("Nome"); } }
-        public string Pasta { get => pasta; set { pasta = value; RaisePropertyChanged("Pasta"); } }
-        public string Arquivo { get => arquivo; set { if (value != arquivo) { arquivo = value; RaisePropertyChanged("Arquivo"); } } }
-        public string Status { get => status; set { status = value; RaisePropertyChanged("Status"); } }
-        public DateTime LastWrite { get => lastWrite; set { lastWrite = value; RaisePropertyChanged("LastWrite"); } }
-        public Color Cor { get => cor; set { cor = value; RaisePropertyChanged("Cor"); } }
-        public Contrato Contrato { get; set; }
-        public bool ProcessandoContrato { get => processContract; }
-        public ZipCheckState ZipValido { get => zipValido; set { zipValido = value; RaisePropertyChanged("ZipValido"); } }
-        public string Login { get => login; set { login = value; RaisePropertyChanged("Login"); } }
+        private string msgErro;
+        private bool monitorarSubPastasIndividualmente;
+        private bool monitorarSubPastas;
+        private bool ocultarPastasVazias;
+        private DateTime dataReferencia;
+        private Empresa empresa;
+        private SortableBindingList<ContratoViewModel> contratos = new SortableBindingList<ContratoViewModel>();
+        private string statusServidor;
+        LocalConfig config = new LocalConfig(true, "FileZillaManager");
+        private List<Connection> conexoes = new List<Connection>();
+        private Color serverColor = Color.Blue;
+        
+        public bool Running { get; set; } = false;
+        public SortableBindingList<ContratoViewModel> Contratos { get=> contratos; set { contratos = value; RaisePropertyChanged("Contratos"); } }
+        public Empresa Empresa { get => empresa; set { empresa = value; RaisePropertyChanged("Empresa"); } }
+        public DateTime DataReferencia { get => dataReferencia; set { dataReferencia = value; RaisePropertyChanged("DataReferencia"); } }
+        public bool OcultarPastasVazias { get => ocultarPastasVazias; set { ocultarPastasVazias = value; RaisePropertyChanged("OcultarPastasVazias"); }  }
+        public bool MonitorarSubPastas { get => monitorarSubPastas; set { monitorarSubPastas = value; RaisePropertyChanged("MonitorarSubPastas"); } }
+        public bool MonitorarSubPastasIndividualmente { get => monitorarSubPastasIndividualmente; set { monitorarSubPastasIndividualmente = value; RaisePropertyChanged("MonitorarSubPastasIndividualmente"); } }
+        public string MsgErro { get => msgErro; set { msgErro = value; RaisePropertyChanged("MsgErro"); } }
+        public string StatusServidor { get => statusServidor; set { statusServidor = value; RaisePropertyChanged("StatusServidor"); } }
+        public List<Connection> Conexoes { get => conexoes; set { conexoes = value; RaisePropertyChanged("Conexoes"); } }
+        public Color ServerColor { get => serverColor; set { serverColor = value; RaisePropertyChanged("ServerColor"); } }
 
-        public long Tamanho { get => tamanho; set { tamanho = value; RaisePropertyChanged("Tamanho"); } }
-        public bool VerificandoZip { get => processZipIsRunning || (verificaZip != null && (verificaZip.Status == TaskStatus.Running || verificaZip.Status == TaskStatus.WaitingToRun)); }
-        public bool VerificandoHash { get => processHashIsRunning || (verificaHash != null && (verificaHash.Status == TaskStatus.Running || verificaHash.Status == TaskStatus.WaitingToRun)); }
-
-        public string TamanhoF { get => this.Tamanho.ToSizeString(); }
-        public string MsgZipValido { get => ZipValido == ZipCheckState.Erro ? msgZipValido : ZipValido.ToString(); set { msgZipValido = value; RaisePropertyChanged("MsgZipValido"); } }
-
-        public string HashFile { get => hashAtual; set { hashAtual = value; RaisePropertyChanged("HashFile"); } }
-        public string Observacao { get => observacao; set { observacao = value; RaisePropertyChanged("Observacao"); } }
-        public long FolderSize { get => folderSize; set { folderSize = value; RaisePropertyChanged("FolderSize"); } }
-        public string FolderSizeF { get => FolderSize.ToSizeString(); }
-        public Color FolderSizeColor { get => Contrato.Armazenamento <=0 ? Color.Empty :  (FolderSize / 1024 / 1024 / 1024) > Contrato.Armazenamento ? Color.IndianRed : Color.LightBlue; }
-
+        List<ContratoViewModel> cache = new List<ContratoViewModel>();
 
         public event PropertyChangedEventHandler PropertyChanged;
+        //public event StatusChangedHandler StatusChanged;
+        //public delegate void StatusChangedHandler(ContratoViewModel sender, EventArgs e);
+        public event ProcessaContratosEndHandler ProcessaContratosEnd;
+        public delegate void ProcessaContratosEndHandler(object sender, EventArgs e);
         private void RaisePropertyChanged(string prop)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
+
+            if (prop == "OcultarPastasVazias")
+            {
+                ProcessaCache();
+            }
         }
 
-        public void Processa()
+
+
+
+        public Task<List<Contrato>> GetContratos()
         {
-
-            processContract = true;
-            try
+            return Task.Factory.StartNew<List<Contrato>>(() =>
             {
-                DirectoryInfo dir = new DirectoryInfo(this.Pasta);
-
-                if (!dir.Exists)
+                List<Contrato> contratos;
+                //List<ContratoViewModel> listaAux = new List<ContratoViewModel>();
+                using (Repositorio.ContratoRepositorio rep = new Repositorio.ContratoRepositorio())
                 {
-                    try
-                    {
-                        dir.Create();
-                    }
-                    catch { }
+                    contratos = rep.SelectAll("ATIVO = 1 AND MONITORAR = 1");
                 }
-
-                if (dir.Exists)
-                {
-                    DateTime dataAux = this.DataRef == DateTime.MinValue ? DateTime.Now : this.DataRef;
-
-                    FileInfo[] files = dir.GetFiles("*.*", subPasta ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
-
-                    FileInfo file = files?.Where(x => x.LastWriteTime.Date <= dataAux.Date &&  !ignorarExtensoes.Contains(x.Extension.ToLower()))?.OrderByDescending(x => x.LastWriteTime)?.FirstOrDefault();
-                    if (file != null)
-                    {
-                        this.Arquivo = file.Name;
-                        this.LastWrite = file.LastWriteTime;
-                        this.Tamanho = file.Length;
-                        this.FolderSize = files.Sum(x => x.Length);
-
-                        if (file.LastWriteTime.Date == dataAux.Date)
-                        {
-                            this.Cor = Color.LightGreen;
-                            this.Status = "Último arquivo recebido hoje";
-                        }
-                        else if (file.LastWriteTime.Date >= dataAux.Date.AddDays(-1))
-                        {
-                            this.Cor = Color.LightBlue;
-                            this.Status = "Último arquivo recebido ontem";
-                        }
-                        else if (file.LastWriteTime.Date >= dataAux.Date.AddDays(-3))
-                        {
-                            this.Cor = Color.Orange;
-                            this.Status = "Último arquivo recebido há 2 ou 3 dias";
-                        }
-                        else
-                        {
-                            this.Cor = Color.Red;
-                            this.Status = "Último arquivo recebido há mais de 3 dias";
-                        }
-
-                        //VerificarCompactacao();
-
-                    }
-                    else
-                    {
-                        this.Arquivo = String.Empty;
-                        this.Tamanho = 0;
-                        this.ZipValido = ZipCheckState.NaoAplicavel;
-                        this.Cor = Color.Gray;
-                        Status = "Nenhum arquivo na pasta cliente";
-                    }
-
-                }
-                else
-                {
-                    this.Cor = Color.Gray;
-                    Status = "Pasta cliente não existe ou é inacessível";
-                }
-
-            }
-            catch (Exception ex)
-            {
-                this.Cor = Color.Gray;
-                Status = "Erro ao processar contrato. Erro: " + ex.Message;
-            }
-            finally
-            {
-                processContract = false;
-            }
-
-        }
-
-        string lastCheckName = null;
-        long lastCheckSize = -1;
-        DateTime lastCheckDate = DateTime.MinValue;
-        private string observacao;
-        private long folderSize;
-        FileCheck fileDb = null;
-        FileInfo file;
-        public void VerificarIntegridade()
-        {
-            this.ZipValido = ZipCheckState.Verificando;
-            verificaZip = Task.Factory.StartNew(() =>
-            {
-                processZipIsRunning = true;
-                try
-                {
-
-                    ForceCheck = false;
-                    if (file.Extension.ToLower() == ".zip" && (String.IsNullOrWhiteSpace(this.exe7z) || !File.Exists(this.exe7z)))
-                    {
-                        this.ZipValido = ZipCheckState.Verificando;
-                        if (IsZipValid(file.FullName))
-                        {
-                            this.ZipValido = ZipCheckState.Valido;
-                        }
-                        else
-                        {
-                            this.ZipValido = ZipCheckState.Invalido;
-                        }
-                    }
-                    else
-                    {
-                        if (!String.IsNullOrWhiteSpace(this.exe7z) && File.Exists(this.exe7z))
-                        {
-                            this.ZipValido = ZipCheckState.Verificando;
-                            this.ZipValido = Is7zipRarValid(file.FullName);
-                        }
-                        else
-                        {
-                            this.Observacao =
-                            this.MsgZipValido = "7z.exe não encontrado";
-                            this.ZipValido = ZipCheckState.NaoAplicavel;
-                        }
-                    }
-
-                    using (Repositorio.FileCheckRepositorio rep = new Repositorio.FileCheckRepositorio())
-                    {
-                        if (fileDb == null)
-                            rep.Insert(new FileCheck() { Contrato = this.Contrato.Codigo, Data = DateTime.Now, Hash = HashFile.ToLower(), Nome = file.FullName.ToLower(), State = this.ZipValido });
-                        else
-                        {
-                            fileDb.State = this.ZipValido;
-                            fileDb.Data = DateTime.Now;
-                            rep.Update(fileDb);
-                        }
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    processZipIsRunning = false;
-                    this.MsgZipValido = ex.Message;
-                    File.WriteAllText("zipcheck.log", ex.Message + " / " + ex.StackTrace);
-                    this.ZipValido = ZipCheckState.Erro;
-                }
-                processZipIsRunning = false;
+                return contratos;
             });
         }
 
-        public void VerificarHash()
+        public async void ProcessaContratos()
         {
-            this.Observacao = String.Empty;
-            if (!String.IsNullOrEmpty(this.Arquivo) && !String.IsNullOrWhiteSpace(this.Pasta))
+            var contratos = await GetContratos();
+            
+            cache.Clear();
+            foreach (var c in contratos)
             {
+                ContratoViewModel model;
                 try
                 {
-                    file = new FileInfo(Path.Combine(this.Pasta, this.Arquivo));
-                    if (file.Exists)
+                    if (MonitorarSubPastasIndividualmente)
                     {
-                        if (this.ForceCheck || lastCheckName != file.FullName || lastCheckSize != file.Length || lastCheckDate != file.LastWriteTime)
+                        DirectoryInfo dir = new DirectoryInfo(c.Pasta);
+                        foreach (DirectoryInfo d in dir.GetDirectories("*", MonitorarSubPastas ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
                         {
-                            lastCheckName = file.FullName;
-                            lastCheckSize = file.Length;
-                            lastCheckDate = file.LastWriteTime;
-
-                            List<string> extensionsCheck = new List<string>() { ".zip", ".rar", ".7z" };
-                            if (extensionsCheck.Contains(file.Extension.ToLower()))
-                            {
-
-                                if (!this.VerificandoZip)//   verificaZip == null || (verificaZip.Status != TaskStatus.Running && verificaZip.Status != TaskStatus.WaitingToRun))
-                                {
-                                    verificaHash = Task.Factory.StartNew(() =>
-                                  {
-                                      processHashIsRunning = true;
-                                      try
-                                      {
-                                          
-                                          this.ZipValido = ZipCheckState.GerandoHash;
-                                          HashFile = Funcoes.SHA1FromFile(file);  //  Funcoes.Md5FromFile(file.FullName);
-                                          using (Repositorio.FileCheckRepositorio rep = new Repositorio.FileCheckRepositorio())
-                                          {
-                                              var filesdb = rep.SelectAll(HashFile, file.FullName);
-
-                                              if (filesdb.Count > 0)
-                                                  fileDb = filesdb.FirstOrDefault();
-
-                                              if (fileDb == null || HashFile.ToUpper() != fileDb?.Hash.ToUpper() || this.ForceCheck || (fileDb.State != ZipCheckState.Valido))
-                                              {
-                                                  this.ZipValido = ZipCheckState.AguardandoVerificacao;
-                                              }
-                                              else
-                                              {
-                                                  this.ZipValido = fileDb.State;
-                                                  this.Observacao = "Arquivo validado pelo hash no banco de dados";
-                                              }
-                                          }
-                                      }
-                                      catch (Exception ex)
-                                      {
-                                          processHashIsRunning = false;
-                                          this.MsgZipValido = ex.Message;
-                                          File.WriteAllText("zipcheck.log", ex.Message + " / " + ex.StackTrace);
-                                          this.ZipValido = ZipCheckState.Erro;
-                                      }
-                                      processHashIsRunning = false;
-                                  });
-                                }
-                            }
-                            else
-                            {
-                                this.ZipValido = ZipCheckState.NaoAplicavel;
-                            }
+                            model = new ContratoViewModel(c, d.FullName, false, DataReferencia, this.Empresa);
+                            cache.Add(model);
                         }
+                        model = new ContratoViewModel(c, c.Pasta, false, DataReferencia, this.Empresa);
+                        cache.Add(model);
                     }
                     else
                     {
-                        this.ZipValido = ZipCheckState.NaoAplicavel;
+                        model = new ContratoViewModel(c, c.Pasta, MonitorarSubPastas, DataReferencia, this.Empresa);
+                        cache.Add(model);
                     }
                 }
                 catch (Exception ex)
                 {
-                    this.MsgZipValido = ex.Message;
-                    this.ZipValido = ZipCheckState.Erro;
+                    MsgErro = ex.Message;
                 }
             }
-            else
+
+            ProcessaCache();
+
+            if (ProcessaContratosEnd != null)
+                ProcessaContratosEnd(this, new EventArgs());
+        }
+
+        public void ProcessarDiretorios()
+        {
+            TGetServerStatus();
+            foreach (var c in cache.OrderBy(x => x.LastLerDiretorio))
+                c.LerDiretorio(this.Conexoes);
+        }
+
+
+        public void ProcessarArquivos()
+        {
+            Parallel.ForEach(cache.OrderBy(x => x.LastWrite), new ParallelOptions() { MaxDegreeOfParallelism = 3 }, c => {
+                c.VerificarHash();
+            });
+
+            while (cache.Any(x => x.Integridade == ZipCheckState.AguardandoVerificacao))
             {
-                this.ZipValido = ZipCheckState.NaoAplicavel;
+                foreach (var c in cache.Where(x => x.Integridade == ZipCheckState.AguardandoVerificacao))
+                {
+                    if (cache.Where(x => x.VerificandoIntegridade).Count() < 3)
+                        c.VerificarIntegridade();
+                }
+                Thread.Sleep(1000);
             }
         }
 
-        public bool IsZipValid(string path)
+        private void ProcessaCache()
+        {
+
+            cache.ForEach(x =>
+          {
+              if (!Contratos.Any(y => y.Login == x.Login && y.Pasta == x.Pasta))
+              {
+                  Contratos.Add(x);
+              }
+              else
+              {
+                  var c = Contratos.Where(y => y.Login == x.Login && y.Pasta == x.Pasta).FirstOrDefault();
+                  if (x != c)
+                  {
+                      x = c;
+                  }
+              }
+
+          });
+
+            for (int i = 0; i < Contratos.Count; i++)
+            {
+                if (!cache.Any(y => y.Pasta == Contratos[i].Pasta && y.Login == Contratos[i].Login) || (OcultarPastasVazias && !Contratos[i].Visible))
+                {
+                    Contratos.RemoveAt(i);
+                    i--;
+                }
+            }
+         
+        }
+
+
+        public void TGetServerStatus()
         {
             try
             {
-                using (var zipFile = ZipFile.OpenRead(path))
+                if (IPAddress.TryParse(this.Empresa.Host, out IPAddress ip))
                 {
-                    var entries = zipFile.Entries;
-                    return true;
+                    using (IFileZillaApi fileZillaApi = new FileZillaApi(ip, this.Empresa.Port))
+                    {
+                        fileZillaApi.Connect(this.Empresa.Pass);
+
+                        if (fileZillaApi.IsConnected)
+                        {
+                            var state = fileZillaApi.GetServerState();
+                            StatusServidor = "Conectado / " + state;
+                            ServerColor = Color.Green;
+                            Conexoes = fileZillaApi.GetConnections();
+
+                            //if (Contratos != null)
+                            //{
+                            //    foreach (var c in Conexoes)
+                            //    {
+                            //        var contratos = Contratos.Where(x => x.Login == c.UserName).ToList();
+                            //        contratos.ForEach(x =>
+                            //        {
+                            //            x.Status = c.TransferMode == TransferMode.Receive ? "Recebendo..." : c.TransferMode == TransferMode.Send ? "Enviando..." : "Conectado";
+                            //            x.Cor = Color.Pink;
+                            //            x.Tamanho = c.TotalSize.HasValue ? c.TotalSize.Value : x.Tamanho;
+                            //        });
+                            //    }
+                            //}
+                        }
+                        else
+                        {
+                            StatusServidor = "Desconectado";
+                            ServerColor = Color.Red;
+                        }
+
+
+                    }
                 }
             }
-            catch (InvalidDataException)
+            catch (Exception ex)
             {
-                return false;
+                Conexoes.Clear();
+                StatusServidor = "Erro: " + ex.Message;
+                ServerColor = Color.Red;
             }
         }
-
-        public ZipCheckState Is7zipRarValid(string path)
-        {
-            processZipIsRunning = true;
-            System.Diagnostics.Process p = new System.Diagnostics.Process();
-            p.StartInfo.FileName = this.exe7z;
-            if (!String.IsNullOrWhiteSpace(this.senhaZip))// && IsPasswordProtected(path))
-            {
-                p.StartInfo.Arguments = "t -p" + this.senhaZip + " \"" + path + "\"";
-            }
-            else
-            {
-                p.StartInfo.Arguments = "t \"" + path + "\"";
-            }
-
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            p.StartInfo.CreateNoWindow = true;
-            p.Start();
-            Program.listaProcessosMonitor.Add(p);
-            StreamReader reader = p.StandardOutput;
-            string r = reader.ReadToEnd();
-            p.WaitForExit();
-            int i = p.ExitCode;
-
-            p.Close();
-
-            if (i == 0 || i == 2)
-                return r.Contains("Everything is Ok") ? ZipCheckState.Valido : ZipCheckState.Invalido;
-            else
-                return ZipCheckState.Erro;
-        }
-
-        private bool IsPasswordProtected(string filename)
-        {
-            string _7z = this.exe7z;
-
-            bool result = false;
-            using (Process p = new Process())
-            {
-                p.StartInfo.UseShellExecute = false;
-                p.StartInfo.RedirectStandardOutput = true;
-                p.StartInfo.RedirectStandardError = true;
-                //p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                p.StartInfo.CreateNoWindow = true;
-                p.StartInfo.FileName = _7z;
-                p.StartInfo.Arguments = $"l -slt \"{filename}\"";
-                p.Start();
-                //Program.listaProcessosMonitor.Add(p);
-                string stdout = p.StandardOutput.ReadToEnd();
-                string stderr = p.StandardError.ReadToEnd();
-                p.WaitForExit();
-
-                if (stdout.Contains("Encrypted = +"))
-                {
-                    result = true;
-                }
-            }
-
-            return result;
-        }
-
-    }
-
-
-    public enum ZipCheckState
-    {
-        [Description("Não Verificado")]
-        NaoVerificado = -1,
-        [Description("Não Aplicável")]
-        NaoAplicavel  =0,
-        [Description("Aguardando Processamento")]
-        AguardandoProcesso = 1,
-        [Description("Verificando")]
-        Verificando =2,
-        [Description("Válido")]
-        Valido = 3,
-        [Description("Inválido")]
-        Invalido = 4,
-        [Description("Gerando Hash")]
-        GerandoHash = 5,
-        [Description("Aguardando Verificação")]
-        AguardandoVerificacao = 6,
-        Erro = 9
     }
 }

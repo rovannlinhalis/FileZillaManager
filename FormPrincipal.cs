@@ -108,5 +108,11 @@ namespace FileZillaManager
                 MessageBox.Show(i + " Registros alterados");
             }
         }
+
+        private void buttonMonitor2_Click(object sender, EventArgs e)
+        {
+            FormMonitor2 form = new FormMonitor2(this.Empresa);
+            form.Show();
+        }
     }
 }

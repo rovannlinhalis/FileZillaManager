@@ -21,7 +21,7 @@ namespace FileZillaManager
     {
 
 
-        List<MonitorViewModel> source = new List<MonitorViewModel>();
+        List<ContratoOldViewModel> source = new List<ContratoOldViewModel>();
         
         string erroBkg1;
         int interval = 1000;
@@ -105,7 +105,7 @@ namespace FileZillaManager
                 var contratos = rep.SelectAll("ATIVO = 1 AND MONITORAR = 1");
                 foreach (var c in contratos)
                 {
-                    MonitorViewModel model;
+                    ContratoOldViewModel model;
                     try
                     {
                         if (subPastasIndividuais)
@@ -113,15 +113,15 @@ namespace FileZillaManager
                             DirectoryInfo dir = new DirectoryInfo(c.Pasta);
                             foreach (DirectoryInfo d in dir.GetDirectories("*", subPastas ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
                             {
-                                model = new MonitorViewModel(c.Nome, c.Login, d.FullName, false, this.Empresa.Exe7zPath, c.SenhaCompactacao, c, dataRef);
+                                model = new ContratoOldViewModel(c.Nome, c.Login, d.FullName, false, this.Empresa.Exe7zPath, c.SenhaCompactacao, c, dataRef);
                                 source.Add(model);
                             }
-                            model = new MonitorViewModel(c.Nome, c.Login, c.Pasta, false, this.Empresa.Exe7zPath, c.SenhaCompactacao, c, dataRef);
+                            model = new ContratoOldViewModel(c.Nome, c.Login, c.Pasta, false, this.Empresa.Exe7zPath, c.SenhaCompactacao, c, dataRef);
                             source.Add(model);
                         }
                         else
                         {
-                            model = new MonitorViewModel(c.Nome, c.Login, c.Pasta, subPastas, this.Empresa.Exe7zPath, c.SenhaCompactacao, c, dataRef);
+                            model = new ContratoOldViewModel(c.Nome, c.Login, c.Pasta, subPastas, this.Empresa.Exe7zPath, c.SenhaCompactacao, c, dataRef);
                             source.Add(model);
                         }
                     }
@@ -164,40 +164,45 @@ namespace FileZillaManager
                 }
                 else if (dataGridView2.Columns[e.ColumnIndex] == dataGridView2.Columns[ColumnMsgIntegridade.Name])
                 {
-                    ZipCheckState state = (ZipCheckState)dataGridView2.Rows[e.RowIndex].Cells[ColumnZipValido.Name].Value;
-                    Color cBottom = state == ZipCheckState.Erro ? Color.Brown : state == ZipCheckState.NaoAplicavel ? Color.Gray : state == ZipCheckState.Valido ? Color.LightGreen : state == ZipCheckState.Invalido ? Color.Red : state == ZipCheckState.GerandoHash ? Color.Purple : state == ZipCheckState.AguardandoProcesso ? Color.Yellow : state == ZipCheckState.AguardandoVerificacao ? Color.Purple : Color.Blue;
+                    if (dataGridView2.Rows[e.RowIndex].Cells[ColumnZipValido.Name].Value != null)
+                    {
+                        ZipCheckState state = (ZipCheckState)dataGridView2.Rows[e.RowIndex].Cells[ColumnZipValido.Name].Value;
+                        Color cBottom = state == ZipCheckState.Erro ? Color.Brown : state == ZipCheckState.NaoAplicavel ? Color.Gray : state == ZipCheckState.Valido ? Color.LightGreen : state == ZipCheckState.Invalido ? Color.Red : state == ZipCheckState.GerandoHash ? Color.Purple : state == ZipCheckState.AguardandoProcesso ? Color.Yellow : state == ZipCheckState.AguardandoVerificacao ? Color.Purple : Color.Blue;
 
 
-                    if ((e.State & DataGridViewElementStates.Selected) != DataGridViewElementStates.Selected)
-                    {
-                        Funcoes.DataGridViewCellGradientPaint((DataGridView)sender, e, Color.White, cBottom);
-                        e.Handled = true;
-                    }
-                    else
-                    {
-                        //((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor =
-                        ((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.SelectionBackColor = cBottom;
-                        //((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.ForeColor =
-                        ((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.SelectionForeColor = Funcoes.GetForeColor(cBottom);
+                        if ((e.State & DataGridViewElementStates.Selected) != DataGridViewElementStates.Selected)
+                        {
+                            Funcoes.DataGridViewCellGradientPaint((DataGridView)sender, e, Color.White, cBottom);
+                            e.Handled = true;
+                        }
+                        else
+                        {
+                            //((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor =
+                            ((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.SelectionBackColor = cBottom;
+                            //((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.ForeColor =
+                            ((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.SelectionForeColor = Funcoes.GetForeColor(cBottom);
+                        }
                     }
                 }
                 else if (dataGridView2.Columns[e.ColumnIndex] == dataGridView2.Columns[ColumnFolderSize.Name])
                 {
-
-                    Color cBottom = (Color)dataGridView2.Rows[e.RowIndex].Cells[ColumnArmazenamentoColor.Name].Value;
-
-
-                    if ((e.State & DataGridViewElementStates.Selected) != DataGridViewElementStates.Selected)
+                    if (dataGridView2.Rows[e.RowIndex].Cells[ColumnArmazenamentoColor.Name].Value != null)
                     {
-                        Funcoes.DataGridViewCellGradientPaint((DataGridView)sender, e, Color.White, cBottom);
-                        e.Handled = true;
-                    }
-                    else
-                    {
-                        //((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor =
-                        ((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.SelectionBackColor = cBottom;
-                        //((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.ForeColor =
-                        ((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.SelectionForeColor = Funcoes.GetForeColor(cBottom);
+                        Color cBottom = (Color)dataGridView2.Rows[e.RowIndex].Cells[ColumnArmazenamentoColor.Name].Value;
+
+
+                        if ((e.State & DataGridViewElementStates.Selected) != DataGridViewElementStates.Selected)
+                        {
+                            Funcoes.DataGridViewCellGradientPaint((DataGridView)sender, e, Color.White, cBottom);
+                            e.Handled = true;
+                        }
+                        else
+                        {
+                            //((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor =
+                            ((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.SelectionBackColor = cBottom;
+                            //((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.ForeColor =
+                            ((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.SelectionForeColor = Funcoes.GetForeColor(cBottom);
+                        }
                     }
                 }
 
@@ -309,7 +314,10 @@ namespace FileZillaManager
 
                 if (!backgroundWorker2.IsBusy)
                     backgroundWorker2.RunWorkerAsync();
+
+                dataGridView2.ResumeLayout();
             }
+            
         }
 
         private void MatarProcessos()
@@ -399,7 +407,7 @@ namespace FileZillaManager
             if (e.ColumnIndex == ColumnAbrirPasta.Index)
             {
 
-                List<MonitorViewModel> lista = dataGridView2.DataSource as List<MonitorViewModel>;
+                List<ContratoOldViewModel> lista = dataGridView2.DataSource as List<ContratoOldViewModel>;
                 if (lista != null)
                 {
                     string args = null;
@@ -421,7 +429,7 @@ namespace FileZillaManager
             }
             else if (e.ColumnIndex == ColumnRechckIntegrity.Index)
             {
-                List<MonitorViewModel> lista = dataGridView2.DataSource as List<MonitorViewModel>;
+                List<ContratoOldViewModel> lista = dataGridView2.DataSource as List<ContratoOldViewModel>;
                 if (lista != null)
                 {
                     lista[e.RowIndex].ZipValido = ZipCheckState.AguardandoProcesso;
@@ -430,7 +438,7 @@ namespace FileZillaManager
             }
             else if (e.ColumnIndex == ColumnOpenFile.Index)
             {
-                List<MonitorViewModel> lista = dataGridView2.DataSource as List<MonitorViewModel>;
+                List<ContratoOldViewModel> lista = dataGridView2.DataSource as List<ContratoOldViewModel>;
                 if (lista != null)
                 {
                     try
@@ -453,7 +461,11 @@ namespace FileZillaManager
         {
             timerRefresh.Enabled = false;
             if (!backgroundWorker1.IsBusy)
+            {
+                source.Clear();
+                dataGridView2.SuspendLayout();
                 backgroundWorker1.RunWorkerAsync();
+            }
             else
                 backgroundWorker1.CancelAsync();
             
@@ -461,8 +473,7 @@ namespace FileZillaManager
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            timerVisibleRows.Enabled = false;
-            timerVisibleRows.Enabled = true;
+            SetVisibleRows();
         }
 
         private void backgroundWorker2_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -506,15 +517,17 @@ namespace FileZillaManager
 
                 if (strSortOrder == SortOrder.Ascending)
                 {
-                    source = source.OrderBy(x => typeof(MonitorViewModel).GetProperty(strColumnName).GetValue(x, null)).ToList();
+                    source = source.OrderBy(x => typeof(ContratoOldViewModel).GetProperty(strColumnName).GetValue(x, null)).ToList();
                 }
                 else
                 {
-                    source = source.OrderByDescending(x => typeof(MonitorViewModel).GetProperty(strColumnName).GetValue(x, null)).ToList();
+                    source = source.OrderByDescending(x => typeof(ContratoOldViewModel).GetProperty(strColumnName).GetValue(x, null)).ToList();
                 }
                 
                dataGridView2.DataSource = source;
                 dataGridView2.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = strSortOrder;
+                timerVisibleRows.Enabled = false;
+                timerVisibleRows.Enabled = true;
             }
         }
 
@@ -550,7 +563,7 @@ namespace FileZillaManager
                     labelStatusServer.Text = "Conectado / " + state;
                     labelStatusServer.ForeColor = Color.Green;
                     labelConexoes.Text = connections.Count + " Conexões ativas";
-                    List<MonitorViewModel> lista = dataGridView2.DataSource as List<MonitorViewModel>;
+                    List<ContratoOldViewModel> lista = dataGridView2.DataSource as List<ContratoOldViewModel>;
                     if (lista != null)
                     {
                         foreach (var c in connections)
@@ -593,6 +606,12 @@ namespace FileZillaManager
         private void timerVisibleRows_Tick(object sender, EventArgs e)
         {
             timerVisibleRows.Enabled = false;
+            SetVisibleRows();
+            timerVisibleRows.Enabled = false;
+        }
+
+        private void SetVisibleRows()
+        {
             foreach (DataGridViewRow r in dataGridView2.Rows)
             {
                 if (checkBoxOcultarPastasVazias.Checked)
@@ -613,7 +632,6 @@ namespace FileZillaManager
                 else
                     r.Visible = true;
             }
-            timerVisibleRows.Enabled = false;
         }
     }
 }

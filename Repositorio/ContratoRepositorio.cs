@@ -199,5 +199,9 @@ ADD ARMAZENAMENTO NUMERIC(6,1);",
 
         }
 
+        
+
+        
+
     }
 }
