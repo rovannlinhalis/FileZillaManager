@@ -18,31 +18,45 @@ namespace FileZillaManager
     public partial class FormMonitor2 : Form
     {
         MonitorViewModel Model;
-        ConcurrentQueue<int> rowsToUpdate = new ConcurrentQueue<int>();
         public FormMonitor2(Empresa emp)
         {
             this.SetStyle(ControlStyles.DoubleBuffer, true);
             Model = new MonitorViewModel(emp);
             InitializeComponent();
+
             bindingSource1.DataSource = Model.Contratos;
             bindingSource1.Sort = "Login";
 
+            //dataGridView1.AutoGenerateColumns = false;
+            //dataGridView1.DataSource = Model.Contratos;
+
             checkBoxOcultarPastasVazias.DataBindings.Add("Checked", Model, "OcultarPastasVazias", false, DataSourceUpdateMode.OnPropertyChanged);
 
-            Model.Contratos.ListChanged += (ss, ee) =>
+            Model.ProcessaContratosEnd += (ss, ee) =>
             {
-                //if (!rowsToUpdate.Contains(ee.NewIndex))
-                    rowsToUpdate.Enqueue(ee.NewIndex);
+
+                if (!backgroundWorkerProcesso.IsBusy)
+                    backgroundWorkerProcesso.RunWorkerAsync();
+
+                bindingSource1.ResetBindings(false);
             };
 
-            Model.ProcessaContratosEnd += (ss, ee) => {
+            Model.StatusChanged += (ss, ee) =>
+                {
+                    int idx = Model.Contratos.IndexOf(ss);
 
-                if (!backgroundWorkerProcessaDiretorios.IsBusy)
-                    backgroundWorkerProcessaDiretorios.RunWorkerAsync();
-                 
-            };
+                    if (idx >= 0)
+                        if (dataGridView1.InvokeRequired)
+                        {
+                            dataGridView1.Invoke((MethodInvoker)delegate { dataGridView1.InvalidateRow(idx); });
+                        }
+                        else
+                        {
+                            dataGridView1.InvalidateRow(idx);
+                        }
+                };
         }
-
+        
         private  void FormMonitor2_Load(object sender, EventArgs e)
         {
             timerGetContratos.Enabled = true;
@@ -52,65 +66,13 @@ namespace FileZillaManager
         {
             timerGetContratos.Enabled = false;
             Model.ProcessaContratos();
-        }
-
-        private void backgroundWorkerProcessaDiretorios_DoWork(object sender, DoWorkEventArgs e)
-        {
-            Model.Running = true;
-            int interval = 1000;
-            while (Model.Running)
-            {
-                try
-                {
-                    Model.ProcessarDiretorios();
-
-                }
-                catch (Exception ex)
-                {
-                    string erro = ex.Message;
-                }
-                Thread.Sleep(interval);
-            }
-        }
-        private void backgroundWorkerProcessaDiretorios_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            timerGetContratos.Enabled = true;
-        }
-        private void timerUpdateSource_Tick(object sender, EventArgs e)
-        {
-            timerUpdateSource.Enabled = false;
-            try
-            {
-                if (rowsToUpdate.Count >0)
-                {
-                    //bindingSource1.ResetBindings(false);
-                    
-                    if (rowsToUpdate.TryDequeue(out int r))
-                    {
-                        if (!rowsToUpdate.Contains(r))
-                            if (r < bindingSource1.Count && r >= 0)
-                            {
-                                bindingSource1.ResetItem(r);
-                                dataGridView1.InvalidateRow(r);
-                            }
-                    }
-                }
-            }
-            catch (Exception ex)
-            { 
-            
-            }
-            timerUpdateSource.Enabled = true;
+            timerGetContratos.Interval = 60000;
+            //timerGetContratos.Enabled = true;
         }
 
 
 
-
-
-
-
-
-
+        #region DataGridView
         private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             e.Cancel = true;
@@ -205,28 +167,6 @@ namespace FileZillaManager
 
             }
         }
-        private void FormMonitor2_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            this.Model.Running = false;
-            MatarProcessos();
-        }
-        private void MatarProcessos()
-        {
-            if (Program.listaProcessosMonitor.Count > 0)
-                foreach (var p in Program.listaProcessosMonitor)
-                {
-                    try
-                    {
-                        Process px = Process.GetProcessById(p.Id);
-                        if (!px.HasExited)
-                        {
-                            px.Kill();
-                        }
-                    }
-                    catch { }
-                }
-        }
-
         private void dataGridView1_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >=0)
@@ -270,6 +210,47 @@ namespace FileZillaManager
                         Model.Contratos[e.RowIndex].Integridade = ZipCheckState.AguardandoVerificacao;
                     }
                 }
+            }
+        }
+        #endregion
+        #region Form
+        private void FormMonitor2_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.Model.Running = false;
+            MatarProcessos();
+        }
+        private void MatarProcessos()
+        {
+            if (Program.listaProcessosMonitor.Count > 0)
+                foreach (var p in Program.listaProcessosMonitor)
+                {
+                    try
+                    {
+                        Process px = Process.GetProcessById(p.Id);
+                        if (!px.HasExited)
+                        {
+                            px.Kill();
+                        }
+                    }
+                    catch { }
+                }
+        }
+        #endregion
+
+        private void backgroundWorkerProcesso_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Model.Running = true;
+            while (Model.Running)
+            {
+                try
+                {
+                    Model.ProcessarArquivos();
+                }
+                catch (Exception ex)
+                {
+                    string erro = ex.Message;
+                }
+                Thread.Sleep(1000);
             }
         }
     }

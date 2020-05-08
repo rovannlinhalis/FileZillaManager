@@ -40,10 +40,6 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.checkBoxOcultarPastasVazias = new System.Windows.Forms.CheckBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.backgroundWorkerProcessaDiretorios = new System.ComponentModel.BackgroundWorker();
-            this.timerUpdateSource = new System.Windows.Forms.Timer(this.components);
-            this.timerGetContratos = new System.Windows.Forms.Timer(this.components);
             this.ColumnContratoNome = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnContratoLogin = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnContratoStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -57,6 +53,9 @@
             this.ColumnContratoFolderSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnContratoFolderSizeColor = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnContratoStatusFTP = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.timerGetContratos = new System.Windows.Forms.Timer(this.components);
+            this.backgroundWorkerProcesso = new System.ComponentModel.BackgroundWorker();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -136,30 +135,9 @@
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView1.Size = new System.Drawing.Size(1111, 477);
             this.dataGridView1.TabIndex = 2;
-            this.dataGridView1.VirtualMode = true;
             this.dataGridView1.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentDoubleClick);
             this.dataGridView1.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dataGridView1_CellPainting);
             this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView1_DataError);
-            // 
-            // bindingSource1
-            // 
-            this.bindingSource1.AllowNew = false;
-            this.bindingSource1.Filter = "Visible=True";
-            // 
-            // backgroundWorkerProcessaDiretorios
-            // 
-            this.backgroundWorkerProcessaDiretorios.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerProcessaDiretorios_DoWork);
-            this.backgroundWorkerProcessaDiretorios.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerProcessaDiretorios_RunWorkerCompleted);
-            // 
-            // timerUpdateSource
-            // 
-            this.timerUpdateSource.Enabled = true;
-            this.timerUpdateSource.Interval = 300;
-            this.timerUpdateSource.Tick += new System.EventHandler(this.timerUpdateSource_Tick);
-            // 
-            // timerGetContratos
-            // 
-            this.timerGetContratos.Tick += new System.EventHandler(this.timerGetContratos_Tick);
             // 
             // ColumnContratoNome
             // 
@@ -271,6 +249,19 @@
             this.ColumnContratoStatusFTP.Name = "ColumnContratoStatusFTP";
             this.ColumnContratoStatusFTP.ReadOnly = true;
             // 
+            // bindingSource1
+            // 
+            this.bindingSource1.AllowNew = false;
+            this.bindingSource1.Filter = "Visible=True";
+            // 
+            // timerGetContratos
+            // 
+            this.timerGetContratos.Tick += new System.EventHandler(this.timerGetContratos_Tick);
+            // 
+            // backgroundWorkerProcesso
+            // 
+            this.backgroundWorkerProcesso.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerProcesso_DoWork);
+            // 
             // FormMonitor2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -298,8 +289,6 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.BindingSource bindingSource1;
         private System.Windows.Forms.CheckBox checkBoxOcultarPastasVazias;
-        private System.ComponentModel.BackgroundWorker backgroundWorkerProcessaDiretorios;
-        private System.Windows.Forms.Timer timerUpdateSource;
         private System.Windows.Forms.Timer timerGetContratos;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnContratoNome;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnContratoLogin;
@@ -314,5 +303,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnContratoFolderSize;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnContratoFolderSizeColor;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnContratoStatusFTP;
+        private System.ComponentModel.BackgroundWorker backgroundWorkerProcesso;
     }
 }

@@ -25,14 +25,14 @@ namespace FileZillaManager.Classes
         private bool ocultarPastasVazias;
         private DateTime dataReferencia;
         private Empresa empresa;
-        private SortableBindingList<ContratoViewModel> contratos = new SortableBindingList<ContratoViewModel>();
+        private List<ContratoViewModel> contratos = new List<ContratoViewModel>();
         private string statusServidor;
         LocalConfig config = new LocalConfig(true, "FileZillaManager");
-        private List<Connection> conexoes = new List<Connection>();
+        private static List<Connection> conexoes = new List<Connection>();
         private Color serverColor = Color.Blue;
         
         public bool Running { get; set; } = false;
-        public SortableBindingList<ContratoViewModel> Contratos { get=> contratos; set { contratos = value; RaisePropertyChanged("Contratos"); } }
+        public List<ContratoViewModel> Contratos { get=> contratos; set { contratos = value; RaisePropertyChanged("Contratos"); } }
         public Empresa Empresa { get => empresa; set { empresa = value; RaisePropertyChanged("Empresa"); } }
         public DateTime DataReferencia { get => dataReferencia; set { dataReferencia = value; RaisePropertyChanged("DataReferencia"); } }
         public bool OcultarPastasVazias { get => ocultarPastasVazias; set { ocultarPastasVazias = value; RaisePropertyChanged("OcultarPastasVazias"); }  }
@@ -40,14 +40,14 @@ namespace FileZillaManager.Classes
         public bool MonitorarSubPastasIndividualmente { get => monitorarSubPastasIndividualmente; set { monitorarSubPastasIndividualmente = value; RaisePropertyChanged("MonitorarSubPastasIndividualmente"); } }
         public string MsgErro { get => msgErro; set { msgErro = value; RaisePropertyChanged("MsgErro"); } }
         public string StatusServidor { get => statusServidor; set { statusServidor = value; RaisePropertyChanged("StatusServidor"); } }
-        public List<Connection> Conexoes { get => conexoes; set { conexoes = value; RaisePropertyChanged("Conexoes"); } }
+        public static List<Connection> Conexoes { get => conexoes; set { conexoes = value; } }
         public Color ServerColor { get => serverColor; set { serverColor = value; RaisePropertyChanged("ServerColor"); } }
 
         List<ContratoViewModel> cache = new List<ContratoViewModel>();
 
         public event PropertyChangedEventHandler PropertyChanged;
-        //public event StatusChangedHandler StatusChanged;
-        //public delegate void StatusChangedHandler(ContratoViewModel sender, EventArgs e);
+        public event StatusChangedHandler StatusChanged;
+        public delegate void StatusChangedHandler(ContratoViewModel sender, EventArgs e);
         public event ProcessaContratosEndHandler ProcessaContratosEnd;
         public delegate void ProcessaContratosEndHandler(object sender, EventArgs e);
         private void RaisePropertyChanged(string prop)
@@ -94,14 +94,32 @@ namespace FileZillaManager.Classes
                         foreach (DirectoryInfo d in dir.GetDirectories("*", MonitorarSubPastas ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
                         {
                             model = new ContratoViewModel(c, d.FullName, false, DataReferencia, this.Empresa);
+                            model.PropertyChanged += (ss, ee) =>
+                            {
+
+                                if (StatusChanged != null)
+                                    StatusChanged(model, new EventArgs());
+                            };
                             cache.Add(model);
                         }
                         model = new ContratoViewModel(c, c.Pasta, false, DataReferencia, this.Empresa);
+                        model.PropertyChanged += (ss, ee) =>
+                        {
+
+                            if (StatusChanged != null)
+                                StatusChanged(model, new EventArgs());
+                        };
                         cache.Add(model);
                     }
                     else
                     {
                         model = new ContratoViewModel(c, c.Pasta, MonitorarSubPastas, DataReferencia, this.Empresa);
+                        model.PropertyChanged += (ss, ee) =>
+                        {
+
+                            if (StatusChanged != null)
+                                StatusChanged(model, new EventArgs());
+                        };
                         cache.Add(model);
                     }
                 }
@@ -117,31 +135,52 @@ namespace FileZillaManager.Classes
                 ProcessaContratosEnd(this, new EventArgs());
         }
 
-        public void ProcessarDiretorios()
-        {
-            TGetServerStatus();
-            foreach (var c in cache.OrderBy(x => x.LastLerDiretorio))
-                c.LerDiretorio(this.Conexoes);
-        }
-
-
         public void ProcessarArquivos()
         {
-            Parallel.ForEach(cache.OrderBy(x => x.LastWrite), new ParallelOptions() { MaxDegreeOfParallelism = 3 }, c => {
-                c.VerificarHash();
-            });
 
-            while (cache.Any(x => x.Integridade == ZipCheckState.AguardandoVerificacao))
+            while (cache.Any(c=>  c.Status == ContratoState.NaoVerificado))
             {
-                foreach (var c in cache.Where(x => x.Integridade == ZipCheckState.AguardandoVerificacao))
+                foreach (var c in cache.OrderBy(x=>x.LastLerDiretorio))
+                    c.LerDiretorio();
+            }
+
+            foreach (var c in cache.Where(x=>x.Status == ContratoState.Erro))
+            {
+                c.LerDiretorio();
+            }
+
+
+            while (cache.Any(x => x.Integridade == ZipCheckState.AguardandoProcesso) || cache.Any(x => x.Integridade == ZipCheckState.AguardandoVerificacao))
+            {
+                foreach (var c in cache.Where(x => x.Integridade == ZipCheckState.AguardandoProcesso).OrderBy(x => x.LastHashDate))
                 {
-                    if (cache.Where(x => x.VerificandoIntegridade).Count() < 3)
-                        c.VerificarIntegridade();
+                    try
+                    {
+                        if (cache.Where(x => x.VerificandoHash)?.Count() < 6)
+                        {
+                            if (!c.VerificandoHash)
+                            {
+                                c.VerificarHash();
+                            }
+                        }
+                    }
+                    catch { }
                 }
-                Thread.Sleep(1000);
+
+
+                foreach (var c in cache.Where(x => x.Integridade == ZipCheckState.AguardandoVerificacao).OrderBy(x => x.lastIntegrityDate))
+                {
+                    try
+                    {
+                        if (cache.Where(x => x.VerificandoIntegridade)?.Count() < 3)
+                        {
+                            c.VerificarIntegridade();
+                        }
+                    }
+                    catch { }
+                }
             }
         }
-
         private void ProcessaCache()
         {
 
@@ -172,8 +211,6 @@ namespace FileZillaManager.Classes
             }
          
         }
-
-
         public void TGetServerStatus()
         {
             try
