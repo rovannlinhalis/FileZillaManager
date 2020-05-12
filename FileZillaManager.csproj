@@ -101,6 +101,9 @@
     <Compile Include="Classes\MonitorViewModel.cs" />
     <Compile Include="Classes\SortableBindingList.cs" />
     <Compile Include="Classes\ZipCheckState.cs" />
+    <Compile Include="ColorInput.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="FormBase.cs">
       <SubType>Form</SubType>
     </Compile>

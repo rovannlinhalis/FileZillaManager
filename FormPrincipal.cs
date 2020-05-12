@@ -35,7 +35,7 @@ namespace FileZillaManager
         private void buttonEmpresa_Click(object sender, EventArgs e)
         {
             FormEmpresa form = new FormEmpresa();
-            form.Show();
+            form.ShowDialog();
             using (Repositorio.EmpresaRepositorio rep = new Repositorio.EmpresaRepositorio())
             {
                 this.Empresa = rep.SelectAll(null).FirstOrDefault();
@@ -50,7 +50,7 @@ namespace FileZillaManager
 
         private void buttonMonitor_Click(object sender, EventArgs e)
         {
-            FormMonitor form = new FormMonitor(this.Empresa);
+            FormMonitor2 form = new FormMonitor2(this.Empresa);
             form.Show();
         }
 

@@ -16,7 +16,7 @@ using System.Xml;
 
 namespace FileZillaManager.Classes
 {
-    public class ContratoViewModel : INotifyPropertyChanged
+    public class ContratoViewModel 
     {
         private string pasta;
         private Contrato contrato;
@@ -79,11 +79,11 @@ namespace FileZillaManager.Classes
         public string Nome { get => Contrato?.Nome; }
         public string Hash { get => LastFileCheck?.Hash; }
         public ContratoState Status { get => status; set { status = value; RaisePropertyChanged("Status"); } }
-        public string StatusF { get => Status == ContratoState.Erro ? mensagem : Status.ToString(); }
+        public string StatusF { get => Status == ContratoState.Erro ? mensagem : Status.GetEnumDescription(); }
         public bool Visible { get => this.Status != ContratoState.DiretorioVazio; }
         public Color FolderSizeColor { get => Contrato.Armazenamento <= 0 ? Color.White : (FolderSize / 1024 / 1024 / 1024) > Contrato.Armazenamento ? Color.Red : Color.LightBlue; }
         public ZipCheckState Integridade { get => integridade; set { integridade = value; RaisePropertyChanged("Integridade"); } }
-        public string IntegridadeF { get => this.Integridade.ToString(); }
+        public string IntegridadeF { get => this.Integridade == ZipCheckState.Erro ? mensagemZip : this.Integridade.GetEnumDescription(); }
         public FTPState FtpState { get => ftpState; set { ftpState = value; RaisePropertyChanged("FtpState"); } }
         public DateTime LastLerDiretorio { get; set; } = DateTime.MinValue;
         public DateTime LastHashDate { get; set; } = DateTime.MinValue;
@@ -92,12 +92,28 @@ namespace FileZillaManager.Classes
         private bool lendoDiretorio = false;
         public bool VerificandoIntegridade { get => processZipIsRunning || (verificaZip != null && (verificaZip.Status == TaskStatus.Running || verificaZip.Status == TaskStatus.WaitingToRun)); }
         public bool VerificandoHash { get =>  (verificaHash != null && (verificaHash.Status == TaskStatus.Running || verificaHash.Status == TaskStatus.WaitingToRun)); }
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        
+        //public event PropertyChangedEventHandler PropertyChanged;
         private void RaisePropertyChanged(string prop)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+            //if (PropertyChanged != null)
+            //    PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+
+        public void CheckStatusFTP()
+        {
+
+            if (MonitorViewModel.Conexoes.Any(x => x.UserName == this.contrato.Login))// && x.PhysicalFile == file.FullName))
+            {
+                var con = MonitorViewModel.Conexoes.Where(x => x.UserName == this.contrato.Login && x.PhysicalFile == file.FullName)?.FirstOrDefault();
+                if (con != null)
+                    this.FtpState = con.TransferMode == TransferMode.Send ? FTPState.Enviando : con.TransferMode == TransferMode.Receive ? FTPState.Recebendo : FTPState.Conectado;
+                else
+                    this.FtpState = FTPState.Conectado;
+            }
+            else
+                this.FtpState = FTPState.Desconectado;
+
         }
 
         public void LerDiretorio()
@@ -139,17 +155,6 @@ namespace FileZillaManager.Classes
                             }
                             else
                                 this.FolderSize = files.Sum(x => x.Length);
-
-                            if (MonitorViewModel.Conexoes.Any(x => x.UserName == this.contrato.Login))// && x.PhysicalFile == file.FullName))
-                            {
-                                var con = MonitorViewModel.Conexoes.Where(x => x.UserName == this.contrato.Login && x.PhysicalFile == file.FullName)?.FirstOrDefault();
-                                if (con != null)
-                                    this.FtpState = con.TransferMode == TransferMode.Send ? FTPState.Enviando : con.TransferMode == TransferMode.Receive ? FTPState.Recebendo : FTPState.Conectado;
-                                else
-                                    this.FtpState = FTPState.Conectado;
-                            }
-                            else
-                                this.FtpState = FTPState.Desconectado;
 
 
 
@@ -208,7 +213,8 @@ namespace FileZillaManager.Classes
                         file = new FileInfo(Path.Combine(this.Pasta, this.Arquivo));
                         if (file.Exists)
                         {
-                            
+                            if (this.integridade == ZipCheckState.AguardandoVerificacao || lastCheckName != file.FullName || lastCheckSize != file.Length || lastCheckDate != file.LastWriteTime)
+                            {
                                 lastCheckName = file.FullName;
                                 lastCheckSize = file.Length;
                                 lastCheckDate = file.LastWriteTime;
@@ -236,7 +242,7 @@ namespace FileZillaManager.Classes
                                                 this.Integridade = LastFileCheck.State;
                                                 //this.Observacao = "Arquivo validado pelo hash no banco de dados";
                                             }
-                                        }
+                                        } 
                                     }
                                     catch (IOException)
                                     {
@@ -253,7 +259,7 @@ namespace FileZillaManager.Classes
                                 {
                                     this.Integridade = ZipCheckState.NaoAplicavel;
                                 }
-                            
+                            }
                         }
                         else
                         {

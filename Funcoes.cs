@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -34,6 +35,21 @@ namespace FileZillaManager
             FileInfo file = new FileInfo(winDir+"\\system32\\"+ md5+".dat");
             return file.Exists;
         }
+
+        public static string GetEnumDescription<TEnum>(this TEnum item)
+            => item.GetType()
+                   .GetField(item.ToString())
+                   .GetCustomAttributes(typeof(DescriptionAttribute), false)
+                   .Cast<DescriptionAttribute>()
+                   .FirstOrDefault()?.Description ?? string.Empty;
+
+        public static string GetEnumCategory<TEnum>(this TEnum item)
+             => item.GetType()
+                    .GetField(item.ToString())
+                    .GetCustomAttributes(typeof(CategoryAttribute), false)
+                    .Cast<CategoryAttribute>()
+                    .FirstOrDefault()?.Category ?? string.Empty;
+
 
         public static string ToSizeString(this long length)
         {
@@ -660,7 +676,7 @@ namespace FileZillaManager
         /// <param name="Top"></param>
         /// <param name="Down"></param>
         public static void DataGridViewCellGradientPaint(DataGridView sender, DataGridViewCellPaintingEventArgs e, Color Top, Color Down)
-        {
+        { 
             Brush gradientBrush = new System.Drawing.Drawing2D.LinearGradientBrush(
                       e.CellBounds, Top, Down,
                       System.Drawing.Drawing2D.LinearGradientMode.Vertical);
@@ -4501,14 +4517,14 @@ namespace FileZillaManager
 
     public static class SiCoresSistema
     {
-        public static readonly Color corFundoObjetoObrigatorioFoco = Color.White;
-        public static readonly Color corFundoObjetoObrigatorioPadrao = Funcoes.ConverteColorFromHex("#FFFAFA");
-        public static readonly Color corFundoObjetoFoco = Color.White;
-        public static readonly Color corFundoObjetoPadrao = Color.White;
-        public static readonly Color corFonteObjetos = Color.Black;// Color.IndianRed;
-        public static readonly Color corFonteObjetoPadrao = Color.Black;//Color.IndianRed;
-        public static readonly Color corBackErro = Funcoes.ConverteColorFromHex("#BCAC9B"); 
-        public static readonly Color corFundoReadOnly = Funcoes.ConverteColorFromHex("#DDC9B4");
+        public static Color corFundoObjetoObrigatorioFoco = Color.White;
+        public static Color corFundoObjetoObrigatorioPadrao = Funcoes.ConverteColorFromHex("#FFFAFA");
+        public static Color corFundoObjetoFoco = Color.White;
+        public static Color corFundoObjetoPadrao = Color.White;
+        public static Color corFonteObjetos = Color.Black;// Color.IndianRed;
+        public static Color corFonteObjetoPadrao = Color.Black;//Color.IndianRed;
+        public static Color corBackErro = Funcoes.ConverteColorFromHex("#BCAC9B"); 
+        public static Color corFundoReadOnly = Funcoes.ConverteColorFromHex("#DDC9B4");
         //public static readonly Color corLogoDark = Color.FromArgb(0, 47, 108);
         //public static readonly Color corLogoLight = Color.FromArgb(105, 179, 231);
 

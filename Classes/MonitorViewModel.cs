@@ -25,29 +25,28 @@ namespace FileZillaManager.Classes
         private bool ocultarPastasVazias;
         private DateTime dataReferencia;
         private Empresa empresa;
-        private List<ContratoViewModel> contratos = new List<ContratoViewModel>();
-        private string statusServidor;
-        LocalConfig config = new LocalConfig(true, "FileZillaManager");
-        private static List<Connection> conexoes = new List<Connection>();
-        private Color serverColor = Color.Blue;
         
+        
+        LocalConfig config = new LocalConfig(true, "FileZillaManager");
+       
         public bool Running { get; set; } = false;
-        public List<ContratoViewModel> Contratos { get=> contratos; set { contratos = value; RaisePropertyChanged("Contratos"); } }
+        public SortableBindingList<ContratoViewModel> Contratos { get; set; } = new SortableBindingList<ContratoViewModel>();
         public Empresa Empresa { get => empresa; set { empresa = value; RaisePropertyChanged("Empresa"); } }
-        public DateTime DataReferencia { get => dataReferencia; set { dataReferencia = value; RaisePropertyChanged("DataReferencia"); } }
-        public bool OcultarPastasVazias { get => ocultarPastasVazias; set { ocultarPastasVazias = value; RaisePropertyChanged("OcultarPastasVazias"); }  }
+        public DateTime DataReferencia { get; set; } = DateTime.MinValue;
+        public bool OcultarPastasVazias { get => ocultarPastasVazias; set { ocultarPastasVazias = value; RaisePropertyChanged("OcultarPastasVazias"); } }
         public bool MonitorarSubPastas { get => monitorarSubPastas; set { monitorarSubPastas = value; RaisePropertyChanged("MonitorarSubPastas"); } }
         public bool MonitorarSubPastasIndividualmente { get => monitorarSubPastasIndividualmente; set { monitorarSubPastasIndividualmente = value; RaisePropertyChanged("MonitorarSubPastasIndividualmente"); } }
         public string MsgErro { get => msgErro; set { msgErro = value; RaisePropertyChanged("MsgErro"); } }
-        public string StatusServidor { get => statusServidor; set { statusServidor = value; RaisePropertyChanged("StatusServidor"); } }
-        public static List<Connection> Conexoes { get => conexoes; set { conexoes = value; } }
-        public Color ServerColor { get => serverColor; set { serverColor = value; RaisePropertyChanged("ServerColor"); } }
+        public string StatusServidor { get; set; }
+        public string StatusConexoes { get; set; }
+        public static List<Connection> Conexoes { get; set; } = new List<Connection>();
+        public Color ServerColor { get; set; } = Color.Blue;
 
         List<ContratoViewModel> cache = new List<ContratoViewModel>();
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public event StatusChangedHandler StatusChanged;
-        public delegate void StatusChangedHandler(ContratoViewModel sender, EventArgs e);
+        //public event StatusChangedHandler StatusChanged;
+        //public delegate void StatusChangedHandler(ContratoViewModel sender, EventArgs e);
         public event ProcessaContratosEndHandler ProcessaContratosEnd;
         public delegate void ProcessaContratosEndHandler(object sender, EventArgs e);
         private void RaisePropertyChanged(string prop)
@@ -55,13 +54,14 @@ namespace FileZillaManager.Classes
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
 
-            if (prop == "OcultarPastasVazias")
-            {
-                ProcessaCache();
-            }
         }
 
+        public void ClearAll()
+        {
+            cache.Clear();
+            Contratos.Clear();
 
+        }
 
 
         public Task<List<Contrato>> GetContratos()
@@ -77,11 +77,10 @@ namespace FileZillaManager.Classes
                 return contratos;
             });
         }
-
         public async void ProcessaContratos()
         {
             var contratos = await GetContratos();
-            
+
             cache.Clear();
             foreach (var c in contratos)
             {
@@ -94,32 +93,14 @@ namespace FileZillaManager.Classes
                         foreach (DirectoryInfo d in dir.GetDirectories("*", MonitorarSubPastas ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
                         {
                             model = new ContratoViewModel(c, d.FullName, false, DataReferencia, this.Empresa);
-                            model.PropertyChanged += (ss, ee) =>
-                            {
-
-                                if (StatusChanged != null)
-                                    StatusChanged(model, new EventArgs());
-                            };
                             cache.Add(model);
                         }
                         model = new ContratoViewModel(c, c.Pasta, false, DataReferencia, this.Empresa);
-                        model.PropertyChanged += (ss, ee) =>
-                        {
-
-                            if (StatusChanged != null)
-                                StatusChanged(model, new EventArgs());
-                        };
                         cache.Add(model);
                     }
                     else
                     {
                         model = new ContratoViewModel(c, c.Pasta, MonitorarSubPastas, DataReferencia, this.Empresa);
-                        model.PropertyChanged += (ss, ee) =>
-                        {
-
-                            if (StatusChanged != null)
-                                StatusChanged(model, new EventArgs());
-                        };
                         cache.Add(model);
                     }
                 }
@@ -133,53 +114,84 @@ namespace FileZillaManager.Classes
 
             if (ProcessaContratosEnd != null)
                 ProcessaContratosEnd(this, new EventArgs());
-        }
 
+        }
         public void ProcessarArquivos()
         {
 
-            while (cache.Any(c=>  c.Status == ContratoState.NaoVerificado))
+
+
+            while (cache.Any(c => c.Status == ContratoState.NaoVerificado))
             {
-                foreach (var c in cache.OrderBy(x=>x.LastLerDiretorio))
+                foreach (var c in cache.OrderBy(x => x.LastLerDiretorio))
                     c.LerDiretorio();
             }
 
-            foreach (var c in cache.Where(x=>x.Status == ContratoState.Erro))
+            foreach (var c in cache.Where(x => x.Status == ContratoState.Erro))
+            {
+                c.LerDiretorio();
+            }
+
+            while (Contratos.Any(c => c.Status == ContratoState.NaoVerificado))
+            {
+                foreach (var c in Contratos.OrderBy(x => x.LastLerDiretorio))
+                    c.LerDiretorio();
+            }
+
+            foreach (var c in Contratos.Where(x => x.Status == ContratoState.Erro))
             {
                 c.LerDiretorio();
             }
 
 
-            while (cache.Any(x => x.Integridade == ZipCheckState.AguardandoProcesso) || cache.Any(x => x.Integridade == ZipCheckState.AguardandoVerificacao))
+            GetServerStatus();
+
+            foreach (var c in Contratos)
             {
-                foreach (var c in cache.Where(x => x.Integridade == ZipCheckState.AguardandoProcesso).OrderBy(x => x.LastHashDate))
-                {
-                    try
-                    {
-                        if (cache.Where(x => x.VerificandoHash)?.Count() < 6)
-                        {
-                            if (!c.VerificandoHash)
-                            {
-                                c.VerificarHash();
-                            }
-                        }
-                    }
-                    catch { }
-                }
+                c.CheckStatusFTP();
+            }
 
 
-                foreach (var c in cache.Where(x => x.Integridade == ZipCheckState.AguardandoVerificacao).OrderBy(x => x.lastIntegrityDate))
+            for (int i = 0; i < Contratos.Count(); i++)
+            {
+                if (this.OcultarPastasVazias && Contratos[i].Status == ContratoState.DiretorioVazio)
                 {
-                    try
-                    {
-                        if (cache.Where(x => x.VerificandoIntegridade)?.Count() < 3)
-                        {
-                            c.VerificarIntegridade();
-                        }
-                    }
-                    catch { }
+                    Contratos.RemoveAt(i);
+                    i--;
                 }
             }
+
+
+            //while (Contratos.Any(x => x.Integridade == ZipCheckState.AguardandoProcesso) || Contratos.Any(x => x.Integridade == ZipCheckState.AguardandoVerificacao || x.Integridade == ZipCheckState.Erro))
+
+            foreach (var c in Contratos.Where(x => x.Integridade == ZipCheckState.AguardandoProcesso || x.Integridade == ZipCheckState.AguardandoVerificacao || x.Integridade == ZipCheckState.Erro).OrderBy(x => x.LastHashDate))
+            {
+                try
+                {
+                    if (Contratos.Where(x => x.VerificandoHash)?.Count() < 6)
+                    {
+                        if (!c.VerificandoHash)
+                        {
+                            c.VerificarHash();
+                        }
+                    }
+                }
+                catch { }
+            }
+
+
+            foreach (var c in Contratos.Where(x => x.Integridade == ZipCheckState.AguardandoVerificacao).OrderBy(x => x.lastIntegrityDate))
+            {
+                try
+                {
+                    if (Contratos.Where(x => x.VerificandoIntegridade)?.Count() < 3)
+                    {
+                        c.VerificarIntegridade();
+                    }
+                }
+                catch { }
+            }
+
         }
         private void ProcessaCache()
         {
@@ -209,9 +221,9 @@ namespace FileZillaManager.Classes
                     i--;
                 }
             }
-         
+
         }
-        public void TGetServerStatus()
+        public void GetServerStatus()
         {
             try
             {
@@ -227,7 +239,7 @@ namespace FileZillaManager.Classes
                             StatusServidor = "Conectado / " + state;
                             ServerColor = Color.Green;
                             Conexoes = fileZillaApi.GetConnections();
-
+                            StatusConexoes = Conexoes.Count + " Conexões ativas";
                             //if (Contratos != null)
                             //{
                             //    foreach (var c in Conexoes)
@@ -245,6 +257,7 @@ namespace FileZillaManager.Classes
                         else
                         {
                             StatusServidor = "Desconectado";
+                            StatusConexoes = "";
                             ServerColor = Color.Red;
                         }
 

@@ -39,7 +39,10 @@ namespace FileZillaManager
                 txbUsuario.Text = ObjEmpresa.Login;
                 txbSenha.Text = ObjEmpresa.Pass;
                 textBox7ZPath.Text = ObjEmpresa.Exe7zPath;
-               
+                siColorInput1.Text = String.IsNullOrWhiteSpace(ObjEmpresa.CorPrimaria) ? "#CD5C5C" :  ObjEmpresa.CorPrimaria;
+                siColorInput2.Text = String.IsNullOrWhiteSpace(ObjEmpresa.CorSecundaria) ? "#fff4f4" : ObjEmpresa.CorSecundaria;
+                siColorInput3.Text = String.IsNullOrWhiteSpace(ObjEmpresa.CorTerciaria) ? "#FA8072" : ObjEmpresa.CorTerciaria;
+                textBoxLogotipo.Text = ObjEmpresa.Logotipo;
             }
         }
 
@@ -66,6 +69,10 @@ namespace FileZillaManager
                 ObjEmpresa.Login = txbUsuario.Text;
                 ObjEmpresa.Pass = txbSenha.Text;
                 ObjEmpresa.Exe7zPath = textBox7ZPath.Text;
+                ObjEmpresa.CorPrimaria = siColorInput1.Text;
+                ObjEmpresa.CorSecundaria = siColorInput2.Text;
+                ObjEmpresa.CorTerciaria = siColorInput3.Text;
+                ObjEmpresa.Logotipo = textBoxLogotipo.Text;
 
                 if (String.IsNullOrEmpty(lblCodigo.Text))
                 {
@@ -256,13 +263,15 @@ namespace FileZillaManager
 
         private void buttonBrowse7z_Click(object sender, EventArgs e)
         {
-            OpenFileDialog diag = new OpenFileDialog();
-            diag.Filter= "7z.exe|7z.exe";
-            diag.InitialDirectory = "C:\\";
-                
-            if (diag.ShowDialog() == DialogResult.OK)
+            using (OpenFileDialog diag = new OpenFileDialog())
             {
-                textBox7ZPath.Text = diag.FileName;
+                diag.Filter = "7z.exe|7z.exe";
+                diag.InitialDirectory = "C:\\";
+
+                if (diag.ShowDialog() == DialogResult.OK)
+                {
+                    textBox7ZPath.Text = diag.FileName;
+                }
             }
         }
 
@@ -280,6 +289,20 @@ namespace FileZillaManager
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void buttonBrowseLogo_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog diag = new OpenFileDialog())
+            {
+                diag.Filter = "Imagens|*.png;*.jpg;*.jpeg";
+                diag.InitialDirectory = "C:\\";
+
+                if (diag.ShowDialog() == DialogResult.OK)
+                {
+                    textBoxLogotipo.Text = diag.FileName;
+                }
             }
         }
     }

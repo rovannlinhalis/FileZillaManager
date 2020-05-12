@@ -18,8 +18,11 @@ namespace FileZillaManager
     public partial class FormMonitor2 : Form
     {
         MonitorViewModel Model;
+        LocalConfig config = new LocalConfig(true, "FileZillaManager");
+        Empresa Empresa;
         public FormMonitor2(Empresa emp)
         {
+            this.Empresa = emp;
             this.SetStyle(ControlStyles.DoubleBuffer, true);
             Model = new MonitorViewModel(emp);
             InitializeComponent();
@@ -31,46 +34,79 @@ namespace FileZillaManager
             //dataGridView1.DataSource = Model.Contratos;
 
             checkBoxOcultarPastasVazias.DataBindings.Add("Checked", Model, "OcultarPastasVazias", false, DataSourceUpdateMode.OnPropertyChanged);
+            checkBoxSubPastas.DataBindings.Add("Checked", Model, "MonitorarSubPastas", false, DataSourceUpdateMode.OnPropertyChanged);
+            checkBoxSubPastasIndividualmente.DataBindings.Add("Checked", Model, "MonitorarSubPastasIndividualmente", false, DataSourceUpdateMode.OnPropertyChanged);
+            labelStatusServidor.DataBindings.Add("Text", Model, "StatusServidor", false, DataSourceUpdateMode.OnPropertyChanged);
+            labelStatusServidor.DataBindings.Add("ForeColor", Model, "ServerColor", false, DataSourceUpdateMode.OnPropertyChanged);
+            labelConexoes.DataBindings.Add("Text", Model, "StatusConexoes", false, DataSourceUpdateMode.OnPropertyChanged);
 
-            Model.ProcessaContratosEnd += (ss, ee) =>
-            {
+
+            Model.ProcessaContratosEnd += (ss, ee) => {
 
                 if (!backgroundWorkerProcesso.IsBusy)
                     backgroundWorkerProcesso.RunWorkerAsync();
 
                 bindingSource1.ResetBindings(false);
+
+                timerResetBinding.Enabled = false;
+                timerResetBinding.Enabled = true;
+
             };
 
-            Model.StatusChanged += (ss, ee) =>
-                {
-                    int idx = Model.Contratos.IndexOf(ss);
+            Model.PropertyChanged += (ss, ee) => {
 
-                    if (idx >= 0)
-                        if (dataGridView1.InvokeRequired)
-                        {
-                            dataGridView1.Invoke((MethodInvoker)delegate { dataGridView1.InvalidateRow(idx); });
-                        }
-                        else
-                        {
-                            dataGridView1.InvalidateRow(idx);
-                        }
-                };
+                timerGetContratos.Interval = 100;
+                timerGetContratos.Enabled = false;
+                timerGetContratos.Enabled = true;
+            };
+
         }
         
         private  void FormMonitor2_Load(object sender, EventArgs e)
         {
+            checkBoxOcultarPastasVazias.Checked = config.OcultarVazias;
+            checkBoxSubPastas.Checked = config.SubPastas;
+            checkBoxSubPastasIndividualmente.Checked = config.SubPastasIndividuais;
+
             timerGetContratos.Enabled = true;
+            FormataColunas();
+            SetColors();
+            this.Text = "Monitor - " + this.Empresa.Nome + " / Desenvolvido por Rovann Linhalis - rovann.com.br";
         }
 
         private void timerGetContratos_Tick(object sender, EventArgs e)
         {
             timerGetContratos.Enabled = false;
+            timerResetBinding.Enabled = false;
             Model.ProcessaContratos();
             timerGetContratos.Interval = 60000;
             //timerGetContratos.Enabled = true;
         }
 
-
+        private void SetColors()
+        {
+            if (!String.IsNullOrWhiteSpace(this.Empresa.CorPrimaria))
+            {
+                dataGridView1.ColumnHeadersDefaultCellStyle.BackColor = Funcoes.ConverteColorFromHex(this.Empresa.CorPrimaria);
+                dataGridView1.ColumnHeadersDefaultCellStyle.ForeColor = Funcoes.GetForeColor(Funcoes.ConverteColorFromHex(this.Empresa.CorPrimaria));
+            }
+            if (!String.IsNullOrWhiteSpace(this.Empresa.CorSecundaria))
+            {
+                dataGridView1.AlternatingRowsDefaultCellStyle.BackColor = Funcoes.ConverteColorFromHex(this.Empresa.CorSecundaria);
+                dataGridView1.AlternatingRowsDefaultCellStyle.ForeColor = Funcoes.GetForeColor(Funcoes.ConverteColorFromHex(this.Empresa.CorSecundaria));
+            }
+            if (!String.IsNullOrWhiteSpace(this.Empresa.CorTerciaria))
+            {
+                dataGridView1.DefaultCellStyle.SelectionBackColor = Funcoes.ConverteColorFromHex(this.Empresa.CorTerciaria);
+                dataGridView1.DefaultCellStyle.SelectionForeColor = Funcoes.GetForeColor(Funcoes.ConverteColorFromHex(this.Empresa.CorTerciaria));
+            }
+            if (!String.IsNullOrWhiteSpace(this.Empresa.Logotipo) && File.Exists(this.Empresa.Logotipo))
+            {
+                pictureBox1.Image = Image.FromFile(this.Empresa.Logotipo);
+            }
+            else
+                pictureBox1.Visible = false;
+        }
 
         #region DataGridView
         private void dataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
@@ -141,7 +177,7 @@ namespace FileZillaManager
                         }
                     }
                 }
-                else if (dataGridView1.Columns[e.ColumnIndex] == dataGridView1.Columns[ColumnContratoFolderSizeColor.Name])
+                else if (dataGridView1.Columns[e.ColumnIndex] == dataGridView1.Columns[ColumnContratoFolderSize.Name])
                 {
                     object v = dataGridView1.Rows[e.RowIndex].Cells[ColumnContratoFolderSizeColor.Name].Value;
 
@@ -212,10 +248,48 @@ namespace FileZillaManager
                 }
             }
         }
+        private void FormataColunas()
+        {
+            foreach (DataGridViewColumn c in dataGridView1.Columns)
+            {
+                if (this.config.ListaOrdemColunas != null && this.config.ListaOrdemColunas.Count > 0)
+                    if (this.config.ListaOrdemColunas.Any(x => x.Nome == c.Name))
+                    {
+                        int ix = c.DisplayIndex;
+                        if (int.TryParse(this.config.ListaOrdemColunas.Where(x => x.Nome == c.Name).FirstOrDefault().Valor.ToString(), out ix))
+                            c.DisplayIndex = ix;
+                    }
+
+                if (this.config.ListaTamanhoColunas != null && this.config.ListaTamanhoColunas.Count > 0)
+                    if (this.config.ListaTamanhoColunas.Any(x => x.Nome == c.Name))
+                    {
+                        int wx = c.Width;
+                        if (int.TryParse(this.config.ListaTamanhoColunas.Where(x => x.Nome == c.Name).FirstOrDefault().Valor.ToString(), out wx))
+                            c.Width = wx;
+                    }
+            }
+        }
+        private void SalvaColumns()
+        {
+            List<LocalConfigListValue> listaIndex = new List<LocalConfigListValue>();
+            List<LocalConfigListValue> listaWidth = new List<LocalConfigListValue>();
+            foreach (DataGridViewColumn c in dataGridView1.Columns)
+            {
+                listaIndex.Add(new LocalConfigListValue() { Nome = c.Name, Valor = c.DisplayIndex });
+                listaWidth.Add(new LocalConfigListValue() { Nome = c.Name, Valor = c.Width });
+            }
+            this.config.ListaOrdemColunas = listaIndex;
+            this.config.ListaTamanhoColunas = listaWidth;
+
+        }
         #endregion
         #region Form
         private void FormMonitor2_FormClosing(object sender, FormClosingEventArgs e)
         {
+            SalvaColumns();
+            config.OcultarVazias = checkBoxOcultarPastasVazias.Checked ;
+            config.SubPastas = checkBoxSubPastas.Checked ;
+            config.SubPastasIndividuais= checkBoxSubPastasIndividualmente.Checked ;
             this.Model.Running = false;
             MatarProcessos();
         }
@@ -252,6 +326,62 @@ namespace FileZillaManager
                 }
                 Thread.Sleep(1000);
             }
+        }
+
+        private void timerResetBinding_Tick(object sender, EventArgs e)
+        {
+            timerResetBinding.Enabled = false;
+            //bindingSource1.ResetBindings(false);
+            dataGridView1.Invalidate();
+            labelStatusServidor.Text = Model.StatusServidor;
+            labelStatusServidor.ForeColor = Model.ServerColor;
+            labelConexoes.Text = Model.StatusConexoes;
+
+            labelStatusArquivos.Text = Model.Contratos.Count() + " Arquivos";
+            labelStatusArquivos.Text += "\r\n" + Model.Contratos.Where(x => x.Status == ContratoState.RecebidoHoje).Count() + " Arquivos Recebidos Hoje";
+            labelStatusArquivos.Text += "\r\n" + Model.Contratos.Where(x => x.Integridade == ZipCheckState.Valido).Count() + " Arquivos Validados com sucesso";
+            labelStatusArquivos.Text += "\r\n" + "Tamanho dos arquivos: "+ Model.Contratos.Sum(x=>x.Tamanho).Value.ToSizeString();
+            labelStatusArquivos.Text += "\r\n" + "Tamanho das pastas: " + Model.Contratos.Sum(x => x.FolderSize).Value.ToSizeString();
+            timerResetBinding.Enabled = true;
+        }
+
+        private void dateTimePickerDataRef_ValueChanged(object sender, EventArgs e)
+        {
+            Model.DataReferencia = dateTimePickerDataRef.Checked ? dateTimePickerDataRef.Value : DateTime.MinValue;
+            Model.ClearAll();
+            timerGetContratos.Interval = 100;
+            timerGetContratos.Enabled = false;
+            timerGetContratos.Enabled = true;
+        }
+
+        private void timerUpdate_Tick(object sender, EventArgs e)
+        {
+            if (DateTime.Now.Hour >= 2 && DateTime.Now.Hour <= 5)
+            {
+                FormUpdate form = new FormUpdate(false);
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    panelUpdates.Visible = true;
+                }
+                else
+                    panelUpdates.Visible = false;
+            }
+        }
+
+        private void labelStatusServidor_MouseClick(object sender, MouseEventArgs e)
+        {
+            toolTip1.Show(labelStatusServidor.Text, labelStatusServidor);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            FormUpdate form = new FormUpdate(false);
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                panelUpdates.Visible = true;
+            }
+            else
+                panelUpdates.Visible = false;
         }
     }
 }

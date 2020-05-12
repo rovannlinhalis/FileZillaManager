@@ -16,7 +16,10 @@ namespace FileZillaManager.Classes
         public int Port { get; set; }
         public string Exe7zPath { get; set; }
 
-
+        public string CorPrimaria { get; set; } = "#CD5C5C";
+        public string CorSecundaria { get; set; } = "#fff4f4";
+        public string CorTerciaria { get; set; } = "#FA8072";
+        public string Logotipo { get; set; }
 
     }
 }

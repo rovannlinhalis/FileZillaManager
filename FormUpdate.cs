@@ -18,9 +18,27 @@ namespace FileZillaManager
         //13/10/2017 - Rovann
         Queue<string> log = new Queue<string>();
         DirectoryInfo dirUpdate = new DirectoryInfo(Application.StartupPath + "\\Update\\");
-        public FormUpdate()
+        bool hidden;
+        public FormUpdate(bool _hidden = false)
         {
             InitializeComponent();
+            hidden = _hidden;
+            if (hidden)
+            {
+                this.ShowInTaskbar = false;
+                this.WindowState = FormWindowState.Minimized;
+            }
+        }
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            if (hidden)
+            {
+                this.Hide();
+                this.ShowInTaskbar = false;
+            }
+
         }
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)

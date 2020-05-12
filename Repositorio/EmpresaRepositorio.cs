@@ -21,7 +21,11 @@ namespace FileZillaManager.Repositorio
             AddField(x => x.Pass, "PASS", FbDbType.VarChar);
             AddField(x => x.Port, "PORT", FbDbType.Numeric);
             AddField(x => x.Exe7zPath, "PATH7Z", FbDbType.VarChar);
-            
+            AddField(x => x.CorPrimaria, "COR1", FbDbType.VarChar);
+            AddField(x => x.CorSecundaria, "COR2", FbDbType.VarChar);
+            AddField(x => x.CorTerciaria, "COR3", FbDbType.VarChar);
+            AddField(x => x.Logotipo, "LOGO", FbDbType.VarChar);
+
         }
 
         public static string[] DDL()
@@ -45,7 +49,15 @@ begin
     new.codigo = gen_id(gen_empresa_id,1);
 end",
 @"ALTER TABLE EMPRESA
-ADD PATH7Z VARCHAR(1024);"
+ADD PATH7Z VARCHAR(1024);",
+@"ALTER TABLE EMPRESA
+ADD COR1 VARCHAR(7);",
+@"ALTER TABLE EMPRESA
+ADD COR2 VARCHAR(7);",
+@"ALTER TABLE EMPRESA
+ADD COR3 VARCHAR(7);",
+@"ALTER TABLE EMPRESA
+ADD LOGO VARCHAR(1024);"
             };
         }
 
