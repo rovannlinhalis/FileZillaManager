@@ -16,7 +16,7 @@ using System.Xml;
 
 namespace FileZillaManager.Classes
 {
-    public class ContratoViewModel 
+    public class ContratoViewModel : IDisposable
     {
         private string pasta;
         private Contrato contrato;
@@ -25,7 +25,7 @@ namespace FileZillaManager.Classes
         private FileCheck lastFileCheck;
         private ContratoState status = ContratoState.NaoVerificado;
         private bool SubPastas = false;
-        List<string> ignorarExtensoes = new List<string>() { ".ini", ".db", ".txt" };
+        List<string> ignorarExtensoes = new List<string>() { ".ini", ".db", ".txt", ".log" };
         private string mensagem = "";
         private string mensagemZip = "";
         private string lastCheckName;
@@ -72,9 +72,9 @@ namespace FileZillaManager.Classes
         public FileCheck LastFileCheck { get => lastFileCheck; set { lastFileCheck = value;  } }
         public long? FolderSize { get => folderSize; set { folderSize = value; RaisePropertyChanged("FolderSize"); } }
         public string FolderSizeF { get => FolderSize.HasValue ? FolderSize.Value.ToSizeString() : ""; }
-        public string Arquivo { get => file?.Name; }
-        public long? Tamanho { get => file?.Length; }
-        public DateTime? LastWrite { get => file?.LastWriteTime; }
+        public string Arquivo { get => file?.Exists ?? false ? file?.Name : null; }
+        public long? Tamanho { get => file?.Exists ?? false ? file?.Length : null; }
+        public DateTime? LastWrite { get => file?.Exists ?? false ? file?.LastWriteTime : null; }
         public string Login { get => Contrato?.Login; }
         public string Nome { get => Contrato?.Nome; }
         public string Hash { get => LastFileCheck?.Hash; }
@@ -99,7 +99,6 @@ namespace FileZillaManager.Classes
             //if (PropertyChanged != null)
             //    PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
-
         public void CheckStatusFTP()
         {
 
@@ -115,7 +114,6 @@ namespace FileZillaManager.Classes
                 this.FtpState = FTPState.Desconectado;
 
         }
-
         public void LerDiretorio()
         {
             if (!lendoDiretorio)
@@ -339,10 +337,6 @@ namespace FileZillaManager.Classes
             });
             
         }
-
-
-
-
         private bool IsZipValid(string path)
         {
             try
@@ -377,24 +371,44 @@ namespace FileZillaManager.Classes
             p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             p.StartInfo.CreateNoWindow = true;
 
+
             if (!Program.listaProcessosMonitor.Any(x => x.StartInfo.Arguments == p.StartInfo.Arguments && !x.HasExited))
             {
-                p.Start();
-                Program.listaProcessosMonitor.Add(p);
-                StreamReader reader = p.StandardOutput;
-                string r = reader.ReadToEnd();
-                p.WaitForExit();
-                int i = p.ExitCode;
-
-                p.Close();
-
-                if (i == 0 || i == 2)
-                    return r.Contains("Everything is Ok") ? ZipCheckState.Valido : ZipCheckState.Invalido;
-                else
-                    return ZipCheckState.Erro;
+                using (TextWriter tw = new StreamWriter(this.pasta + "\\log.log", false, Encoding.Default))
+                {
+                    tw.WriteLine(this.Empresa.Exe7zPath);
+                    tw.WriteLine(path);
+                    tw.WriteLine("antes Start");
+                    tw.WriteLine(p.StartInfo.Arguments);
+                    if (p.Start())
+                    {
+                        tw.WriteLine("True on Start");
+                        Program.listaProcessosMonitor.Add(p);
+                        StreamReader reader = p.StandardOutput;
+                        string r = reader.ReadToEnd();
+                        tw.WriteLine("Antes wait for exit");
+                        p.WaitForExit();
+                        int i = p.ExitCode;
+                        tw.WriteLine("Exit code: " + i);
+                        p.Close();
+                        tw.WriteLine("out: "+ r);
+                        if (i == 0 || i == 2)
+                            return r.Contains("Everything is Ok") ? ZipCheckState.Valido : ZipCheckState.Invalido;
+                        else
+                            return ZipCheckState.Erro;
+                    }
+                    else
+                    {
+                        tw.WriteLine("False on Start");
+                        return ZipCheckState.Erro;
+                    }
+                }
             }
             else
+            {
                 return ZipCheckState.Verificando;
+            }
+
         }
         private bool IsPasswordProtected(string filename)
         {
@@ -424,6 +438,15 @@ namespace FileZillaManager.Classes
 
             return result;
         }
+        public void Dispose()
+        {
+            if (Watcher != null)
+                try
+                {
+                    Watcher.Dispose();
+                }
+                catch { }
 
+        }
     }
 }

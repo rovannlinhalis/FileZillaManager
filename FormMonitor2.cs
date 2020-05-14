@@ -331,6 +331,7 @@ namespace FileZillaManager
         private void timerResetBinding_Tick(object sender, EventArgs e)
         {
             timerResetBinding.Enabled = false;
+            //timerResetBinding.Interval = 5000;
             //bindingSource1.ResetBindings(false);
             dataGridView1.Invalidate();
             labelStatusServidor.Text = Model.StatusServidor;

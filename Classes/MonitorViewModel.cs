@@ -58,7 +58,10 @@ namespace FileZillaManager.Classes
 
         public void ClearAll()
         {
+            cache.ForEach(x => x.Dispose());
             cache.Clear();
+            foreach (var c in Contratos)
+                c.Dispose();
             Contratos.Clear();
 
         }
@@ -80,7 +83,7 @@ namespace FileZillaManager.Classes
         public async void ProcessaContratos()
         {
             var contratos = await GetContratos();
-
+            cache.ForEach(x => x.Dispose());
             cache.Clear();
             foreach (var c in contratos)
             {
@@ -118,27 +121,12 @@ namespace FileZillaManager.Classes
         }
         public void ProcessarArquivos()
         {
-
-
-
-            while (cache.Any(c => c.Status == ContratoState.NaoVerificado))
-            {
-                foreach (var c in cache.OrderBy(x => x.LastLerDiretorio))
-                    c.LerDiretorio();
-            }
-
-            foreach (var c in cache.Where(x => x.Status == ContratoState.Erro))
+            foreach (var c in cache.Where(x=>x.Status == ContratoState.NaoVerificado || x.Status == ContratoState.Erro || (DateTime.Now - x.LastLerDiretorio) > TimeSpan.FromMinutes(10)).OrderBy(x => x.LastLerDiretorio))
             {
                 c.LerDiretorio();
             }
 
-            while (Contratos.Any(c => c.Status == ContratoState.NaoVerificado))
-            {
-                foreach (var c in Contratos.OrderBy(x => x.LastLerDiretorio))
-                    c.LerDiretorio();
-            }
-
-            foreach (var c in Contratos.Where(x => x.Status == ContratoState.Erro))
+            foreach (var c in Contratos.Where(x => x.Status == ContratoState.NaoVerificado || x.Status == ContratoState.Erro || (DateTime.Now - x.LastLerDiretorio) > TimeSpan.FromMinutes(10)).OrderBy(x=>x.LastLerDiretorio))
             {
                 c.LerDiretorio();
             }
@@ -217,6 +205,7 @@ namespace FileZillaManager.Classes
             {
                 if (!cache.Any(y => y.Pasta == Contratos[i].Pasta && y.Login == Contratos[i].Login) || (OcultarPastasVazias && !Contratos[i].Visible))
                 {
+                    Contratos[i].Dispose();
                     Contratos.RemoveAt(i);
                     i--;
                 }
