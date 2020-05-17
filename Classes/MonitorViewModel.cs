@@ -121,12 +121,12 @@ namespace FileZillaManager.Classes
         }
         public void ProcessarArquivos()
         {
-            foreach (var c in cache.Where(x=>x.Status == ContratoState.NaoVerificado || x.Status == ContratoState.Erro || (DateTime.Now - x.LastLerDiretorio) > TimeSpan.FromMinutes(10)).OrderBy(x => x.LastLerDiretorio))
+            foreach (var c in cache.Where(x=>x.Status == ContratoState.NaoVerificado || x.Status == ContratoState.Erro || (DateTime.Now - x.LastLerDiretorio) > TimeSpan.FromMinutes(2)).OrderBy(x => x.LastLerDiretorio))
             {
                 c.LerDiretorio();
             }
 
-            foreach (var c in Contratos.Where(x => x.Status == ContratoState.NaoVerificado || x.Status == ContratoState.Erro || (DateTime.Now - x.LastLerDiretorio) > TimeSpan.FromMinutes(10)).OrderBy(x=>x.LastLerDiretorio))
+            foreach (var c in Contratos.Where(x => x.Status == ContratoState.NaoVerificado || x.Status == ContratoState.Erro || (DateTime.Now - x.LastLerDiretorio) > TimeSpan.FromMinutes(2)).OrderBy(x=>x.LastLerDiretorio))
             {
                 c.LerDiretorio();
             }

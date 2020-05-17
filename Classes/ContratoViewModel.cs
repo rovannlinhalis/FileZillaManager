@@ -79,11 +79,11 @@ namespace FileZillaManager.Classes
         public string Nome { get => Contrato?.Nome; }
         public string Hash { get => LastFileCheck?.Hash; }
         public ContratoState Status { get => status; set { status = value; RaisePropertyChanged("Status"); } }
-        public string StatusF { get => Status == ContratoState.Erro ? mensagem : Status.GetEnumDescription(); }
+        public string StatusX { get => Status == ContratoState.Erro ? mensagem : Status.GetEnumDescription(); }
         public bool Visible { get => this.Status != ContratoState.DiretorioVazio; }
         public Color FolderSizeColor { get => Contrato.Armazenamento <= 0 ? Color.White : (FolderSize / 1024 / 1024 / 1024) > Contrato.Armazenamento ? Color.Red : Color.LightBlue; }
         public ZipCheckState Integridade { get => integridade; set { integridade = value; RaisePropertyChanged("Integridade"); } }
-        public string IntegridadeF { get => this.Integridade == ZipCheckState.Erro ? mensagemZip : this.Integridade.GetEnumDescription(); }
+        public string IntegridadeX { get => this.Integridade == ZipCheckState.Erro ? mensagemZip : this.Integridade.GetEnumDescription(); }
         public FTPState FtpState { get => ftpState; set { ftpState = value; RaisePropertyChanged("FtpState"); } }
         public DateTime LastLerDiretorio { get; set; } = DateTime.MinValue;
         public DateTime LastHashDate { get; set; } = DateTime.MinValue;
@@ -355,60 +355,81 @@ namespace FileZillaManager.Classes
         private ZipCheckState Is7zipRarValid(string path)
         {
             processZipIsRunning = true;
-            System.Diagnostics.Process p = new System.Diagnostics.Process();
-            p.StartInfo.FileName = this.Empresa.Exe7zPath;
-            if (!String.IsNullOrWhiteSpace(Contrato.SenhaCompactacao))// && IsPasswordProtected(path))
+            try
             {
-                p.StartInfo.Arguments = "t -p" + Contrato.SenhaCompactacao + " \"" + path + "\"";
-            }
-            else
-            {
-                p.StartInfo.Arguments = "t \"" + path + "\"";
-            }
-
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            p.StartInfo.CreateNoWindow = true;
-
-
-            if (!Program.listaProcessosMonitor.Any(x => x.StartInfo.Arguments == p.StartInfo.Arguments && !x.HasExited))
-            {
-                using (TextWriter tw = new StreamWriter(this.pasta + "\\log.log", false, Encoding.Default))
+                System.Diagnostics.Process p = new System.Diagnostics.Process();
+                p.StartInfo.FileName = this.Empresa.Exe7zPath;
+                if (!String.IsNullOrWhiteSpace(Contrato.SenhaCompactacao))// && IsPasswordProtected(path))
                 {
-                    tw.WriteLine(this.Empresa.Exe7zPath);
-                    tw.WriteLine(path);
-                    tw.WriteLine("antes Start");
-                    tw.WriteLine(p.StartInfo.Arguments);
-                    if (p.Start())
+                    p.StartInfo.Arguments = "t -p" + Contrato.SenhaCompactacao + " \"" + path + "\"";
+                }
+                else
+                {
+                    p.StartInfo.Arguments = "t \"" + path + "\"";
+                }
+
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.RedirectStandardOutput = true;
+                p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                p.StartInfo.CreateNoWindow = true;
+
+
+                if (!Program.listaProcessosMonitor.Any(x => x.StartInfo.Arguments == p.StartInfo.Arguments && !x.HasExited))
+                {
+                    using (TextWriter tw = new StreamWriter(this.pasta + "\\log.log", false, Encoding.Default))
                     {
-                        tw.WriteLine("True on Start");
-                        Program.listaProcessosMonitor.Add(p);
-                        StreamReader reader = p.StandardOutput;
-                        string r = reader.ReadToEnd();
-                        tw.WriteLine("Antes wait for exit");
-                        p.WaitForExit();
-                        int i = p.ExitCode;
-                        tw.WriteLine("Exit code: " + i);
-                        p.Close();
-                        tw.WriteLine("out: "+ r);
-                        if (i == 0 || i == 2)
-                            return r.Contains("Everything is Ok") ? ZipCheckState.Valido : ZipCheckState.Invalido;
+                        tw.WriteLine(this.Empresa.Exe7zPath);
+                        tw.WriteLine(path);
+                        tw.WriteLine("antes Start");
+                        tw.WriteLine(p.StartInfo.Arguments);
+                        if (p.Start())
+                        {
+                            tw.WriteLine("True on Start");
+                            Program.listaProcessosMonitor.Add(p);
+                            StreamReader reader = p.StandardOutput;
+                            string r = reader.ReadToEnd();
+                            tw.WriteLine("Antes wait for exit");
+                            p.WaitForExit();
+                            int i = p.ExitCode;
+                            tw.WriteLine("Exit code: " + i);
+                            try
+                            {
+                                if (!p.HasExited)
+                                    p.Close();
+                            }
+                            catch { }
+                            tw.WriteLine("out: " + r);
+                            if (i == 0 || i == 2)
+                                return r.Contains("Everything is Ok") ? ZipCheckState.Valido : ZipCheckState.Invalido;
+                            else
+                                return ZipCheckState.Erro;
+                        }
                         else
+                        {
+                            tw.WriteLine("False on Start");
                             return ZipCheckState.Erro;
-                    }
-                    else
-                    {
-                        tw.WriteLine("False on Start");
-                        return ZipCheckState.Erro;
+                        }
                     }
                 }
+                else
+                {
+                    return ZipCheckState.Verificando;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return ZipCheckState.Verificando;
+                using (TextWriter tw = new StreamWriter(this.pasta + "\\log.log", true, Encoding.Default))
+                {
+                    tw.WriteLine(ex.Message);
+                    tw.WriteLine(ex.StackTrace);
+                }
+                mensagemZip = ex.Message;
+                return ZipCheckState.Erro;
             }
-
+            finally
+            {
+                processZipIsRunning = false;
+            }
         }
         private bool IsPasswordProtected(string filename)
         {

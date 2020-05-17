@@ -53,7 +53,7 @@ namespace FileZillaManager
 
             Thread.Sleep(200);
 
-            string md5list = Funcoes.GetMd5DirFromSite("FileZillaManager").Replace("\n", "").Replace("\r", "");
+            string md5list = Funcoes.GetMd5DirFromSite("FileZillaManager")?.Replace("\n", "")?.Replace("\r", "");
 
             if (!String.IsNullOrEmpty(md5list))
             {

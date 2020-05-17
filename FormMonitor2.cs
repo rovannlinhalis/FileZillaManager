@@ -185,18 +185,20 @@ namespace FileZillaManager
                     {
                         Color cBottom = (Color)v;
 
-
-                        if ((e.State & DataGridViewElementStates.Selected) != DataGridViewElementStates.Selected)
+                        if (cBottom != Color.Empty)
                         {
-                            Funcoes.DataGridViewCellGradientPaint((DataGridView)sender, e, Color.White, cBottom);
-                            e.Handled = true;
-                        }
-                        else
-                        {
-                            //((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor =
-                            ((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.SelectionBackColor = cBottom;
-                            //((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.ForeColor =
-                            ((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.SelectionForeColor = Funcoes.GetForeColor(cBottom);
+                            if ((e.State & DataGridViewElementStates.Selected) != DataGridViewElementStates.Selected)
+                            {
+                                Funcoes.DataGridViewCellGradientPaint((DataGridView)sender, e, Color.White, cBottom);
+                                e.Handled = true;
+                            }
+                            else
+                            {
+                                //((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor =
+                                ((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.SelectionBackColor = cBottom;
+                                //((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.ForeColor =
+                                ((DataGridView)sender).Rows[e.RowIndex].Cells[e.ColumnIndex].Style.SelectionForeColor = Funcoes.GetForeColor(cBottom);
+                            }
                         }
                     }
                 }
@@ -338,11 +340,11 @@ namespace FileZillaManager
             labelStatusServidor.ForeColor = Model.ServerColor;
             labelConexoes.Text = Model.StatusConexoes;
 
-            labelStatusArquivos.Text = Model.Contratos.Count() + " Arquivos";
-            labelStatusArquivos.Text += "\r\n" + Model.Contratos.Where(x => x.Status == ContratoState.RecebidoHoje).Count() + " Arquivos Recebidos Hoje";
-            labelStatusArquivos.Text += "\r\n" + Model.Contratos.Where(x => x.Integridade == ZipCheckState.Valido).Count() + " Arquivos Validados com sucesso";
-            labelStatusArquivos.Text += "\r\n" + "Tamanho dos arquivos: "+ Model.Contratos.Sum(x=>x.Tamanho).Value.ToSizeString();
-            labelStatusArquivos.Text += "\r\n" + "Tamanho das pastas: " + Model.Contratos.Sum(x => x.FolderSize).Value.ToSizeString();
+            labelStatusArquivos.Text = Model.Contratos?.Count() + " Arquivos";
+            labelStatusArquivos.Text += "\r\n" + Model.Contratos?.Where(x => x.Status == ContratoState.RecebidoHoje)?.Count() + " Arquivos Recebidos Hoje";
+            labelStatusArquivos.Text += "\r\n" + Model.Contratos?.Where(x => x.Integridade == ZipCheckState.Valido)?.Count() + " Arquivos Validados com sucesso";
+            labelStatusArquivos.Text += "\r\n" + "Tamanho dos arquivos: "+ Model.Contratos?.Sum(x=>x.Tamanho).Value.ToSizeString();
+            labelStatusArquivos.Text += "\r\n" + "Tamanho das pastas: " + Model.Contratos?.Sum(x => x.FolderSize).Value.ToSizeString();
             timerResetBinding.Enabled = true;
         }
 

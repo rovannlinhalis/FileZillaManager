@@ -38,21 +38,28 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMonitor2));
             this.panel2 = new System.Windows.Forms.Panel();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.labelStatusArquivos = new System.Windows.Forms.Label();
+            this.panelUpdates = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.labelConexoes = new System.Windows.Forms.Label();
             this.labelStatusServidor = new System.Windows.Forms.Label();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
+            this.labelStatusArquivos = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
             this.checkBoxOcultarPastasVazias = new System.Windows.Forms.CheckBox();
             this.dateTimePickerDataRef = new System.Windows.Forms.DateTimePicker();
             this.checkBoxSubPastasIndividualmente = new System.Windows.Forms.CheckBox();
             this.checkBoxSubPastas = new System.Windows.Forms.CheckBox();
-            this.panelUpdates = new System.Windows.Forms.Panel();
-            this.label2 = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.timerGetContratos = new System.Windows.Forms.Timer(this.components);
+            this.backgroundWorkerProcesso = new System.ComponentModel.BackgroundWorker();
+            this.timerResetBinding = new System.Windows.Forms.Timer(this.components);
+            this.timerUpdate = new System.Windows.Forms.Timer(this.components);
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.ColumnContratoNome = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnContratoLogin = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnContratoStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -66,21 +73,14 @@
             this.ColumnContratoFolderSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnContratoFolderSizeColor = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnContratoStatusFTP = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.timerGetContratos = new System.Windows.Forms.Timer(this.components);
-            this.backgroundWorkerProcesso = new System.ComponentModel.BackgroundWorker();
-            this.timerResetBinding = new System.Windows.Forms.Timer(this.components);
-            this.timerUpdate = new System.Windows.Forms.Timer(this.components);
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panel2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             this.panelUpdates.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel2
@@ -96,40 +96,28 @@
             this.panel2.Size = new System.Drawing.Size(1261, 82);
             this.panel2.TabIndex = 1;
             // 
-            // groupBox3
+            // panelUpdates
             // 
-            this.groupBox3.Controls.Add(this.button1);
-            this.groupBox3.Controls.Add(this.labelStatusArquivos);
-            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Left;
-            this.groupBox3.Font = new System.Drawing.Font("Roboto", 6.25F);
-            this.groupBox3.Location = new System.Drawing.Point(571, 0);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(273, 82);
-            this.groupBox3.TabIndex = 11;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Status dos Arquivos";
+            this.panelUpdates.BackColor = System.Drawing.Color.PaleGreen;
+            this.panelUpdates.Controls.Add(this.label2);
+            this.panelUpdates.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panelUpdates.Location = new System.Drawing.Point(998, 0);
+            this.panelUpdates.Name = "panelUpdates";
+            this.panelUpdates.Size = new System.Drawing.Size(263, 82);
+            this.panelUpdates.TabIndex = 8;
+            this.panelUpdates.Visible = false;
             // 
-            // button1
+            // label2
             // 
-            this.button1.Location = new System.Drawing.Point(174, 10);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Visible = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // labelStatusArquivos
-            // 
-            this.labelStatusArquivos.AutoSize = true;
-            this.labelStatusArquivos.Dock = System.Windows.Forms.DockStyle.Top;
-            this.labelStatusArquivos.Font = new System.Drawing.Font("Roboto", 8.25F);
-            this.labelStatusArquivos.Location = new System.Drawing.Point(3, 14);
-            this.labelStatusArquivos.Name = "labelStatusArquivos";
-            this.labelStatusArquivos.Size = new System.Drawing.Size(16, 13);
-            this.labelStatusArquivos.TabIndex = 7;
-            this.labelStatusArquivos.Text = "---";
+            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label2.Font = new System.Drawing.Font("Roboto", 14.25F);
+            this.label2.ForeColor = System.Drawing.Color.DarkGreen;
+            this.label2.Location = new System.Drawing.Point(0, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(263, 82);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Atualização Disponível";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // groupBox2
             // 
@@ -166,6 +154,41 @@
             this.labelStatusServidor.TabIndex = 4;
             this.labelStatusServidor.Text = "Status do Servidor";
             this.labelStatusServidor.MouseClick += new System.Windows.Forms.MouseEventHandler(this.labelStatusServidor_MouseClick);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.button1);
+            this.groupBox3.Controls.Add(this.labelStatusArquivos);
+            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Left;
+            this.groupBox3.Font = new System.Drawing.Font("Roboto", 6.25F);
+            this.groupBox3.Location = new System.Drawing.Point(571, 0);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(273, 82);
+            this.groupBox3.TabIndex = 11;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Status dos Arquivos";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(174, 10);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 8;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // labelStatusArquivos
+            // 
+            this.labelStatusArquivos.AutoSize = true;
+            this.labelStatusArquivos.Dock = System.Windows.Forms.DockStyle.Top;
+            this.labelStatusArquivos.Font = new System.Drawing.Font("Roboto", 8.25F);
+            this.labelStatusArquivos.Location = new System.Drawing.Point(3, 14);
+            this.labelStatusArquivos.Name = "labelStatusArquivos";
+            this.labelStatusArquivos.Size = new System.Drawing.Size(16, 13);
+            this.labelStatusArquivos.TabIndex = 7;
+            this.labelStatusArquivos.Text = "---";
             // 
             // groupBox1
             // 
@@ -238,28 +261,15 @@
             this.checkBoxSubPastas.Text = "Monitorar Subpastas";
             this.checkBoxSubPastas.UseVisualStyleBackColor = true;
             // 
-            // panelUpdates
+            // pictureBox1
             // 
-            this.panelUpdates.BackColor = System.Drawing.Color.PaleGreen;
-            this.panelUpdates.Controls.Add(this.label2);
-            this.panelUpdates.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelUpdates.Location = new System.Drawing.Point(998, 0);
-            this.panelUpdates.Name = "panelUpdates";
-            this.panelUpdates.Size = new System.Drawing.Size(263, 82);
-            this.panelUpdates.TabIndex = 8;
-            this.panelUpdates.Visible = false;
-            // 
-            // label2
-            // 
-            this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label2.Font = new System.Drawing.Font("Roboto", 14.25F);
-            this.label2.ForeColor = System.Drawing.Color.DarkGreen;
-            this.label2.Location = new System.Drawing.Point(0, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(263, 82);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Atualização Disponível";
-            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Left;
+            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(214, 82);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 12;
+            this.pictureBox1.TabStop = false;
             // 
             // dataGridView1
             // 
@@ -320,6 +330,30 @@
             this.dataGridView1.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dataGridView1_CellPainting);
             this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView1_DataError);
             // 
+            // bindingSource1
+            // 
+            this.bindingSource1.AllowNew = false;
+            this.bindingSource1.Filter = "Visible=True";
+            // 
+            // timerGetContratos
+            // 
+            this.timerGetContratos.Tick += new System.EventHandler(this.timerGetContratos_Tick);
+            // 
+            // backgroundWorkerProcesso
+            // 
+            this.backgroundWorkerProcesso.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerProcesso_DoWork);
+            // 
+            // timerResetBinding
+            // 
+            this.timerResetBinding.Interval = 1000;
+            this.timerResetBinding.Tick += new System.EventHandler(this.timerResetBinding_Tick);
+            // 
+            // timerUpdate
+            // 
+            this.timerUpdate.Enabled = true;
+            this.timerUpdate.Interval = 10800000;
+            this.timerUpdate.Tick += new System.EventHandler(this.timerUpdate_Tick);
+            // 
             // ColumnContratoNome
             // 
             this.ColumnContratoNome.DataPropertyName = "Nome";
@@ -349,7 +383,7 @@
             // 
             // ColumnContratoStatusText
             // 
-            this.ColumnContratoStatusText.DataPropertyName = "StatusF";
+            this.ColumnContratoStatusText.DataPropertyName = "StatusX";
             this.ColumnContratoStatusText.HeaderText = "Status";
             this.ColumnContratoStatusText.Name = "ColumnContratoStatusText";
             this.ColumnContratoStatusText.ReadOnly = true;
@@ -364,7 +398,7 @@
             // 
             // ColumnFileCheckF
             // 
-            this.ColumnFileCheckF.DataPropertyName = "IntegridadeF";
+            this.ColumnFileCheckF.DataPropertyName = "IntegridadeX";
             this.ColumnFileCheckF.HeaderText = "Integridade";
             this.ColumnFileCheckF.Name = "ColumnFileCheckF";
             this.ColumnFileCheckF.ReadOnly = true;
@@ -429,40 +463,6 @@
             this.ColumnContratoStatusFTP.Name = "ColumnContratoStatusFTP";
             this.ColumnContratoStatusFTP.ReadOnly = true;
             // 
-            // bindingSource1
-            // 
-            this.bindingSource1.AllowNew = false;
-            this.bindingSource1.Filter = "Visible=True";
-            // 
-            // timerGetContratos
-            // 
-            this.timerGetContratos.Tick += new System.EventHandler(this.timerGetContratos_Tick);
-            // 
-            // backgroundWorkerProcesso
-            // 
-            this.backgroundWorkerProcesso.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerProcesso_DoWork);
-            // 
-            // timerResetBinding
-            // 
-            this.timerResetBinding.Interval = 1000;
-            this.timerResetBinding.Tick += new System.EventHandler(this.timerResetBinding_Tick);
-            // 
-            // timerUpdate
-            // 
-            this.timerUpdate.Enabled = true;
-            this.timerUpdate.Interval = 10800000;
-            this.timerUpdate.Tick += new System.EventHandler(this.timerUpdate_Tick);
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.pictureBox1.Location = new System.Drawing.Point(0, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(214, 82);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 12;
-            this.pictureBox1.TabStop = false;
-            // 
             // FormMonitor2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -478,16 +478,16 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMonitor2_FormClosing);
             this.Load += new System.EventHandler(this.FormMonitor2_Load);
             this.panel2.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
+            this.panelUpdates.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.panelUpdates.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -515,6 +515,7 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Label labelStatusArquivos;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnContratoNome;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnContratoLogin;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnContratoStatus;
@@ -528,6 +529,5 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnContratoFolderSize;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnContratoFolderSizeColor;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnContratoStatusFTP;
-        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }

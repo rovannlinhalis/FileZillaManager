@@ -85,6 +85,14 @@ namespace FileZillaManager.Classes
         /// <param name="direction"></param>
         protected override void ApplySortCore(PropertyDescriptor prop, ListSortDirection direction)
         {
+
+            if (prop.Name.EndsWith("F"))
+            {
+                var props = TypeDescriptor.GetProperties(typeof(T));
+                string newName = prop.Name.Remove(prop.Name.Length - 1);
+                prop = props.Find(newName, false)?? prop;
+            }
+
             _sortProperty = prop;
             _sortDirection = direction;
 
