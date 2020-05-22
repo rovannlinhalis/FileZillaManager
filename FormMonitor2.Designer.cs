@@ -31,11 +31,14 @@
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMonitor2));
             this.panel2 = new System.Windows.Forms.Panel();
             this.panelUpdates = new System.Windows.Forms.Panel();
@@ -73,6 +76,11 @@
             this.ColumnContratoFolderSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnContratoFolderSizeColor = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnContratoStatusFTP = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnLastLerDiretorio = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnLastHast = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnLastIntegrity = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnHash = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnMensagemZip = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel2.SuspendLayout();
             this.panelUpdates.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -305,16 +313,21 @@
             this.ColumnContratoTamanho,
             this.ColumnContratoFolderSize,
             this.ColumnContratoFolderSizeColor,
-            this.ColumnContratoStatusFTP});
+            this.ColumnContratoStatusFTP,
+            this.ColumnLastLerDiretorio,
+            this.ColumnLastHast,
+            this.ColumnLastIntegrity,
+            this.ColumnHash,
+            this.ColumnMensagemZip});
             this.dataGridView1.DataSource = this.bindingSource1;
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Roboto", 8.25F);
-            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.Salmon;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Roboto", 8.25F);
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.Color.Salmon;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle10;
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.EnableHeadersVisualStyles = false;
             this.dataGridView1.GridColor = System.Drawing.Color.Gainsboro;
@@ -463,6 +476,53 @@
             this.ColumnContratoStatusFTP.Name = "ColumnContratoStatusFTP";
             this.ColumnContratoStatusFTP.ReadOnly = true;
             // 
+            // ColumnLastLerDiretorio
+            // 
+            this.ColumnLastLerDiretorio.DataPropertyName = "LastLerDiretorio";
+            dataGridViewCellStyle7.Format = "G";
+            dataGridViewCellStyle7.NullValue = null;
+            this.ColumnLastLerDiretorio.DefaultCellStyle = dataGridViewCellStyle7;
+            this.ColumnLastLerDiretorio.HeaderText = "Ler Diretorio";
+            this.ColumnLastLerDiretorio.Name = "ColumnLastLerDiretorio";
+            this.ColumnLastLerDiretorio.ReadOnly = true;
+            this.ColumnLastLerDiretorio.Visible = false;
+            // 
+            // ColumnLastHast
+            // 
+            this.ColumnLastHast.DataPropertyName = "LastHashDate";
+            dataGridViewCellStyle8.Format = "G";
+            this.ColumnLastHast.DefaultCellStyle = dataGridViewCellStyle8;
+            this.ColumnLastHast.HeaderText = "Last Hash";
+            this.ColumnLastHast.Name = "ColumnLastHast";
+            this.ColumnLastHast.ReadOnly = true;
+            this.ColumnLastHast.Visible = false;
+            // 
+            // ColumnLastIntegrity
+            // 
+            this.ColumnLastIntegrity.DataPropertyName = "lastIntegrityDate";
+            dataGridViewCellStyle9.Format = "G";
+            this.ColumnLastIntegrity.DefaultCellStyle = dataGridViewCellStyle9;
+            this.ColumnLastIntegrity.HeaderText = "Last Integrity";
+            this.ColumnLastIntegrity.Name = "ColumnLastIntegrity";
+            this.ColumnLastIntegrity.ReadOnly = true;
+            this.ColumnLastIntegrity.Visible = false;
+            // 
+            // ColumnHash
+            // 
+            this.ColumnHash.DataPropertyName = "Hash";
+            this.ColumnHash.HeaderText = "Hash";
+            this.ColumnHash.Name = "ColumnHash";
+            this.ColumnHash.ReadOnly = true;
+            this.ColumnHash.Visible = false;
+            // 
+            // ColumnMensagemZip
+            // 
+            this.ColumnMensagemZip.DataPropertyName = "MensagemZip";
+            this.ColumnMensagemZip.HeaderText = "Msg Zip";
+            this.ColumnMensagemZip.Name = "ColumnMensagemZip";
+            this.ColumnMensagemZip.ReadOnly = true;
+            this.ColumnMensagemZip.Visible = false;
+            // 
             // FormMonitor2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -529,5 +589,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnContratoFolderSize;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnContratoFolderSizeColor;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnContratoStatusFTP;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnLastLerDiretorio;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnLastHast;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnLastIntegrity;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnHash;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnMensagemZip;
     }
 }

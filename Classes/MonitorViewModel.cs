@@ -85,6 +85,7 @@ namespace FileZillaManager.Classes
             var contratos = await GetContratos();
             cache.ForEach(x => x.Dispose());
             cache.Clear();
+            
             foreach (var c in contratos)
             {
                 ContratoViewModel model;
@@ -113,6 +114,9 @@ namespace FileZillaManager.Classes
                 }
             }
 
+            foreach (var c in Contratos)
+                c.LastLerDiretorio = DateTime.MinValue;
+
             ProcessaCache();
 
             if (ProcessaContratosEnd != null)
@@ -121,12 +125,12 @@ namespace FileZillaManager.Classes
         }
         public void ProcessarArquivos()
         {
-            foreach (var c in cache.Where(x=>x.Status == ContratoState.NaoVerificado || x.Status == ContratoState.Erro || (DateTime.Now - x.LastLerDiretorio) > TimeSpan.FromMinutes(2)).OrderBy(x => x.LastLerDiretorio))
+            foreach (var c in cache.Where(x=>x.Status == ContratoState.NaoVerificado || x.Status == ContratoState.Erro || x.Integridade == ZipCheckState.Erro || (DateTime.Now - x.LastLerDiretorio) > TimeSpan.FromMinutes(10)).OrderBy(x => x.LastLerDiretorio))
             {
                 c.LerDiretorio();
             }
 
-            foreach (var c in Contratos.Where(x => x.Status == ContratoState.NaoVerificado || x.Status == ContratoState.Erro || (DateTime.Now - x.LastLerDiretorio) > TimeSpan.FromMinutes(2)).OrderBy(x=>x.LastLerDiretorio))
+            foreach (var c in Contratos.Where(x => x.Status == ContratoState.NaoVerificado || x.Status == ContratoState.Erro || x.Integridade == ZipCheckState.Erro || (DateTime.Now - x.LastLerDiretorio) > TimeSpan.FromMinutes(10)).OrderBy(x=>x.LastLerDiretorio))
             {
                 c.LerDiretorio();
             }
@@ -152,7 +156,7 @@ namespace FileZillaManager.Classes
 
             //while (Contratos.Any(x => x.Integridade == ZipCheckState.AguardandoProcesso) || Contratos.Any(x => x.Integridade == ZipCheckState.AguardandoVerificacao || x.Integridade == ZipCheckState.Erro))
 
-            foreach (var c in Contratos.Where(x => x.Integridade == ZipCheckState.AguardandoProcesso || x.Integridade == ZipCheckState.AguardandoVerificacao || x.Integridade == ZipCheckState.Erro).OrderBy(x => x.LastHashDate))
+            foreach (var c in Contratos.Where(x => x.FtpState != FTPState.Recebendo && ( x.Integridade == ZipCheckState.AguardandoProcesso || x.Integridade == ZipCheckState.AguardandoVerificacao || x.Integridade == ZipCheckState.Erro || DateTime.Now - x.LastHashDate > TimeSpan.FromMinutes(10))).OrderBy(x => x.LastHashDate))
             {
                 try
                 {

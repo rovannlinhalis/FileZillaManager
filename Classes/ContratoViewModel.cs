@@ -31,7 +31,7 @@ namespace FileZillaManager.Classes
         private string lastCheckName;
         private long lastCheckSize;
         private DateTime lastCheckDate;
-        
+
         private bool processZipIsRunning = false;
         Task verificaZip;
         Task verificaHash;
@@ -55,7 +55,7 @@ namespace FileZillaManager.Classes
             Watcher.Renamed += Watcher_FileChanged;
         }
 
-        
+
         private void Watcher_FileChanged(object sender, FileSystemEventArgs e)
         {
             Watcher.EnableRaisingEvents = false;
@@ -65,11 +65,11 @@ namespace FileZillaManager.Classes
         public Empresa Empresa { get; set; }
         public DateTime DataRef { get; set; }
         public string HashFile { get; set; }
-        public Contrato Contrato { get => contrato; set { contrato = value;  } }
+        public Contrato Contrato { get => contrato; set { contrato = value; } }
         public FileInfo File { get => file; set { file = value; RaisePropertyChanged("File"); } }
         public string Pasta { get => pasta; set { pasta = value; RaisePropertyChanged("Pasta"); } }
         public string TamanhoF { get => Tamanho.HasValue ? Tamanho.Value.ToSizeString() : ""; }
-        public FileCheck LastFileCheck { get => lastFileCheck; set { lastFileCheck = value;  } }
+        public FileCheck LastFileCheck { get => lastFileCheck; set { lastFileCheck = value; } }
         public long? FolderSize { get => folderSize; set { folderSize = value; RaisePropertyChanged("FolderSize"); } }
         public string FolderSizeF { get => FolderSize.HasValue ? FolderSize.Value.ToSizeString() : ""; }
         public string Arquivo { get => file?.Exists ?? false ? file?.Name : null; }
@@ -91,8 +91,10 @@ namespace FileZillaManager.Classes
 
         private bool lendoDiretorio = false;
         public bool VerificandoIntegridade { get => processZipIsRunning || (verificaZip != null && (verificaZip.Status == TaskStatus.Running || verificaZip.Status == TaskStatus.WaitingToRun)); }
-        public bool VerificandoHash { get =>  (verificaHash != null && (verificaHash.Status == TaskStatus.Running || verificaHash.Status == TaskStatus.WaitingToRun)); }
-        
+        public bool VerificandoHash { get => (verificaHash != null && (verificaHash.Status == TaskStatus.Running || verificaHash.Status == TaskStatus.WaitingToRun)); }
+
+        public string MensagemZip { get => mensagemZip; }
+
         //public event PropertyChangedEventHandler PropertyChanged;
         private void RaisePropertyChanged(string prop)
         {
@@ -140,7 +142,7 @@ namespace FileZillaManager.Classes
 
                         FileInfo[] files = dir.GetFiles("*.*", SubPastas ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
                         FileInfo file = files?.Where(x => x.LastWriteTime.Date <= dataAux.Date && !ignorarExtensoes.Contains(x.Extension.ToLower()))?.OrderByDescending(x => x.LastWriteTime)?.FirstOrDefault();
-                        
+
                         this.File = null;
 
                         if (file != null)
@@ -148,7 +150,7 @@ namespace FileZillaManager.Classes
                             this.File = file;
 
                             if (!SubPastas)
-                            {   this.FolderSize = dir.GetFiles("*", SearchOption.AllDirectories)?.Sum(x => x.Length);
+                            { this.FolderSize = dir.GetFiles("*", SearchOption.AllDirectories)?.Sum(x => x.Length);
                                 //this.FolderSize = files.Sum(x => x.Length);
                             }
                             else
@@ -199,10 +201,10 @@ namespace FileZillaManager.Classes
         }
         public void VerificarHash()
         {
-            this.LastHashDate = DateTime.Now;
+           
             verificaHash = Task.Factory.StartNew(() =>
             {
-
+                this.LastHashDate = DateTime.Now;
                 Watcher.EnableRaisingEvents = false;
                 if (!String.IsNullOrEmpty(this.Arquivo) && !String.IsNullOrWhiteSpace(this.Pasta))
                 {
@@ -231,18 +233,30 @@ namespace FileZillaManager.Classes
                                             if (filesdb.Count > 0)
                                                 LastFileCheck = filesdb.FirstOrDefault();
 
-                                            if (LastFileCheck == null || HashFile.ToUpper() != LastFileCheck?.Hash.ToUpper() || (LastFileCheck.State != ZipCheckState.Valido))
+
+                                            if (LastFileCheck == null || HashFile.ToLower() != LastFileCheck?.Hash.ToLower() || LastFileCheck.State == ZipCheckState.Erro ||  (LastFileCheck.State != ZipCheckState.Valido && DateTime.Now - LastFileCheck.Data > TimeSpan.FromHours(1)) || (LastFileCheck?.FileData - file.LastWriteTime) > TimeSpan.FromSeconds(1) || LastFileCheck?.FileLength != file.Length)
                                             {
+
+                                                if (Program.Debug)
+                                                {
+                                                    mensagemZip = LastFileCheck == null ? "Último arquivo é null" : LastFileCheck.State == ZipCheckState.Erro ? "Last check com erro" : HashFile.ToLower() != LastFileCheck?.Hash.ToLower() ? "HASH DIFERE " + HashFile + "/" + LastFileCheck?.Hash : LastFileCheck.State != ZipCheckState.Valido ? "Último Status é dif. Válido" : (LastFileCheck?.FileData - file.LastWriteTime) > TimeSpan.FromSeconds(1) ? "Data do arquivo difere" : LastFileCheck?.FileLength != file.Length ? "Tamanho do arquivo difere" : "Nenhuma das opcoes";
+                                                }
+
+
+
                                                 this.Integridade = ZipCheckState.AguardandoVerificacao;
+
+
                                             }
                                             else
                                             {
                                                 this.Integridade = LastFileCheck.State;
+                                                this.lastIntegrityDate = LastFileCheck.Data;
                                                 //this.Observacao = "Arquivo validado pelo hash no banco de dados";
                                             }
-                                        } 
+                                        }
                                     }
-                                    catch (IOException)
+                                    catch (IOException ioe)
                                     {
                                         this.mensagemZip = "Sem acesso ao arquivo";
                                         this.Integridade = ZipCheckState.Erro;
@@ -279,7 +293,7 @@ namespace FileZillaManager.Classes
         }
         public void VerificarIntegridade()
         {
-            this.lastIntegrityDate = DateTime.Now;
+            
             this.Integridade = ZipCheckState.Verificando;
             verificaZip = Task.Factory.StartNew(() =>
             {
@@ -316,11 +330,13 @@ namespace FileZillaManager.Classes
                     using (Repositorio.FileCheckRepositorio rep = new Repositorio.FileCheckRepositorio())
                     {
                         if (LastFileCheck == null)
-                            rep.Insert(new FileCheck() { Contrato = this.Contrato.Codigo, Data = DateTime.Now, Hash = HashFile.ToLower(), Nome = file.FullName.ToLower(), State = this.Integridade });
+                            rep.Insert(new FileCheck() { Contrato = this.Contrato.Codigo, Data = DateTime.Now, Hash = HashFile.ToLower(), Nome = file.FullName.ToLower(), State = this.Integridade, FileData = file.LastWriteTime, FileLength = file.Length });
                         else
                         {
                             LastFileCheck.State = this.Integridade;
                             LastFileCheck.Data = DateTime.Now;
+                            LastFileCheck.FileData = file.LastWriteTime;
+                            LastFileCheck.FileLength = file.Length;
                             rep.Update(LastFileCheck);
                         }
                     }
@@ -332,10 +348,11 @@ namespace FileZillaManager.Classes
                     this.mensagemZip = ex.Message;
                     this.Integridade = ZipCheckState.Erro;
                 }
+                this.lastIntegrityDate = DateTime.Now;
                 processZipIsRunning = false;
                 Watcher.EnableRaisingEvents = true;
             });
-            
+
         }
         private bool IsZipValid(string path)
         {
@@ -354,6 +371,8 @@ namespace FileZillaManager.Classes
         }
         private ZipCheckState Is7zipRarValid(string path)
         {
+            ZipCheckState retorno = ZipCheckState.Verificando;
+            string tw = "";
             processZipIsRunning = true;
             try
             {
@@ -376,60 +395,78 @@ namespace FileZillaManager.Classes
 
                 if (!Program.listaProcessosMonitor.Any(x => x.StartInfo.Arguments == p.StartInfo.Arguments && !x.HasExited))
                 {
-                    using (TextWriter tw = new StreamWriter(this.pasta + "\\log.log", false, Encoding.Default))
+                    //using (TextWriter tw = new StreamWriter(this.pasta + "\\log.log", false, Encoding.Default))
+
                     {
-                        tw.WriteLine(this.Empresa.Exe7zPath);
-                        tw.WriteLine(path);
-                        tw.WriteLine("antes Start");
-                        tw.WriteLine(p.StartInfo.Arguments);
+                        tw += this.Empresa.Exe7zPath;
+                        tw += path;
+                        tw += "antes Start";
+                        tw += p.StartInfo.Arguments;
                         if (p.Start())
                         {
-                            tw.WriteLine("True on Start");
+                            tw += "True on Start";
                             Program.listaProcessosMonitor.Add(p);
                             StreamReader reader = p.StandardOutput;
                             string r = reader.ReadToEnd();
-                            tw.WriteLine("Antes wait for exit");
+                            tw += "Antes wait for exit";
                             p.WaitForExit();
                             int i = p.ExitCode;
-                            tw.WriteLine("Exit code: " + i);
+                            tw += "Exit code: " + i;
                             try
                             {
                                 if (!p.HasExited)
                                     p.Close();
                             }
                             catch { }
-                            tw.WriteLine("out: " + r);
+                            tw += "out: " + r;
                             if (i == 0 || i == 2)
-                                return r.Contains("Everything is Ok") ? ZipCheckState.Valido : ZipCheckState.Invalido;
+                                retorno = r.Contains("Everything is Ok") ? ZipCheckState.Valido : ZipCheckState.Invalido;
                             else
-                                return ZipCheckState.Erro;
+                                retorno = ZipCheckState.Erro;
                         }
                         else
                         {
-                            tw.WriteLine("False on Start");
-                            return ZipCheckState.Erro;
+                            tw += "False on Start";
+                            retorno = ZipCheckState.Erro;
                         }
                     }
                 }
                 else
                 {
-                    return ZipCheckState.Verificando;
+                    retorno = ZipCheckState.Verificando;
                 }
             }
             catch (Exception ex)
             {
-                using (TextWriter tw = new StreamWriter(this.pasta + "\\log.log", true, Encoding.Default))
-                {
-                    tw.WriteLine(ex.Message);
-                    tw.WriteLine(ex.StackTrace);
-                }
+                tw += ex.Message;
+                tw += ex.StackTrace;
                 mensagemZip = ex.Message;
-                return ZipCheckState.Erro;
+                retorno = ZipCheckState.Erro;
             }
             finally
             {
                 processZipIsRunning = false;
             }
+
+
+            try
+            {
+                if (Program.Debug)
+                {
+
+                    using (TextWriter tww = new StreamWriter(this.pasta + "\\log.log", true, Encoding.Default))
+                    {
+
+                        tww.Write(tw);
+                    }
+                }
+                else
+                    System.IO.File.Delete(this.pasta + "\\log.log");
+            }
+            catch { }
+
+
+            return retorno;
         }
         private bool IsPasswordProtected(string filename)
         {

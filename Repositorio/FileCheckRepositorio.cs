@@ -24,6 +24,9 @@ namespace FileZillaManager.Repositorio
             AddField(x => x.State, "STATE", FbDbType.Integer);
             AddField(x => x.Contrato, "CONTRATO", FbDbType.Integer);
             AddField(x => x.Data, "DATA", FbDbType.TimeStamp);
+            AddField(x => x.FileData, "FILEDATA", FbDbType.TimeStamp);
+            AddField(x => x.FileLength, "FILE_TAM", FbDbType.Numeric);
+
         }
 
        
@@ -39,7 +42,13 @@ namespace FileZillaManager.Repositorio
     FILEHASH  VARCHAR(128) NOT NULL
 ); ",
 @"ALTER TABLE FILE_CHECK ADD CONSTRAINT PK_FILECHECK PRIMARY KEY(NOME, FILEHASH)
-USING INDEX PK_FILECHECK_IDX;"
+USING INDEX PK_FILECHECK_IDX;",
+
+@"ALTER TABLE FILE_CHECK
+ADD FILEDATA TIMESTAMP;",
+@"ALTER TABLE FILE_CHECK
+ADD FILE_TAM NUMERIC(18,0);",
+
             };
         }
 

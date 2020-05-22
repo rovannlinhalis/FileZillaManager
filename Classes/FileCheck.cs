@@ -15,5 +15,7 @@ namespace FileZillaManager.Classes
         public int Contrato { get; set; }
         public DateTime Data { get; set; }
 
+        public DateTime FileData { get; set; }
+        public long FileLength { get; set; }
     }
 }

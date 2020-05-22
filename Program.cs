@@ -21,6 +21,7 @@ namespace FileZillaManager
         public static List<Process> listaProcessosMonitor = new List<Process>();
         public static string ConnectionString() => File.ReadAllText(fileConfigConnection.FullName, Encoding.Default).Replace("\r", "").Replace("\n", "");
 
+        public static bool Debug { get; set; } = false;
 
         /// <summary>
         /// The main entry point for the application.

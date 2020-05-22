@@ -114,5 +114,10 @@ namespace FileZillaManager
             FormMonitor2 form = new FormMonitor2(this.Empresa);
             form.Show();
         }
+
+        private void buttonDebugMode_Click(object sender, EventArgs e)
+        {
+            Program.Debug = true;
+        }
     }
 }

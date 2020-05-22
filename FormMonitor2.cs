@@ -248,10 +248,33 @@ namespace FileZillaManager
                         Model.Contratos[e.RowIndex].Integridade = ZipCheckState.AguardandoVerificacao;
                     }
                 }
+                else if (e.ColumnIndex == ColumnContratoLogin.Index || e.ColumnIndex == ColumnContratoNome.Index)
+                {
+                    try
+                    {
+                        Contrato c = Model.Contratos[e.RowIndex].Contrato;
+                        FormContrato form = new FormContrato(c);
+                        form.Show();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Não foi possível abrir o contrato: "+ ex.Message, "Erro", MessageBoxButtons.OK,  MessageBoxIcon.Error);
+                    }
+                }
             }
         }
         private void FormataColunas()
         {
+
+            if (Program.Debug)
+            {
+                dataGridView1.Columns[ColumnLastHast.Name].Visible = true;
+                dataGridView1.Columns[ColumnLastIntegrity.Name].Visible = true;
+                dataGridView1.Columns[ColumnLastLerDiretorio.Name].Visible = true;
+                dataGridView1.Columns[ColumnHash.Name].Visible = true;
+                dataGridView1.Columns[ColumnMensagemZip.Name].Visible = true;
+
+            }
             foreach (DataGridViewColumn c in dataGridView1.Columns)
             {
                 if (this.config.ListaOrdemColunas != null && this.config.ListaOrdemColunas.Count > 0)
@@ -273,15 +296,23 @@ namespace FileZillaManager
         }
         private void SalvaColumns()
         {
-            List<LocalConfigListValue> listaIndex = new List<LocalConfigListValue>();
+          
+
+                List<LocalConfigListValue> listaIndex = new List<LocalConfigListValue>();
             List<LocalConfigListValue> listaWidth = new List<LocalConfigListValue>();
             foreach (DataGridViewColumn c in dataGridView1.Columns)
             {
                 listaIndex.Add(new LocalConfigListValue() { Nome = c.Name, Valor = c.DisplayIndex });
                 listaWidth.Add(new LocalConfigListValue() { Nome = c.Name, Valor = c.Width });
+
+                
             }
             this.config.ListaOrdemColunas = listaIndex;
             this.config.ListaTamanhoColunas = listaWidth;
+
+
+            
+
 
         }
         #endregion

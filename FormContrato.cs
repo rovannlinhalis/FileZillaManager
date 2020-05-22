@@ -16,12 +16,14 @@ namespace FileZillaManager
     {
         List<Contrato> listaCompleta;
         List<Grupo> _grupos;
-        public FormContrato()
+        Contrato currentObj = null;
+        public FormContrato(Contrato c = null)
         {
             InitializeComponent();
             dataGridView1.AutoGenerateColumns = false;
             Funcoes.ColorirObjetos(this);
             Funcoes.TrocaTabPorEnter(this);
+            currentObj = c;
         }
 
         public Task<List<Contrato>> GetRecords()
@@ -96,6 +98,11 @@ namespace FileZillaManager
             Funcoes.ClearControl(panelCadastro);
             CarregarCombo();
             CarregarGrid();
+
+            if (currentObj != null)
+            {
+                SelectContrato(currentObj);
+            }
         }
 
         private void SelectContrato(Contrato c )
@@ -143,11 +150,20 @@ namespace FileZillaManager
         {
             if (e.RowIndex >= 0)
             {
-                List<Contrato> lista = dataGridView1.DataSource as List<Contrato>;
-                if (lista != null)
+                if (currentObj != null)
                 {
-                    Contrato c = lista[e.RowIndex];
-                    SelectContrato(c);
+                    SelectContrato(currentObj);
+                    currentObj = null;
+                }
+                else
+                {
+                    List<Contrato> lista = dataGridView1.DataSource as List<Contrato>;
+                    if (lista != null)
+                    {
+                        Contrato c = lista[e.RowIndex];
+                        SelectContrato(c);
+                        dataGridView1.ClearSelection();
+                    }
                 }
             }
         }
@@ -273,6 +289,11 @@ namespace FileZillaManager
         {
             if (e.KeyData == Keys.Delete)
                 campoGrupo.SelectedIndex = -1;
+        }
+
+        private void label9_Click(object sender, EventArgs e)
+        {
+            campoSenhaCompactacao.PasswordChar = campoSenhaCompactacao.PasswordChar == '*' ? '\0' : '*';
         }
     }
 }
