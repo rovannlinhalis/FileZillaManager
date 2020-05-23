@@ -329,11 +329,12 @@ namespace FileZillaManager
         private void MatarProcessos()
         {
             if (Program.listaProcessosMonitor.Count > 0)
-                foreach (var p in Program.listaProcessosMonitor)
+                for (int i = 0; i < Program.listaProcessosMonitor.Count; i++)
+                //foreach (var p in Program.listaProcessosMonitor)
                 {
                     try
                     {
-                        Process px = Process.GetProcessById(p.Id);
+                        Process px = Process.GetProcessById(Program.listaProcessosMonitor[i].Id);
                         if (!px.HasExited)
                         {
                             px.Kill();

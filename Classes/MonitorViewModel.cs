@@ -23,7 +23,7 @@ namespace FileZillaManager.Classes
         private bool monitorarSubPastasIndividualmente;
         private bool monitorarSubPastas;
         private bool ocultarPastasVazias;
-        private DateTime dataReferencia;
+        //private DateTime dataReferencia;
         private Empresa empresa;
         
         
@@ -125,12 +125,13 @@ namespace FileZillaManager.Classes
         }
         public void ProcessarArquivos()
         {
-            foreach (var c in cache.Where(x=>x.Status == ContratoState.NaoVerificado || x.Status == ContratoState.Erro || x.Integridade == ZipCheckState.Erro || (DateTime.Now - x.LastLerDiretorio) > TimeSpan.FromMinutes(10)).OrderBy(x => x.LastLerDiretorio))
+            //foreach (var c in cache.Where(x=> !Contratos.Any(y=>y.Pasta == x.Pasta && y.Login == x.Login ) && ( x.Status == ContratoState.NaoVerificado || x.Status == ContratoState.Erro || x.Integridade == ZipCheckState.Erro)).OrderBy(x => x.LastLerDiretorio))
+            foreach (var c in cache.Where(x => !x.LendoDiretorio &&  !Contratos.Any(y => y.Pasta == x.Pasta && y.Login == x.Login) && DateTime.Now - x.LastLerDiretorio >= TimeSpan.FromSeconds(1)).OrderBy(x => x.LastLerDiretorio))
             {
                 c.LerDiretorio();
             }
 
-            foreach (var c in Contratos.Where(x => x.Status == ContratoState.NaoVerificado || x.Status == ContratoState.Erro || x.Integridade == ZipCheckState.Erro || (DateTime.Now - x.LastLerDiretorio) > TimeSpan.FromMinutes(10)).OrderBy(x=>x.LastLerDiretorio))
+            foreach (var c in Contratos.Where(x=> !x.LendoDiretorio &&  DateTime.Now - x.LastLerDiretorio >= TimeSpan.FromSeconds(1)).OrderBy(x=>x.LastLerDiretorio))
             {
                 c.LerDiretorio();
             }

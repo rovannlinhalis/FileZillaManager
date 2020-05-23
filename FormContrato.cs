@@ -162,7 +162,7 @@ namespace FileZillaManager
                     {
                         Contrato c = lista[e.RowIndex];
                         SelectContrato(c);
-                        dataGridView1.ClearSelection();
+                        //dataGridView1.ClearSelection();
                     }
                 }
             }
