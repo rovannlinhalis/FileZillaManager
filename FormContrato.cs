@@ -23,6 +23,7 @@ namespace FileZillaManager
             dataGridView1.AutoGenerateColumns = false;
             Funcoes.ColorirObjetos(this);
             Funcoes.TrocaTabPorEnter(this);
+            if (c != null)
             currentObj = c;
         }
 
@@ -90,6 +91,18 @@ namespace FileZillaManager
                 List<Contrato> listaFiltrada = listaCompleta.Where(x => x.Nome.Contains(textBoxFiltro.Text) || x.Login.Contains(textBoxFiltro.Text)).OrderByDescending(x => x.Nome.StartsWith(textBoxFiltro.Text) || x.Login.StartsWith(textBoxFiltro.Text)).ThenBy(x => x.Login.EndsWith(textBoxFiltro.Text) ||  x.Nome.EndsWith(textBoxFiltro.Text)).ToList();
                 dataGridView1.DataSource = listaFiltrada;
             }
+
+            if (currentObj != null)
+            {
+                List<Contrato> lista = dataGridView1.DataSource as List<Contrato>;
+                int idx = lista.FindIndex(x => x.Codigo == currentObj.Codigo);
+                if (idx >= 0)
+                {
+                    dataGridView1.Rows[idx].Selected = true;
+                    SelectContrato(currentObj);
+                }
+                currentObj = null;
+            }
         }
         
         private void FormContrato_Load(object sender, EventArgs e)
@@ -98,11 +111,6 @@ namespace FileZillaManager
             Funcoes.ClearControl(panelCadastro);
             CarregarCombo();
             CarregarGrid();
-
-            if (currentObj != null)
-            {
-                SelectContrato(currentObj);
-            }
         }
 
         private void SelectContrato(Contrato c )
@@ -150,13 +158,7 @@ namespace FileZillaManager
         {
             if (e.RowIndex >= 0)
             {
-                if (currentObj != null)
-                {
-                    SelectContrato(currentObj);
-                    currentObj = null;
-                }
-                else
-                {
+            
                     List<Contrato> lista = dataGridView1.DataSource as List<Contrato>;
                     if (lista != null)
                     {
@@ -164,7 +166,6 @@ namespace FileZillaManager
                         SelectContrato(c);
                         //dataGridView1.ClearSelection();
                     }
-                }
             }
         }
 

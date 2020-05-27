@@ -334,6 +334,14 @@ namespace FileZillaManager.Classes
 
                     using (Repositorio.FileCheckRepositorio rep = new Repositorio.FileCheckRepositorio())
                     {
+                        var filesdb = rep.SelectAll(HashFile, file.FullName);
+
+                        if (filesdb.Count > 0)
+                            LastFileCheck = filesdb.FirstOrDefault();
+                        else
+                            LastFileCheck = null;
+
+
                         if (LastFileCheck == null)
                             rep.Insert(new FileCheck() { Contrato = this.Contrato.Codigo, Data = DateTime.Now, Hash = HashFile.ToLower(), Nome = file.FullName.ToLower(), State = this.Integridade, FileData = file.LastWriteTime, FileLength = file.Length });
                         else
