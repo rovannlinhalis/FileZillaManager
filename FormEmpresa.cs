@@ -43,6 +43,7 @@ namespace FileZillaManager
                 siColorInput2.Text = String.IsNullOrWhiteSpace(ObjEmpresa.CorSecundaria) ? "#fff4f4" : ObjEmpresa.CorSecundaria;
                 siColorInput3.Text = String.IsNullOrWhiteSpace(ObjEmpresa.CorTerciaria) ? "#FA8072" : ObjEmpresa.CorTerciaria;
                 textBoxLogotipo.Text = ObjEmpresa.Logotipo;
+                campoMinDeleteInvalido.Value = ObjEmpresa.MinDeleteInvalido < campoMinDeleteInvalido.Minimum ? campoMinDeleteInvalido.Minimum : ObjEmpresa.MinDeleteInvalido;
             }
         }
 
@@ -73,6 +74,7 @@ namespace FileZillaManager
                 ObjEmpresa.CorSecundaria = siColorInput2.Text;
                 ObjEmpresa.CorTerciaria = siColorInput3.Text;
                 ObjEmpresa.Logotipo = textBoxLogotipo.Text;
+                ObjEmpresa.MinDeleteInvalido = (int)campoMinDeleteInvalido.Value;
 
                 if (String.IsNullOrEmpty(lblCodigo.Text))
                 {

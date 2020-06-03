@@ -21,5 +21,7 @@ namespace FileZillaManager.Classes
         public string CorTerciaria { get; set; } = "#FA8072";
         public string Logotipo { get; set; }
 
+        public int MinDeleteInvalido { get; set; } = 0;
+
     }
 }

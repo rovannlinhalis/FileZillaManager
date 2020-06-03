@@ -316,6 +316,7 @@ namespace FileZillaManager.Classes
                         else
                         {
                             this.Integridade = ZipCheckState.Invalido;
+
                         }
                     }
                     else
@@ -324,6 +325,9 @@ namespace FileZillaManager.Classes
                         {
                             this.Integridade = ZipCheckState.Verificando;
                             this.Integridade = Is7zipRarValid(file.FullName);
+
+                           
+
                         }
                         else
                         {
@@ -354,6 +358,8 @@ namespace FileZillaManager.Classes
                         }
                     }
 
+                    DeletaInvalido();
+
                 }
                 catch (Exception ex)
                 {
@@ -366,6 +372,21 @@ namespace FileZillaManager.Classes
                 //Watcher.EnableRaisingEvents = true;
             });
 
+        }
+        private void DeletaInvalido()
+        {
+            if (Empresa.MinDeleteInvalido > 0)
+                if (this.Integridade == ZipCheckState.Invalido && DateTime.Now - file.LastWriteTime >= TimeSpan.FromMinutes(Empresa.MinDeleteInvalido))
+                {
+                    try
+                    {
+                        file.Delete();
+                    }
+                    catch (Exception ex)
+                    {
+                        this.mensagemZip = "Deletar arquivo inválido. " + ex.Message;
+                    }
+                }
         }
         private bool IsZipValid(string path)
         {

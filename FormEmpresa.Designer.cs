@@ -53,6 +53,10 @@
             this.buttonBrowseLogo = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.textBoxLogotipo = new System.Windows.Forms.TextBox();
+            this.campoMinDeleteInvalido = new System.Windows.Forms.NumericUpDown();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.campoMinDeleteInvalido)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -85,7 +89,7 @@
             this.buttonCancelar.Font = new System.Drawing.Font("Roboto", 8.25F, System.Drawing.FontStyle.Bold);
             this.buttonCancelar.ForeColor = System.Drawing.Color.IndianRed;
             this.buttonCancelar.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonCancelar.Location = new System.Drawing.Point(184, 345);
+            this.buttonCancelar.Location = new System.Drawing.Point(184, 407);
             this.buttonCancelar.Name = "buttonCancelar";
             this.buttonCancelar.Size = new System.Drawing.Size(107, 43);
             this.buttonCancelar.TabIndex = 11;
@@ -103,7 +107,7 @@
             this.buttonGravar.Font = new System.Drawing.Font("Roboto", 8.25F, System.Drawing.FontStyle.Bold);
             this.buttonGravar.ForeColor = System.Drawing.Color.IndianRed;
             this.buttonGravar.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonGravar.Location = new System.Drawing.Point(71, 345);
+            this.buttonGravar.Location = new System.Drawing.Point(71, 407);
             this.buttonGravar.Name = "buttonGravar";
             this.buttonGravar.Size = new System.Drawing.Size(107, 43);
             this.buttonGravar.TabIndex = 10;
@@ -214,7 +218,7 @@
             this.buttonTestarConexao.Font = new System.Drawing.Font("Roboto", 8.25F);
             this.buttonTestarConexao.ForeColor = System.Drawing.Color.IndianRed;
             this.buttonTestarConexao.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonTestarConexao.Location = new System.Drawing.Point(12, 299);
+            this.buttonTestarConexao.Location = new System.Drawing.Point(12, 361);
             this.buttonTestarConexao.Name = "buttonTestarConexao";
             this.buttonTestarConexao.Size = new System.Drawing.Size(95, 28);
             this.buttonTestarConexao.TabIndex = 13;
@@ -232,7 +236,7 @@
             this.buttonImportar.Font = new System.Drawing.Font("Roboto", 8.25F);
             this.buttonImportar.ForeColor = System.Drawing.Color.IndianRed;
             this.buttonImportar.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonImportar.Location = new System.Drawing.Point(245, 299);
+            this.buttonImportar.Location = new System.Drawing.Point(245, 361);
             this.buttonImportar.Name = "buttonImportar";
             this.buttonImportar.Size = new System.Drawing.Size(107, 28);
             this.buttonImportar.TabIndex = 14;
@@ -288,7 +292,7 @@
             this.buttonEnviarDados.Font = new System.Drawing.Font("Roboto", 8.25F);
             this.buttonEnviarDados.ForeColor = System.Drawing.Color.IndianRed;
             this.buttonEnviarDados.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.buttonEnviarDados.Location = new System.Drawing.Point(132, 299);
+            this.buttonEnviarDados.Location = new System.Drawing.Point(132, 361);
             this.buttonEnviarDados.Name = "buttonEnviarDados";
             this.buttonEnviarDados.Size = new System.Drawing.Size(107, 28);
             this.buttonEnviarDados.TabIndex = 18;
@@ -395,23 +399,57 @@
             this.textBoxLogotipo.TabIndex = 26;
             this.textBoxLogotipo.Tag = "";
             // 
+            // campoMinDeleteInvalido
+            // 
+            this.campoMinDeleteInvalido.Location = new System.Drawing.Point(12, 304);
+            this.campoMinDeleteInvalido.Maximum = new decimal(new int[] {
+            999,
+            0,
+            0,
+            0});
+            this.campoMinDeleteInvalido.Name = "campoMinDeleteInvalido";
+            this.campoMinDeleteInvalido.Size = new System.Drawing.Size(166, 21);
+            this.campoMinDeleteInvalido.TabIndex = 31;
+            this.campoMinDeleteInvalido.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(12, 288);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(166, 13);
+            this.label8.TabIndex = 32;
+            this.label8.Text = "Deletar Arquivos Inválidos (min)";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(12, 328);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(95, 13);
+            this.label9.TabIndex = 33;
+            this.label9.Text = "0 = Nunca deletar";
+            // 
             // FormEmpresa
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(363, 400);
+            this.ClientSize = new System.Drawing.Size(363, 462);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.campoMinDeleteInvalido);
             this.Controls.Add(this.buttonBrowseLogo);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.textBoxLogotipo);
             this.Controls.Add(this.buttonEnviarDados);
             this.Controls.Add(this.buttonBrowse7z);
-            this.Controls.Add(this.siColorInput2);
             this.Controls.Add(this.siColorInput3);
+            this.Controls.Add(this.siColorInput2);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.textBox7ZPath);
-            this.Controls.Add(this.siColorInput1);
             this.Controls.Add(this.buttonImportar);
             this.Controls.Add(this.buttonTestarConexao);
+            this.Controls.Add(this.siColorInput1);
             this.Controls.Add(this.lblCodigo);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.txtPorta);
@@ -428,6 +466,7 @@
             this.Name = "FormEmpresa";
             this.Text = "Configurações";
             this.Load += new System.EventHandler(this.FormEmpresa_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.campoMinDeleteInvalido)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -460,5 +499,8 @@
         private System.Windows.Forms.Button buttonBrowseLogo;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox textBoxLogotipo;
+        private System.Windows.Forms.NumericUpDown campoMinDeleteInvalido;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
     }
 }
