@@ -94,6 +94,10 @@ namespace FileZillaManager.Classes
         public bool VerificandoIntegridade { get => processZipIsRunning || (verificaZip != null && (verificaZip.Status == TaskStatus.Running || verificaZip.Status == TaskStatus.WaitingToRun)); }
         public bool VerificandoHash { get => (verificaHash != null && (verificaHash.Status == TaskStatus.Running || verificaHash.Status == TaskStatus.WaitingToRun)); }
 
+
+        int qtdArquivos;
+        public int QtdArquivos { get => qtdArquivos; }
+
         public string MensagemZip { get => mensagemZip; }
 
         //public event PropertyChangedEventHandler PropertyChanged;
@@ -259,6 +263,9 @@ namespace FileZillaManager.Classes
                                                 this.lastIntegrityDate = LastFileCheck.Data;
                                                 //this.Observacao = "Arquivo validado pelo hash no banco de dados";
                                             }
+
+                                            qtdArquivos = rep.SelectAll(contrato.Codigo, DataRef)?.Count() ?? 0;
+
                                         }
                                     }
                                     catch (IOException ioe)

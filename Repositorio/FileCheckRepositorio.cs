@@ -57,6 +57,11 @@ ADD FILE_TAM NUMERIC(18,0);",
             return this.SelectAll("lower(NOME) = '" + fileName.ToLower() + "' and lower(FILEHASH) = '" + md5Hash.ToLower() + "'");
         }
 
+        public List<Classes.FileCheck> SelectAll(int contrato, DateTime data)
+        {
+            return this.SelectAll("CONTRATO = " + contrato + " and cast(data as date) = '" + data.ToShortDateString() + "'");
+        }
+
         public int DeleteAll()
         {
             int i = 0;

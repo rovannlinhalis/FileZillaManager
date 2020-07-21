@@ -81,6 +81,7 @@
             this.ColumnLastIntegrity = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnHash = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnMensagemZip = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnQtdArquivos = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel2.SuspendLayout();
             this.panelUpdates.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -318,7 +319,8 @@
             this.ColumnLastHast,
             this.ColumnLastIntegrity,
             this.ColumnHash,
-            this.ColumnMensagemZip});
+            this.ColumnMensagemZip,
+            this.ColumnQtdArquivos});
             this.dataGridView1.DataSource = this.bindingSource1;
             dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Window;
@@ -523,6 +525,14 @@
             this.ColumnMensagemZip.ReadOnly = true;
             this.ColumnMensagemZip.Visible = false;
             // 
+            // ColumnQtdArquivos
+            // 
+            this.ColumnQtdArquivos.DataPropertyName = "QtdArquivos";
+            this.ColumnQtdArquivos.HeaderText = "Qtd Arquivos";
+            this.ColumnQtdArquivos.Name = "ColumnQtdArquivos";
+            this.ColumnQtdArquivos.ReadOnly = true;
+            this.ColumnQtdArquivos.Visible = false;
+            // 
             // FormMonitor2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -594,5 +604,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnLastIntegrity;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnHash;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnMensagemZip;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnQtdArquivos;
     }
 }

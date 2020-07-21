@@ -273,6 +273,7 @@ namespace FileZillaManager
                 dataGridView1.Columns[ColumnLastLerDiretorio.Name].Visible = true;
                 dataGridView1.Columns[ColumnHash.Name].Visible = true;
                 dataGridView1.Columns[ColumnMensagemZip.Name].Visible = true;
+                dataGridView1.Columns[ColumnQtdArquivos.Name].Visible = true;
 
             }
             foreach (DataGridViewColumn c in dataGridView1.Columns)
