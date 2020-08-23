@@ -91,6 +91,19 @@ namespace FileZillaManager.Classes
                 ContratoViewModel model;
                 try
                 {
+                    //DirectoryInfo dir = new DirectoryInfo(c.Pasta);
+
+                    //model = new ContratoViewModel(c, dir.FullName, false, DataReferencia, this.Empresa);
+                    //cache.Add(model);
+
+
+                    //foreach (DirectoryInfo d in dir.GetDirectories("*", SearchOption.AllDirectories))
+                    //{
+                    //    model = new ContratoViewModel(c, d.FullName, false, DataReferencia, this.Empresa);
+                    //    cache.Add(model);
+                    //}
+
+
                     if (MonitorarSubPastasIndividualmente)
                     {
                         DirectoryInfo dir = new DirectoryInfo(c.Pasta);

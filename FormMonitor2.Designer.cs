@@ -57,12 +57,6 @@
             this.checkBoxSubPastas = new System.Windows.Forms.CheckBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.timerGetContratos = new System.Windows.Forms.Timer(this.components);
-            this.backgroundWorkerProcesso = new System.ComponentModel.BackgroundWorker();
-            this.timerResetBinding = new System.Windows.Forms.Timer(this.components);
-            this.timerUpdate = new System.Windows.Forms.Timer(this.components);
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.ColumnContratoNome = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnContratoLogin = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnContratoStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -82,6 +76,12 @@
             this.ColumnHash = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnMensagemZip = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnQtdArquivos = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.timerGetContratos = new System.Windows.Forms.Timer(this.components);
+            this.backgroundWorkerProcesso = new System.ComponentModel.BackgroundWorker();
+            this.timerResetBinding = new System.Windows.Forms.Timer(this.components);
+            this.timerUpdate = new System.Windows.Forms.Timer(this.components);
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.panel2.SuspendLayout();
             this.panelUpdates.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -345,30 +345,6 @@
             this.dataGridView1.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dataGridView1_CellPainting);
             this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView1_DataError);
             // 
-            // bindingSource1
-            // 
-            this.bindingSource1.AllowNew = false;
-            this.bindingSource1.Filter = "Visible=True";
-            // 
-            // timerGetContratos
-            // 
-            this.timerGetContratos.Tick += new System.EventHandler(this.timerGetContratos_Tick);
-            // 
-            // backgroundWorkerProcesso
-            // 
-            this.backgroundWorkerProcesso.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerProcesso_DoWork);
-            // 
-            // timerResetBinding
-            // 
-            this.timerResetBinding.Interval = 1000;
-            this.timerResetBinding.Tick += new System.EventHandler(this.timerResetBinding_Tick);
-            // 
-            // timerUpdate
-            // 
-            this.timerUpdate.Enabled = true;
-            this.timerUpdate.Interval = 10800000;
-            this.timerUpdate.Tick += new System.EventHandler(this.timerUpdate_Tick);
-            // 
             // ColumnContratoNome
             // 
             this.ColumnContratoNome.DataPropertyName = "Nome";
@@ -532,6 +508,30 @@
             this.ColumnQtdArquivos.Name = "ColumnQtdArquivos";
             this.ColumnQtdArquivos.ReadOnly = true;
             this.ColumnQtdArquivos.Visible = false;
+            // 
+            // bindingSource1
+            // 
+            this.bindingSource1.AllowNew = false;
+            this.bindingSource1.Filter = "Visible=True";
+            // 
+            // timerGetContratos
+            // 
+            this.timerGetContratos.Tick += new System.EventHandler(this.timerGetContratos_Tick);
+            // 
+            // backgroundWorkerProcesso
+            // 
+            this.backgroundWorkerProcesso.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerProcesso_DoWork);
+            // 
+            // timerResetBinding
+            // 
+            this.timerResetBinding.Interval = 1000;
+            this.timerResetBinding.Tick += new System.EventHandler(this.timerResetBinding_Tick);
+            // 
+            // timerUpdate
+            // 
+            this.timerUpdate.Enabled = true;
+            this.timerUpdate.Interval = 10800000;
+            this.timerUpdate.Tick += new System.EventHandler(this.timerUpdate_Tick);
             // 
             // FormMonitor2
             // 
