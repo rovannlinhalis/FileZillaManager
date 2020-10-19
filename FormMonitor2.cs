@@ -419,5 +419,36 @@ namespace FileZillaManager
             else
                 panelUpdates.Visible = false;
         }
+
+        private void timerHardware_Tick(object sender, EventArgs e)
+        {
+            timerHardware.Enabled = false;
+            panelHardwareMonitor.Visible = false;
+            labelHardwareMensagem.Text = "Verificando unidades";
+            try
+            {
+                foreach (DriveInfo inf in DriveInfo.GetDrives())
+                {
+                    if (inf.IsReady)
+                    {
+                        if (inf.DriveType == DriveType.Fixed)// || inf.DriveType == DriveType.Network)
+                        {
+                            double perc = inf.TotalFreeSpace * 100 / inf.TotalSize;
+
+                            if (perc <= 5)
+                            {
+                                panelHardwareMonitor.Visible = true;
+                                labelHardwareMensagem.Text = "Unidade " + inf.Name + " está com pouco espaço.";
+                            }
+
+                        }
+                    }
+                }
+            }
+            catch { }
+            
+            timerHardware.Interval = 3600000;
+            timerHardware.Enabled = true;
+        }
     }
 }
