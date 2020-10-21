@@ -46,6 +46,7 @@ namespace FileZillaManager
                 if (!backgroundWorkerProcesso.IsBusy)
                     backgroundWorkerProcesso.RunWorkerAsync();
 
+
                 bindingSource1.ResetBindings(false);
 
                 timerResetBinding.Enabled = false;
@@ -72,6 +73,8 @@ namespace FileZillaManager
             FormataColunas();
             SetColors();
             this.Text = "Monitor - " + this.Empresa.Nome + " / Desenvolvido por Rovann Linhalis - rovann.com.br";
+
+            
         }
 
         private void timerGetContratos_Tick(object sender, EventArgs e)
@@ -449,6 +452,21 @@ namespace FileZillaManager
             
             timerHardware.Interval = 3600000;
             timerHardware.Enabled = true;
+        }
+
+        private void timerSort_Tick(object sender, EventArgs e)
+        {
+            timerSort.Enabled = false;
+            timerResetBinding.Enabled = false;
+            Model.Contratos.SetSecondProperty("Nome");
+            Model.Contratos.ReSort();
+            timerResetBinding.Enabled = true;
+            timerSort.Enabled = checkBoxRefreshOrdem.Checked;
+        }
+
+        private void checkBoxRefreshOrdem_CheckedChanged(object sender, EventArgs e)
+        {
+            timerSort.Enabled = checkBoxRefreshOrdem.Checked;
         }
     }
 }

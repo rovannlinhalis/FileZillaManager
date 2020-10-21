@@ -19,6 +19,7 @@ namespace FileZillaManager.Classes
         private bool _isSorted;
         private ListSortDirection _sortDirection = ListSortDirection.Ascending;
         private PropertyDescriptor _sortProperty;
+        private PropertyDescriptor _sortSecondProperty;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SortableBindingList{T}"/> class.
@@ -68,6 +69,24 @@ namespace FileZillaManager.Classes
             get { return _sortProperty; }
         }
 
+        public PropertyDescriptor SortSecondProperty { get => _sortSecondProperty; set => _sortSecondProperty = value; }
+
+        public void SetSecondProperty(string propName)
+        {
+            PropertyDescriptor prop;
+            var props = TypeDescriptor.GetProperties(typeof(T));
+            
+            prop = props.Find(propName, false) ?? null;
+
+            if (propName.EndsWith("F"))
+            {
+                string newName = propName.Remove(propName.Length - 1);
+                prop = props.Find(newName, false) ?? prop;
+            }
+
+            _sortSecondProperty = prop;
+        }
+
         /// <summary>
         /// Removes any sort applied with ApplySortCore if sorting is implemented
         /// </summary>
@@ -75,7 +94,16 @@ namespace FileZillaManager.Classes
         {
             _sortDirection = ListSortDirection.Ascending;
             _sortProperty = null;
+            SortSecondProperty = null;
             _isSorted = false; //thanks Luca
+        }
+
+        
+
+        public void ReSort()
+        {
+            if (_isSorted)
+                ApplySortCore(_sortProperty, _sortDirection);
         }
 
         /// <summary>
@@ -128,12 +156,46 @@ namespace FileZillaManager.Classes
             {
                 return 1; //first has value, second doesn't
             }
+            if (lhsValue.Equals(rhsValue))
+            {
+                if (SortSecondProperty != null)
+                    return OnSecondComparison(lhs, rhs);
+                else
+                {
+                    if (lhsValue is IComparable)
+                    {
+                        return ((IComparable)lhsValue).CompareTo(rhsValue);
+                    }
+                    return 0; //both are the same
+                }
+            }
+            if (lhsValue is IComparable)
+            {
+                return ((IComparable)lhsValue).CompareTo(rhsValue);
+            }
+            //not comparable, compare ToString
+            return lhsValue.ToString().CompareTo(rhsValue.ToString());
+        }
+        private int OnSecondComparison(T lhs, T rhs)
+        {
+            object lhsValue = lhs == null ? null : SortSecondProperty.GetValue(lhs);
+            object rhsValue = rhs == null ? null : SortSecondProperty.GetValue(rhs);
+            if (lhsValue == null)
+            {
+                return (rhsValue == null) ? 0 : -1; //nulls are equal
+            }
+            if (rhsValue == null)
+            {
+                return 1; //first has value, second doesn't
+            }
             if (lhsValue is IComparable)
             {
                 return ((IComparable)lhsValue).CompareTo(rhsValue);
             }
             if (lhsValue.Equals(rhsValue))
             {
+
+
                 return 0; //both are the same
             }
             //not comparable, compare ToString

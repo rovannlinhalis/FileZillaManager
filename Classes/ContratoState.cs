@@ -10,17 +10,17 @@ namespace FileZillaManager.Classes
 {
     public enum ContratoState
     {
-        [Description("Não Verificado")]
+        [Description(".Não Verificado")]
         NaoVerificado = -1,
-        [Description("Diretório Vazio")]
+        [Description(" Diretório Vazio")]
         DiretorioVazio = 0,
-        [Description("Arquivo Recebido Hoje")]
+        [Description("1 - Arquivo Recebido Hoje")]
         RecebidoHoje = 1,
-        [Description("Arquivo Recebido há 1 dia")]
+        [Description("2 - Arquivo Recebido há 1 dia")]
         Recebido1dia = 2,
-        [Description("Arquivo Recebido há 2 ou 3 dias")]
+        [Description("3 - Arquivo Recebido há 2 ou 3 dias")]
         Recebido2ou3dias = 3,
-        [Description("Arquivo Recebido há mais de 3 dias")]
+        [Description("5 - Arquivo Recebido há mais de 3 dias")]
         RecebidoMais3dias = 5,
         Erro = 9
     }

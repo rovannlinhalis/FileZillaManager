@@ -29,18 +29,20 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMonitor2));
             this.panel2 = new System.Windows.Forms.Panel();
+            this.panelHardwareMonitor = new System.Windows.Forms.Panel();
+            this.labelHardwareMensagem = new System.Windows.Forms.Label();
             this.panelUpdates = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -57,6 +59,14 @@
             this.checkBoxSubPastas = new System.Windows.Forms.CheckBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.timerGetContratos = new System.Windows.Forms.Timer(this.components);
+            this.backgroundWorkerProcesso = new System.ComponentModel.BackgroundWorker();
+            this.timerResetBinding = new System.Windows.Forms.Timer(this.components);
+            this.timerUpdate = new System.Windows.Forms.Timer(this.components);
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.timerHardware = new System.Windows.Forms.Timer(this.components);
+            this.timerSort = new System.Windows.Forms.Timer(this.components);
             this.ColumnContratoNome = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnContratoLogin = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnContratoStatus = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -76,16 +86,9 @@
             this.ColumnHash = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnMensagemZip = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnQtdArquivos = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.timerGetContratos = new System.Windows.Forms.Timer(this.components);
-            this.backgroundWorkerProcesso = new System.ComponentModel.BackgroundWorker();
-            this.timerResetBinding = new System.Windows.Forms.Timer(this.components);
-            this.timerUpdate = new System.Windows.Forms.Timer(this.components);
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.panelHardwareMonitor = new System.Windows.Forms.Panel();
-            this.labelHardwareMensagem = new System.Windows.Forms.Label();
-            this.timerHardware = new System.Windows.Forms.Timer(this.components);
+            this.checkBoxRefreshOrdem = new System.Windows.Forms.CheckBox();
             this.panel2.SuspendLayout();
+            this.panelHardwareMonitor.SuspendLayout();
             this.panelUpdates.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -93,7 +96,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
-            this.panelHardwareMonitor.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel2
@@ -109,6 +111,29 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1261, 82);
             this.panel2.TabIndex = 1;
+            // 
+            // panelHardwareMonitor
+            // 
+            this.panelHardwareMonitor.BackColor = System.Drawing.Color.LightCoral;
+            this.panelHardwareMonitor.Controls.Add(this.labelHardwareMensagem);
+            this.panelHardwareMonitor.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panelHardwareMonitor.Location = new System.Drawing.Point(735, 0);
+            this.panelHardwareMonitor.Name = "panelHardwareMonitor";
+            this.panelHardwareMonitor.Size = new System.Drawing.Size(263, 82);
+            this.panelHardwareMonitor.TabIndex = 13;
+            this.panelHardwareMonitor.Visible = false;
+            // 
+            // labelHardwareMensagem
+            // 
+            this.labelHardwareMensagem.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelHardwareMensagem.Font = new System.Drawing.Font("Roboto", 14.25F);
+            this.labelHardwareMensagem.ForeColor = System.Drawing.Color.DarkRed;
+            this.labelHardwareMensagem.Location = new System.Drawing.Point(0, 0);
+            this.labelHardwareMensagem.Name = "labelHardwareMensagem";
+            this.labelHardwareMensagem.Size = new System.Drawing.Size(263, 82);
+            this.labelHardwareMensagem.TabIndex = 5;
+            this.labelHardwareMensagem.Text = "----------";
+            this.labelHardwareMensagem.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // panelUpdates
             // 
@@ -206,6 +231,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.checkBoxRefreshOrdem);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.checkBoxOcultarPastasVazias);
             this.groupBox1.Controls.Add(this.dateTimePickerDataRef);
@@ -234,7 +260,7 @@
             // 
             this.checkBoxOcultarPastasVazias.AutoSize = true;
             this.checkBoxOcultarPastasVazias.Font = new System.Drawing.Font("Roboto", 8.25F);
-            this.checkBoxOcultarPastasVazias.Location = new System.Drawing.Point(7, 18);
+            this.checkBoxOcultarPastasVazias.Location = new System.Drawing.Point(7, 14);
             this.checkBoxOcultarPastasVazias.Name = "checkBoxOcultarPastasVazias";
             this.checkBoxOcultarPastasVazias.Size = new System.Drawing.Size(137, 17);
             this.checkBoxOcultarPastasVazias.TabIndex = 1;
@@ -257,7 +283,7 @@
             // 
             this.checkBoxSubPastasIndividualmente.AutoSize = true;
             this.checkBoxSubPastasIndividualmente.Font = new System.Drawing.Font("Roboto", 8.25F);
-            this.checkBoxSubPastasIndividualmente.Location = new System.Drawing.Point(7, 54);
+            this.checkBoxSubPastasIndividualmente.Location = new System.Drawing.Point(7, 46);
             this.checkBoxSubPastasIndividualmente.Name = "checkBoxSubPastasIndividualmente";
             this.checkBoxSubPastasIndividualmente.Size = new System.Drawing.Size(213, 17);
             this.checkBoxSubPastasIndividualmente.TabIndex = 3;
@@ -268,7 +294,7 @@
             // 
             this.checkBoxSubPastas.AutoSize = true;
             this.checkBoxSubPastas.Font = new System.Drawing.Font("Roboto", 8.25F);
-            this.checkBoxSubPastas.Location = new System.Drawing.Point(7, 36);
+            this.checkBoxSubPastas.Location = new System.Drawing.Point(7, 30);
             this.checkBoxSubPastas.Name = "checkBoxSubPastas";
             this.checkBoxSubPastas.Size = new System.Drawing.Size(131, 17);
             this.checkBoxSubPastas.TabIndex = 2;
@@ -290,20 +316,20 @@
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AllowUserToOrderColumns = true;
-            dataGridViewCellStyle11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(244)))), ((int)(((byte)(244)))));
-            this.dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(244)))), ((int)(((byte)(244)))));
+            this.dataGridView1.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridView1.AutoGenerateColumns = false;
             this.dataGridView1.BackgroundColor = System.Drawing.Color.White;
             this.dataGridView1.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
             this.dataGridView1.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle12.BackColor = System.Drawing.Color.IndianRed;
-            dataGridViewCellStyle12.Font = new System.Drawing.Font("Roboto", 8.25F);
-            dataGridViewCellStyle12.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.Color.Firebrick;
-            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.IndianRed;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Roboto", 8.25F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Firebrick;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridView1.ColumnHeadersHeight = 32;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -327,14 +353,14 @@
             this.ColumnMensagemZip,
             this.ColumnQtdArquivos});
             this.dataGridView1.DataSource = this.bindingSource1;
-            dataGridViewCellStyle20.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle20.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle20.Font = new System.Drawing.Font("Roboto", 8.25F);
-            dataGridViewCellStyle20.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle20.SelectionBackColor = System.Drawing.Color.Salmon;
-            dataGridViewCellStyle20.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle20.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle20;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Roboto", 8.25F);
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.Color.Salmon;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle10;
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView1.EnableHeadersVisualStyles = false;
             this.dataGridView1.GridColor = System.Drawing.Color.Gainsboro;
@@ -350,12 +376,47 @@
             this.dataGridView1.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dataGridView1_CellPainting);
             this.dataGridView1.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGridView1_DataError);
             // 
+            // bindingSource1
+            // 
+            this.bindingSource1.AllowNew = false;
+            this.bindingSource1.Filter = "Visible=True";
+            // 
+            // timerGetContratos
+            // 
+            this.timerGetContratos.Tick += new System.EventHandler(this.timerGetContratos_Tick);
+            // 
+            // backgroundWorkerProcesso
+            // 
+            this.backgroundWorkerProcesso.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerProcesso_DoWork);
+            // 
+            // timerResetBinding
+            // 
+            this.timerResetBinding.Interval = 1000;
+            this.timerResetBinding.Tick += new System.EventHandler(this.timerResetBinding_Tick);
+            // 
+            // timerUpdate
+            // 
+            this.timerUpdate.Enabled = true;
+            this.timerUpdate.Interval = 10800000;
+            this.timerUpdate.Tick += new System.EventHandler(this.timerUpdate_Tick);
+            // 
+            // timerHardware
+            // 
+            this.timerHardware.Enabled = true;
+            this.timerHardware.Interval = 5000;
+            this.timerHardware.Tick += new System.EventHandler(this.timerHardware_Tick);
+            // 
+            // timerSort
+            // 
+            this.timerSort.Interval = 3000;
+            this.timerSort.Tick += new System.EventHandler(this.timerSort_Tick);
+            // 
             // ColumnContratoNome
             // 
             this.ColumnContratoNome.DataPropertyName = "Nome";
-            dataGridViewCellStyle13.Format = "G";
-            dataGridViewCellStyle13.NullValue = null;
-            this.ColumnContratoNome.DefaultCellStyle = dataGridViewCellStyle13;
+            dataGridViewCellStyle3.Format = "G";
+            dataGridViewCellStyle3.NullValue = null;
+            this.ColumnContratoNome.DefaultCellStyle = dataGridViewCellStyle3;
             this.ColumnContratoNome.HeaderText = "Nome";
             this.ColumnContratoNome.Name = "ColumnContratoNome";
             this.ColumnContratoNome.ReadOnly = true;
@@ -402,9 +463,9 @@
             // ColumnContratoLastWrite
             // 
             this.ColumnContratoLastWrite.DataPropertyName = "LastWrite";
-            dataGridViewCellStyle14.Format = "G";
-            dataGridViewCellStyle14.NullValue = null;
-            this.ColumnContratoLastWrite.DefaultCellStyle = dataGridViewCellStyle14;
+            dataGridViewCellStyle4.Format = "G";
+            dataGridViewCellStyle4.NullValue = null;
+            this.ColumnContratoLastWrite.DefaultCellStyle = dataGridViewCellStyle4;
             this.ColumnContratoLastWrite.HeaderText = "Data do Arquivo";
             this.ColumnContratoLastWrite.Name = "ColumnContratoLastWrite";
             this.ColumnContratoLastWrite.ReadOnly = true;
@@ -429,8 +490,8 @@
             // ColumnContratoTamanho
             // 
             this.ColumnContratoTamanho.DataPropertyName = "TamanhoF";
-            dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.ColumnContratoTamanho.DefaultCellStyle = dataGridViewCellStyle15;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.ColumnContratoTamanho.DefaultCellStyle = dataGridViewCellStyle5;
             this.ColumnContratoTamanho.HeaderText = "Tamanho";
             this.ColumnContratoTamanho.Name = "ColumnContratoTamanho";
             this.ColumnContratoTamanho.ReadOnly = true;
@@ -438,8 +499,8 @@
             // ColumnContratoFolderSize
             // 
             this.ColumnContratoFolderSize.DataPropertyName = "FolderSizeF";
-            dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.ColumnContratoFolderSize.DefaultCellStyle = dataGridViewCellStyle16;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.ColumnContratoFolderSize.DefaultCellStyle = dataGridViewCellStyle6;
             this.ColumnContratoFolderSize.HeaderText = "Armazenamento";
             this.ColumnContratoFolderSize.Name = "ColumnContratoFolderSize";
             this.ColumnContratoFolderSize.ReadOnly = true;
@@ -462,9 +523,9 @@
             // ColumnLastLerDiretorio
             // 
             this.ColumnLastLerDiretorio.DataPropertyName = "LastLerDiretorio";
-            dataGridViewCellStyle17.Format = "G";
-            dataGridViewCellStyle17.NullValue = null;
-            this.ColumnLastLerDiretorio.DefaultCellStyle = dataGridViewCellStyle17;
+            dataGridViewCellStyle7.Format = "G";
+            dataGridViewCellStyle7.NullValue = null;
+            this.ColumnLastLerDiretorio.DefaultCellStyle = dataGridViewCellStyle7;
             this.ColumnLastLerDiretorio.HeaderText = "Ler Diretorio";
             this.ColumnLastLerDiretorio.Name = "ColumnLastLerDiretorio";
             this.ColumnLastLerDiretorio.ReadOnly = true;
@@ -473,8 +534,8 @@
             // ColumnLastHast
             // 
             this.ColumnLastHast.DataPropertyName = "LastHashDate";
-            dataGridViewCellStyle18.Format = "G";
-            this.ColumnLastHast.DefaultCellStyle = dataGridViewCellStyle18;
+            dataGridViewCellStyle8.Format = "G";
+            this.ColumnLastHast.DefaultCellStyle = dataGridViewCellStyle8;
             this.ColumnLastHast.HeaderText = "Last Hash";
             this.ColumnLastHast.Name = "ColumnLastHast";
             this.ColumnLastHast.ReadOnly = true;
@@ -483,8 +544,8 @@
             // ColumnLastIntegrity
             // 
             this.ColumnLastIntegrity.DataPropertyName = "lastIntegrityDate";
-            dataGridViewCellStyle19.Format = "G";
-            this.ColumnLastIntegrity.DefaultCellStyle = dataGridViewCellStyle19;
+            dataGridViewCellStyle9.Format = "G";
+            this.ColumnLastIntegrity.DefaultCellStyle = dataGridViewCellStyle9;
             this.ColumnLastIntegrity.HeaderText = "Last Integrity";
             this.ColumnLastIntegrity.Name = "ColumnLastIntegrity";
             this.ColumnLastIntegrity.ReadOnly = true;
@@ -514,58 +575,17 @@
             this.ColumnQtdArquivos.ReadOnly = true;
             this.ColumnQtdArquivos.Visible = false;
             // 
-            // bindingSource1
+            // checkBoxRefreshOrdem
             // 
-            this.bindingSource1.AllowNew = false;
-            this.bindingSource1.Filter = "Visible=True";
-            // 
-            // timerGetContratos
-            // 
-            this.timerGetContratos.Tick += new System.EventHandler(this.timerGetContratos_Tick);
-            // 
-            // backgroundWorkerProcesso
-            // 
-            this.backgroundWorkerProcesso.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerProcesso_DoWork);
-            // 
-            // timerResetBinding
-            // 
-            this.timerResetBinding.Interval = 1000;
-            this.timerResetBinding.Tick += new System.EventHandler(this.timerResetBinding_Tick);
-            // 
-            // timerUpdate
-            // 
-            this.timerUpdate.Enabled = true;
-            this.timerUpdate.Interval = 10800000;
-            this.timerUpdate.Tick += new System.EventHandler(this.timerUpdate_Tick);
-            // 
-            // panelHardwareMonitor
-            // 
-            this.panelHardwareMonitor.BackColor = System.Drawing.Color.LightCoral;
-            this.panelHardwareMonitor.Controls.Add(this.labelHardwareMensagem);
-            this.panelHardwareMonitor.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelHardwareMonitor.Location = new System.Drawing.Point(735, 0);
-            this.panelHardwareMonitor.Name = "panelHardwareMonitor";
-            this.panelHardwareMonitor.Size = new System.Drawing.Size(263, 82);
-            this.panelHardwareMonitor.TabIndex = 13;
-            this.panelHardwareMonitor.Visible = false;
-            // 
-            // labelHardwareMensagem
-            // 
-            this.labelHardwareMensagem.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelHardwareMensagem.Font = new System.Drawing.Font("Roboto", 14.25F);
-            this.labelHardwareMensagem.ForeColor = System.Drawing.Color.DarkRed;
-            this.labelHardwareMensagem.Location = new System.Drawing.Point(0, 0);
-            this.labelHardwareMensagem.Name = "labelHardwareMensagem";
-            this.labelHardwareMensagem.Size = new System.Drawing.Size(263, 82);
-            this.labelHardwareMensagem.TabIndex = 5;
-            this.labelHardwareMensagem.Text = "----------";
-            this.labelHardwareMensagem.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // timerHardware
-            // 
-            this.timerHardware.Enabled = true;
-            this.timerHardware.Interval = 5000;
-            this.timerHardware.Tick += new System.EventHandler(this.timerHardware_Tick);
+            this.checkBoxRefreshOrdem.AutoSize = true;
+            this.checkBoxRefreshOrdem.Font = new System.Drawing.Font("Roboto", 8.25F);
+            this.checkBoxRefreshOrdem.Location = new System.Drawing.Point(7, 62);
+            this.checkBoxRefreshOrdem.Name = "checkBoxRefreshOrdem";
+            this.checkBoxRefreshOrdem.Size = new System.Drawing.Size(170, 17);
+            this.checkBoxRefreshOrdem.TabIndex = 7;
+            this.checkBoxRefreshOrdem.Text = "Reordenar Automaticamente";
+            this.checkBoxRefreshOrdem.UseVisualStyleBackColor = true;
+            this.checkBoxRefreshOrdem.CheckedChanged += new System.EventHandler(this.checkBoxRefreshOrdem_CheckedChanged);
             // 
             // FormMonitor2
             // 
@@ -582,6 +602,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMonitor2_FormClosing);
             this.Load += new System.EventHandler(this.FormMonitor2_Load);
             this.panel2.ResumeLayout(false);
+            this.panelHardwareMonitor.ResumeLayout(false);
             this.panelUpdates.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
@@ -592,7 +613,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
-            this.panelHardwareMonitor.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -621,6 +641,10 @@
         private System.Windows.Forms.Label labelStatusArquivos;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Panel panelHardwareMonitor;
+        private System.Windows.Forms.Label labelHardwareMensagem;
+        private System.Windows.Forms.Timer timerHardware;
+        private System.Windows.Forms.Timer timerSort;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnContratoNome;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnContratoLogin;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnContratoStatus;
@@ -640,8 +664,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnHash;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnMensagemZip;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnQtdArquivos;
-        private System.Windows.Forms.Panel panelHardwareMonitor;
-        private System.Windows.Forms.Label labelHardwareMensagem;
-        private System.Windows.Forms.Timer timerHardware;
+        private System.Windows.Forms.CheckBox checkBoxRefreshOrdem;
     }
 }

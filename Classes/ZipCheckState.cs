@@ -10,21 +10,21 @@ namespace FileZillaManager.Classes
 {
     public enum ZipCheckState
     {
-        [Description("Não Verificado")]
+        [Description(" Não Verificado")]
         NaoVerificado = -1,
         [Description("Não Aplicável")]
         NaoAplicavel = 0,
-        [Description("Aguardando Processamento")]
+        [Description("1 - Aguardando Processamento")]
         AguardandoProcesso = 1,
-        [Description("Verificando")]
+        [Description("2 - Verificando")]
         Verificando = 2,
-        [Description("Válido")]
+        [Description("3 - Válido")]
         Valido = 3,
-        [Description("Inválido")]
+        [Description("4 - Inválido")]
         Invalido = 4,
-        [Description("Gerando Hash")]
+        [Description("5 - Gerando Hash")]
         GerandoHash = 5,
-        [Description("Aguardando Verificação")]
+        [Description("6 - Aguardando Verificação")]
         AguardandoVerificacao = 6,
         Erro = 9
     }
