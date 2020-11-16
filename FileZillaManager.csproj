@@ -98,6 +98,7 @@
     <Compile Include="Classes\Grupo.cs" />
     <Compile Include="Classes\LocalConfig.cs" />
     <Compile Include="Classes\ContratoOldViewModel.cs" />
+    <Compile Include="Classes\Monitor.cs" />
     <Compile Include="Classes\MonitorViewModel.cs" />
     <Compile Include="Classes\SortableBindingList.cs" />
     <Compile Include="Classes\ZipCheckState.cs" />
@@ -165,6 +166,7 @@
     <Compile Include="Repositorio\EmpresaRepositorio.cs" />
     <Compile Include="Repositorio\FileCheckRepositorio.cs" />
     <Compile Include="Repositorio\GrupoRepositorio.cs" />
+    <Compile Include="Repositorio\MonitorRepositorio.cs" />
     <EmbeddedResource Include="AboutBox1.resx">
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </EmbeddedResource>
