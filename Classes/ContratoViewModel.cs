@@ -108,7 +108,6 @@ namespace FileZillaManager.Classes
         }
         public void CheckStatusFTP()
         {
-
             if (MonitorViewModel.Conexoes.Any(x => x.UserName == this.contrato.Login))// && x.PhysicalFile == file.FullName))
             {
                 var con = MonitorViewModel.Conexoes.Where(x => x.UserName == this.contrato.Login && x.PhysicalFile == file.FullName)?.FirstOrDefault();
@@ -120,12 +119,14 @@ namespace FileZillaManager.Classes
             else
                 this.FtpState = FTPState.Desconectado;
 
+            AtualizarMonitor();
+
         }
         public void LerDiretorio()
         {
             if (!lendoDiretorio)
             {
-                
+
                 lendoDiretorio = true;
                 try
                 {
@@ -156,7 +157,8 @@ namespace FileZillaManager.Classes
                             this.File = file;
 
                             if (!SubPastas)
-                            { this.FolderSize = dir.GetFiles("*", SearchOption.AllDirectories)?.Sum(x => x.Length);
+                            {
+                                this.FolderSize = dir.GetFiles("*", SearchOption.AllDirectories)?.Sum(x => x.Length);
                                 //this.FolderSize = files.Sum(x => x.Length);
                             }
                             else
@@ -189,26 +191,75 @@ namespace FileZillaManager.Classes
                             this.integridade = ZipCheckState.NaoAplicavel;
                             this.Status = ContratoState.DiretorioVazio;
                         }
+
+
+
+                        AtualizarMonitor();
+
+
                     }
                     else
                     {
+
+                        ApagarMonitor();
+
                         this.Status = ContratoState.Erro;
                         mensagem = "Diretório Inacessível";
                     }
                 }
                 catch (Exception ex)
                 {
+                    ApagarMonitor();
+
                     this.Status = ContratoState.Erro;
                     mensagem = ex.Message;
                 }
                 lendoDiretorio = false;
                 this.LastLerDiretorio = DateTime.Now;
                 //Watcher.EnableRaisingEvents = true;
+
             }
         }
+        public async void ApagarMonitor()
+        {
+            await Task.Factory.StartNew(async () =>
+            {
+                using (Repositorio.MonitorRepositorio repM = new Repositorio.MonitorRepositorio())
+                {
+                    await repM.Delete(this.Pasta, this.Contrato.Codigo);
+                }
+            });
+        }
+
+        DateTime LastUpdateMonitor = DateTime.MinValue;
+        public async Task AtualizarMonitor()
+        {
+            if ((DateTime.Now - LastUpdateMonitor) > TimeSpan.FromSeconds(30))
+            {
+                using (Repositorio.MonitorRepositorio repM = new Repositorio.MonitorRepositorio())
+                {
+                    Monitor monitor = new Monitor();
+                    monitor.Contrato = this.Contrato.Codigo;
+                    monitor.Data = DateTime.Now;
+                    monitor.FileName = this.File?.Name;
+                    monitor.ArquivoStatus = this.Status;
+                    monitor.FileSize = this.File?.Length;
+                    monitor.FtpStatus = this.FtpState;
+                    monitor.Integridade = this.Integridade;
+                    monitor.IsSubFolder = this.Contrato.Pasta != this.Pasta;
+                    monitor.FileData = this.File?.LastWriteTime;
+                    monitor.ContratoFolder = this.Contrato.Pasta;
+                    monitor.Armazenamento = FolderSize;
+                    monitor.Folder = this.Pasta;
+                    LastUpdateMonitor = DateTime.Now;
+                    await repM.InsertOrUpdateAsync(monitor);
+                }
+            }
+        }
+
         public void VerificarHash()
         {
-           
+
             verificaHash = Task.Factory.StartNew(() =>
             {
                 this.LastHashDate = DateTime.Now;
@@ -243,7 +294,7 @@ namespace FileZillaManager.Classes
                                                 LastFileCheck = null;
 
 
-                                            if (LastFileCheck == null || HashFile.ToLower() != LastFileCheck?.Hash.ToLower() || LastFileCheck.State == ZipCheckState.Erro ||  (LastFileCheck.State != ZipCheckState.Valido && DateTime.Now - LastFileCheck.Data > TimeSpan.FromHours(1)) || (LastFileCheck?.FileData - file.LastWriteTime) > TimeSpan.FromSeconds(1) || LastFileCheck?.FileLength != file.Length)
+                                            if (LastFileCheck == null || HashFile.ToLower() != LastFileCheck?.Hash.ToLower() || LastFileCheck.State == ZipCheckState.Erro || (LastFileCheck.State != ZipCheckState.Valido && DateTime.Now - LastFileCheck.Data > TimeSpan.FromHours(1)) || (LastFileCheck?.FileData - file.LastWriteTime) > TimeSpan.FromSeconds(1) || LastFileCheck?.FileLength != file.Length)
                                             {
 
                                                 if (Program.Debug)
@@ -270,7 +321,7 @@ namespace FileZillaManager.Classes
                                     }
                                     catch (IOException ioe)
                                     {
-                                        this.mensagemZip = "Sem acesso ao arquivo: "+ ioe.Message;
+                                        this.mensagemZip = "Sem acesso ao arquivo: " + ioe.Message;
                                         this.Integridade = ZipCheckState.Erro;
                                     }
                                     catch (Exception ex)
@@ -301,11 +352,14 @@ namespace FileZillaManager.Classes
                     this.Integridade = ZipCheckState.NaoAplicavel;
                 }
                 //Watcher.EnableRaisingEvents = true;
+
+                AtualizarMonitor();
+
             });
         }
         public void VerificarIntegridade()
         {
-            
+
             this.Integridade = ZipCheckState.Verificando;
             verificaZip = Task.Factory.StartNew(() =>
             {
@@ -333,7 +387,7 @@ namespace FileZillaManager.Classes
                             this.Integridade = ZipCheckState.Verificando;
                             this.Integridade = Is7zipRarValid(file.FullName);
 
-                           
+
 
                         }
                         else
@@ -377,6 +431,8 @@ namespace FileZillaManager.Classes
                 this.lastIntegrityDate = DateTime.Now;
                 processZipIsRunning = false;
                 //Watcher.EnableRaisingEvents = true;
+
+                AtualizarMonitor();
             });
 
         }

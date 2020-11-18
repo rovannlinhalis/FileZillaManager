@@ -34,6 +34,7 @@ namespace FileZillaManager
                 commands.AddRange(Repositorio.GrupoRepositorio.DDL());
                 commands.AddRange(Repositorio.ContratoRepositorio.DDL());
                 commands.AddRange(Repositorio.FileCheckRepositorio.DDL());
+                commands.AddRange(Repositorio.MonitorRepositorio.DDL());
 
 
                 FbDataBase.FbDataBase db = new FbDataBase.FbDataBase(Program.ConnectionString());

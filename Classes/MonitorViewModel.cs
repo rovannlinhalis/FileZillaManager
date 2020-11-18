@@ -25,10 +25,10 @@ namespace FileZillaManager.Classes
         private bool ocultarPastasVazias;
         //private DateTime dataReferencia;
         private Empresa empresa;
-        
-        
+
+
         LocalConfig config = new LocalConfig(true, "FileZillaManager");
-       
+
         public bool Running { get; set; } = false;
         public SortableBindingList<ContratoViewModel> Contratos { get; set; } = new SortableBindingList<ContratoViewModel>();
         public Empresa Empresa { get => empresa; set { empresa = value; RaisePropertyChanged("Empresa"); } }
@@ -82,48 +82,55 @@ namespace FileZillaManager.Classes
         }
         public async void ProcessaContratos()
         {
+
+
+
             var contratos = await GetContratos();
             cache.ForEach(x => x.Dispose());
             cache.Clear();
-            
-            foreach (var c in contratos)
+            using (Repositorio.MonitorRepositorio repM = new Repositorio.MonitorRepositorio())
             {
-                ContratoViewModel model;
-                try
+                foreach (var c in contratos)
                 {
-                    //DirectoryInfo dir = new DirectoryInfo(c.Pasta);
+                    await repM.LimparContrato(c.Codigo);
 
-                    //model = new ContratoViewModel(c, dir.FullName, false, DataReferencia, this.Empresa);
-                    //cache.Add(model);
-
-
-                    //foreach (DirectoryInfo d in dir.GetDirectories("*", SearchOption.AllDirectories))
-                    //{
-                    //    model = new ContratoViewModel(c, d.FullName, false, DataReferencia, this.Empresa);
-                    //    cache.Add(model);
-                    //}
-
-
-                    if (MonitorarSubPastasIndividualmente)
+                    ContratoViewModel model;
+                    try
                     {
-                        DirectoryInfo dir = new DirectoryInfo(c.Pasta);
-                        foreach (DirectoryInfo d in dir.GetDirectories("*", MonitorarSubPastas ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
+                        //DirectoryInfo dir = new DirectoryInfo(c.Pasta);
+
+                        //model = new ContratoViewModel(c, dir.FullName, false, DataReferencia, this.Empresa);
+                        //cache.Add(model);
+
+
+                        //foreach (DirectoryInfo d in dir.GetDirectories("*", SearchOption.AllDirectories))
+                        //{
+                        //    model = new ContratoViewModel(c, d.FullName, false, DataReferencia, this.Empresa);
+                        //    cache.Add(model);
+                        //}
+
+
+                        if (MonitorarSubPastasIndividualmente)
                         {
-                            model = new ContratoViewModel(c, d.FullName, false, DataReferencia, this.Empresa);
+                            DirectoryInfo dir = new DirectoryInfo(c.Pasta);
+                            foreach (DirectoryInfo d in dir.GetDirectories("*", MonitorarSubPastas ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly))
+                            {
+                                model = new ContratoViewModel(c, d.FullName, false, DataReferencia, this.Empresa);
+                                cache.Add(model);
+                            }
+                            model = new ContratoViewModel(c, c.Pasta, false, DataReferencia, this.Empresa);
                             cache.Add(model);
                         }
-                        model = new ContratoViewModel(c, c.Pasta, false, DataReferencia, this.Empresa);
-                        cache.Add(model);
+                        else
+                        {
+                            model = new ContratoViewModel(c, c.Pasta, MonitorarSubPastas, DataReferencia, this.Empresa);
+                            cache.Add(model);
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        model = new ContratoViewModel(c, c.Pasta, MonitorarSubPastas, DataReferencia, this.Empresa);
-                        cache.Add(model);
+                        MsgErro = ex.Message;
                     }
-                }
-                catch (Exception ex)
-                {
-                    MsgErro = ex.Message;
                 }
             }
 
@@ -136,6 +143,7 @@ namespace FileZillaManager.Classes
                 ProcessaContratosEnd(this, new EventArgs());
 
         }
+
         public void ProcessarArquivos()
         {
             //foreach (var c in cache.Where(x=> !Contratos.Any(y=>y.Pasta == x.Pasta && y.Login == x.Login ) && ( x.Status == ContratoState.NaoVerificado || x.Status == ContratoState.Erro || x.Integridade == ZipCheckState.Erro)).OrderBy(x => x.LastLerDiretorio))
