@@ -46,20 +46,25 @@ namespace FileZillaManagerInstallUpdate
                     bool sucess = false;
                     while (diag == DialogResult.Retry && !sucess)
                     {
-                        Process[] ps = Process.GetProcessesByName("FileZillaManager");
-
-                        while (ps.Length > 0)
+                        try
                         {
-                            //MessageBox.Show("A aplicação FileZillaManager será finalizada.", "Instalar Atualização", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            Process[] ps = Process.GetProcessesByName("FileZillaManager");
 
-                            foreach (Process p in ps)
+                            while (ps.Length > 0)
                             {
-                                p.Kill();
-                                Thread.Sleep(500);
-                            }
+                                //MessageBox.Show("A aplicação FileZillaManager será finalizada.", "Instalar Atualização", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                            ps = Process.GetProcessesByName("FileZillaManager");
+                                foreach (Process p in ps)
+                                {
+                                    p.Kill();
+                                    Thread.Sleep(500);
+                                }
+
+                                ps = Process.GetProcessesByName("FileZillaManager");
+                            }
                         }
+                        catch 
+                        { }
 
                         try
                         {
@@ -117,13 +122,16 @@ namespace FileZillaManagerInstallUpdate
                             sucess = false;
                         }
                     }
-
-                    dir.Delete();
+                    try
+                    {
+                        dir.Delete(true);
+                    }
+                    catch { }
                 }
             }
             catch  (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Erro ao atualizar aplicação.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message + ex.StackTrace,  "Erro ao atualizar aplicação.", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             if (exe.Exists)
