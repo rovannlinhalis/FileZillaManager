@@ -30,10 +30,7 @@ namespace FileZillaManager
 
         public static bool Ativado()
         {
-            string winDir = Environment.GetEnvironmentVariable("SystemRoot");
-            string md5 = Md5FromString("integra");
-            FileInfo file = new FileInfo(winDir+"\\system32\\"+ md5+".dat");
-            return file.Exists;
+            return true;
         }
 
         public static string GetEnumDescription<TEnum>(this TEnum item)
@@ -79,140 +76,8 @@ namespace FileZillaManager
             tw.Close();
         }
 
-        public static bool IsPlacaVeiculo(string value)
-        {
-            Regex regex = new Regex(@"^[a-zA-Z]{3}\-\d{4}$");
-            Regex regex2 = new Regex(@"^[a-zA-Z]{3}\d{4}$");
-
-            if (regex.IsMatch(value) || regex2.IsMatch(value))
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        public static string WrapString(this string texto, int chars, bool lastRight)
-        {
-            List<string> aux = new List<string>();
-            for (int i = 0; i < texto.Length; i += chars)
-                aux.Add(texto.Substring(i, Math.Min(chars, texto.Length - i)));
-
-            string r = "";
-
-            for (int i = 0; i < aux.Count - 1; i++)
-            {
-                r += aux[i] + "\r\n";
-            }
-
-            r += (lastRight && aux.Count > 1) ? aux[aux.Count - 1].PadLeft(chars, ' ') : aux[aux.Count - 1];
 
 
-            return r;
-        }
-
-        /// <summary>
-        /// Adiciona uma linha em branco ao combobox (só utilizar depois de definido um datasource para o mesmo)
-        /// </summary>
-        /// <param name="cb"></param>
-        public static void AddRowComboBox(ComboBox cb)
-        {
-            AddRowComboBox(cb, "");
-        }
-
-        /// <summary>
-        /// Adiciona uma linha em branco ao combobox (só utilizar depois de definido um datasource para o mesmo)
-        /// </summary>
-        /// <param name="cb"></param>
-        public static void AddRowComboBox(ComboBox cb, string texto)
-        {
-            DataTable dt = (DataTable)cb.DataSource;
-            DataRow r = dt.NewRow();
-            for (int i = 0; i < dt.Columns.Count; i++)
-            {
-                if (dt.Columns[i].DataType.ToString() == "System.Int32" || dt.Columns[i].DataType.ToString() == "System.Int64" || dt.Columns[i].DataType.ToString().ToLower() == "system.decimal")
-                    r[i] = 0;
-                else if (dt.Columns[i].DataType.ToString().ToLower() == "system.string")
-                    r[i] = texto;
-            }
-            dt.Rows.InsertAt(r, 0);
-            cb.DataSource = dt;
-        }
-        public static void AddRowDataTable(ref DataTable dt, string texto)
-        {
-            DataRow r = dt.NewRow();
-            for (int i = 0; i < dt.Columns.Count; i++)
-            {
-                if (dt.Columns[i].DataType.ToString() == "System.Int32" || dt.Columns[i].DataType.ToString() == "System.Int64" || dt.Columns[i].DataType.ToString().ToLower() == "system.decimal")
-                    r[i] = 0;
-                else if (dt.Columns[i].DataType.ToString().ToLower() == "system.string")
-                    r[i] = texto;
-            }
-            dt.Rows.InsertAt(r, 0);
-        }
-
-        /// <summary>
-        /// Adiciona uma linha em branco ao combobox (só utilizar depois de definido um datasource para o mesmo)
-        /// </summary>
-        /// <param name="cb"></param>
-        public static void AddRowComboBox(ComboBox cb, string texto, object valor)
-        {
-            DataTable dt = (DataTable)cb.DataSource;
-            DataRow r = dt.NewRow();
-
-            if (valor == null)
-                r[cb.ValueMember] = DBNull.Value;
-            else if (dt.Columns[cb.ValueMember].DataType.ToString() == "System.Int32" || dt.Columns[cb.ValueMember].DataType.ToString() == "System.Int64" || dt.Columns[cb.ValueMember].DataType.ToString().ToLower() == "system.decimal")
-                r[cb.ValueMember] = Funcoes.ToDecimal(valor.ToString());
-            else if (dt.Columns[cb.ValueMember].DataType.ToString().ToLower() == "system.string")
-                r[cb.ValueMember] = valor;
-
-            r[cb.DisplayMember] = texto;
-
-            dt.Rows.InsertAt(r, 0);
-            cb.DataSource = dt;
-        }
-        public static void AddRowComboBox(DataGridViewComboBoxColumn cb, string texto, object valor)
-        {
-            DataTable dt = (DataTable)cb.DataSource;
-            DataRow r = dt.NewRow();
-
-            if (valor == null)
-                r[cb.ValueMember] = DBNull.Value;
-            else if (dt.Columns[cb.ValueMember].DataType.ToString() == "System.Int32" || dt.Columns[cb.ValueMember].DataType.ToString() == "System.Int64")
-                r[cb.ValueMember] = Funcoes.ToInt(valor.ToString());
-            else if (dt.Columns[cb.ValueMember].DataType.ToString().ToLower() == "system.double" || dt.Columns[cb.ValueMember].DataType.ToString().ToLower() == "system.decimal")
-                r[cb.ValueMember] = Funcoes.ToDecimal(valor.ToString());
-            else if (dt.Columns[cb.ValueMember].DataType.ToString().ToLower() == "system.string")
-                r[cb.ValueMember] = valor;
-            else
-                r[cb.ValueMember] = valor;
-
-
-            r[cb.DisplayMember] = texto;
-
-            dt.Rows.InsertAt(r, 0);
-            cb.DataSource = dt;
-        }
-
-        public static void CheckTodos(DataGridView d, int cellIndex)
-        {
-
-            foreach (DataGridViewRow r in d.Rows)
-                r.Cells[cellIndex].Value = true;// !Funcoes.ConvertStringToBool(r.Cells[0].Value.ToString());
-        }
-        public static void CheckNenhum(DataGridView d, int cellIndex)
-        {
-            foreach (DataGridViewRow r in d.Rows)
-                r.Cells[cellIndex].Value = false;// !Funcoes.ConvertStringToBool(r.Cells[0].Value.ToString());
-        }
-        public static void CheckInverter(DataGridView d, int cellIndex)
-        {
-            foreach (DataGridViewRow r in d.Rows)
-            {
-                r.Cells[cellIndex].Value = r.Cells[cellIndex].Value == null ? false : !Funcoes.ConvertStringToBool(r.Cells[cellIndex].Value.ToString());
-            }
-        }
 
         /// <summary>
         /// Percorre os controles da controlcollection e limpa
@@ -596,80 +461,6 @@ namespace FileZillaManager
         }
 
         /// <summary>
-        /// Evento para rolagem de um datagridview com mouse
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private static void DataGridView_MouseWheel(object sender, MouseEventArgs e)
-        {
-
-            int currentIndex = ((DataGridView)sender).FirstDisplayedScrollingRowIndex;
-            int scrollLines = 2;// SystemInformation.MouseWheelScrollLines;
-
-            scrollLines = scrollLines > ((DataGridView)sender).Rows.Count ? ((DataGridView)sender).Rows.Count - 1 : scrollLines;
-
-
-            if (e.Delta > 0)
-            {
-                try
-                {
-                    ((DataGridView)sender).FirstDisplayedScrollingRowIndex = Math.Max(0, currentIndex - scrollLines);
-                }
-                catch { }
-            }
-            else if (e.Delta < 0)
-            {
-                int aux = currentIndex + scrollLines;
-
-                aux = aux > ((DataGridView)sender).Rows.Count ? ((DataGridView)sender).Rows.Count - 1 : aux;
-                try
-                {
-                    ((DataGridView)sender).FirstDisplayedScrollingRowIndex = currentIndex + scrollLines;
-                }
-                catch { }
-
-            }
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="_ronly"></param>
-        /// <param name="dgv"></param>
-        /// <param name="colunas"></param>
-        public static void DataGridViewReadOnly(bool _ronly, ref DataGridView dgv, List<DataGridViewColumn> colunas)
-        {
-            foreach (DataGridViewColumn c in dgv.Columns)
-            {
-                if (colunas != null)
-                {
-                    if (colunas.Contains(c))
-                    {
-                        dgv.Columns[c.Name].ReadOnly = _ronly;
-                    }
-                    else
-                    {
-                        dgv.Columns[c.Name].ReadOnly = !_ronly;
-                    }
-                }
-                else
-                {
-                    dgv.Columns[c.Name].ReadOnly = _ronly;
-                }
-            }
-        }
-        /// <summary>
-        /// Define as propriedades AllowUserToAddRows AllowUserToDeleteRows e ReadOnly de um datagridview
-        /// </summary>
-        /// <param name="dgv"></param>
-        /// <param name="ronly"></param>
-        public static void DataGridViewReadOnly(DataGridView dgv, bool ronly)
-        {
-            dgv.AllowUserToAddRows = !ronly;
-            dgv.AllowUserToDeleteRows = !ronly;
-            dgv.ReadOnly = ronly;
-        }
-
-        /// <summary>
         /// Pinta a celula de um datagridview, de forma gradiente vertical
         /// </summary>
         /// <param name="e"></param>
@@ -692,70 +483,7 @@ namespace FileZillaManager
             sender.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.ForeColor = Funcoes.GetForeColor(Down);
         }
 
-        /// <summary>
-        /// Evento Enter de um DateTimePicker
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private static void DateTimePickerEnter(object sender, EventArgs e)
-        {
-            ((DateTimePicker)sender).BackColor = SiCoresSistema.corFundoObjetoFoco;
-        }
-
-        /// <summary>
-        /// Evento Leave de um DateTimePicker
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private static void DateTimePickerLeave(object sender, EventArgs e)
-        {
-            ((DateTimePicker)sender).BackColor = SiCoresSistema.corFundoObjetoPadrao;
-        }
-
-        /// <summary>
-        /// Retorna um bitmap em formato de circulo, na cor informada
-        /// </summary>
-        /// <param name="color"></param>
-        /// <returns></returns>
-        public static Bitmap DrawCircle(string color, int size)
-        {
-
-            Color c = Funcoes.ConverteColorFromHex(color);
-
-            Brush b = new SolidBrush(c);
-            Bitmap flag = new Bitmap(size, size);
-            Graphics g = Graphics.FromImage(flag);
-
-            g.FillEllipse(b, 0, 0, size - 2, size - 2);
-            g.DrawEllipse(new Pen(Color.Black), 0, 0, size - 2, size - 2);
-
-            return flag;
-        }
-        public static Bitmap DrawCircle(string color)
-        {
-            return DrawCircle(color, 21);
-        }
-
-        /// <summary>
-        /// Retorna um bitmap em formato de circulo, na cor informada
-        /// </summary>
-        /// <param name="color"></param>
-        /// <returns></returns>
-        public static Graphics DrawCircle(ref Bitmap bx, string color)
-        {
-            Color c = Funcoes.ConverteColorFromHex(color);
-
-            Brush b = new SolidBrush(c);
-            Bitmap flag = bx;
-
-            Graphics g = Graphics.FromImage(flag);
-            g.Clear(Color.Empty);
-
-            g.FillEllipse(b, 0, 0, 19, 19);
-            g.DrawEllipse(new Pen(Color.Black), 0, 0, 19, 19);
-
-            return g;
-        }
+       
 
         /// <summary>
         /// Seleciona o valor de um combobox pelo seu texto
