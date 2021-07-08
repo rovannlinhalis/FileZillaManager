@@ -72,6 +72,7 @@ namespace FileZillaManager
                 FormLogin frm_emp = new FormLogin();
                 if (frm_emp.ShowDialog() == DialogResult.OK)
                 {
+                    StartAppCenter();
                     //AppCenter.Start("81bb30ce-49f2-427c-8b93-72c24c55cf40", typeof(Analytics), typeof(Crashes));
                     Application.Run(new FormPrincipal(frm_emp.EmpresaSelecionada));
                 }
@@ -217,7 +218,11 @@ namespace FileZillaManager
             }
 
         }
-
+        static void StartAppCenter()
+        {
+            Microsoft.AppCenter.AppCenter.Start("7fa05a77-b5f3-4adf-a2bf-08ff7010ab67",
+                   typeof(Microsoft.AppCenter.Analytics.Analytics), typeof(Microsoft.AppCenter.Crashes.Crashes));
+        }
         public static void MatarProcessosMonitor()
         {
             if (Program.listaProcessosMonitor.Count > 0)

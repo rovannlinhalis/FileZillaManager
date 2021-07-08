@@ -64,116 +64,122 @@ namespace FileZillaManager
                 Thread.Sleep(200);
                 int downloaded = 0;
                 int p = 0;
-                foreach (string f in files)
-                {
+                Parallel.ForEach(files, f => { 
+                //foreach (string f in files)
+                //{
                     string[] fs = f.Split('|');
 
                     if (fs.Length < 2)
                     {
                         p++;
-                        continue;
-                    }
-
-                    string nomeHttp = fs[0];
-                    string nome = fs[0].Replace("FileZillaManager/", "").Replace("/", "\\");
-
-
-                    log.Enqueue("Processando arquivo " + nome);
-                    backgroundWorker1.ReportProgress(p * 98 / files.Length + 2);
-                    Thread.Sleep(100);
-
-
-                    string md5Site = fs[1];
-                    FileInfo file = new FileInfo(Application.StartupPath + "\\" + nome);
-
-                    if (file.Extension.ToLower().EndsWith("fdb"))// || file.Extension.ToLower().EndsWith("config"))
-                    {
-                        p++;
-                        continue;
-                    }
-
-
-                    FileInfo fileUpdate;
-                    if (file.Name.ToLower() == "FileZillaManagerInstallUpdate.exe".ToLower())
-                        fileUpdate = new FileInfo(Application.StartupPath + "\\" + nome);
-                    else
-                        fileUpdate = new FileInfo(dirUpdate.FullName + nome);
-
-
-                    bool download = false;
-
-                    if (!file.Exists)
-                    {
-                        download = true;
                     }
                     else
                     {
-                        string md5Local = Funcoes.Md5FromFile(file.FullName);
+                        string nomeHttp = fs[0];
+                        string nome = fs[0].Replace("FileZillaManager/", "").Replace("/", "\\");
 
-                        if (md5Local != md5Site)
-                        {
-                           
 
-                            if (fileUpdate.Exists)
-                            {
-                                string md5Update = Funcoes.Md5FromFile(fileUpdate.FullName);
-                                if (md5Update != md5Site)
-                                {
-                                    download = true;
-                                }
-                                else
-                                {
-                                    downloaded++;
-                                }
-                            }
-                            else
-                            {
-                                download = true;
-                            }
-                        }
-                    }
-
-                    if (download && !System.Diagnostics.Debugger.IsAttached)
-                    {
-                        if (!fileUpdate.Directory.Exists)
-                            fileUpdate.Directory.Create();
-
-                        log.Enqueue("Baixando arquivo " + nome);
+                        log.Enqueue("Processando arquivo " + nome);
                         backgroundWorker1.ReportProgress(p * 98 / files.Length + 2);
                         Thread.Sleep(100);
-                        string remoteUri = "https://www.rovann.com.br/atualizacao/" + nomeHttp;
-                        WebClient myWebClient = new WebClient();
 
-                        myWebClient.DownloadFile(remoteUri, fileUpdate.FullName);
 
-                        fileUpdate.Refresh();
+                        string md5Site = fs[1];
+                        FileInfo file = new FileInfo(Application.StartupPath + "\\" + nome);
 
-                        if (fileUpdate.Exists)
+                        if (file.Extension.ToLower().EndsWith("fdb"))// || file.Extension.ToLower().EndsWith("config"))
                         {
-                            string md5Download = Funcoes.Md5FromFile(fileUpdate.FullName);
+                            p++;
 
-                            if (md5Download != md5Site)
-                            {
-                                fileUpdate.Delete();
-                                throw new Exception("Erro no download do arquivo " + nomeHttp);
-                            }
-                            else
-                            {
-                                downloaded++;
-                            }
                         }
                         else
                         {
-                            throw new Exception("Erro no download do arquivo " + nomeHttp);
+
+                            FileInfo fileUpdate;
+                            if (file.Name.ToLower() == "FileZillaManagerInstallUpdate.exe".ToLower())
+                                fileUpdate = new FileInfo(Application.StartupPath + "\\" + nome);
+                            else
+                                fileUpdate = new FileInfo(dirUpdate.FullName + nome);
+
+
+                            bool download = false;
+
+                            if (!file.Exists)
+                            {
+                                download = true;
+                            }
+                            else
+                            {
+                                string md5Local = Funcoes.Md5FromFile(file.FullName);
+
+                                if (md5Local != md5Site)
+                                {
+
+
+                                    if (fileUpdate.Exists)
+                                    {
+                                        string md5Update = Funcoes.Md5FromFile(fileUpdate.FullName);
+                                        if (md5Update != md5Site)
+                                        {
+                                            download = true;
+                                        }
+                                        else
+                                        {
+                                            downloaded++;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        download = true;
+                                    }
+                                }
+                            }
+
+                            if (download && !System.Diagnostics.Debugger.IsAttached)
+                            {
+                                if (!fileUpdate.Directory.Exists)
+                                    fileUpdate.Directory.Create();
+
+                                log.Enqueue("Baixando arquivo " + nome);
+                                backgroundWorker1.ReportProgress(p * 98 / files.Length + 2);
+                                Thread.Sleep(100);
+                                string remoteUri = "https://www.rovann.com.br/atualizacao/" + nomeHttp;
+                                WebClient myWebClient = new WebClient();
+
+                                myWebClient.DownloadFile(remoteUri, fileUpdate.FullName);
+
+                                fileUpdate.Refresh();
+
+                                if (fileUpdate.Exists)
+                                {
+                                    string md5Download = Funcoes.Md5FromFile(fileUpdate.FullName);
+
+                                    if (md5Download != md5Site)
+                                    {
+                                        fileUpdate.Delete();
+                                        throw new Exception("Erro no download do arquivo " + nomeHttp);
+                                    }
+                                    else
+                                    {
+                                        downloaded++;
+                                    }
+                                }
+                                else
+                                {
+                                    throw new Exception("Erro no download do arquivo " + nomeHttp);
+                                }
+                            }
+
+                            log.Enqueue("Arquivo processado: " + nome);
+                            backgroundWorker1.ReportProgress(p * 98 / files.Length + 2);
+                            Thread.Sleep(100);
+
+                            p++;
                         }
                     }
+                    //}
+                });
 
-                    log.Enqueue("Arquivo processado: " + nome);
-                    backgroundWorker1.ReportProgress(p * 98 / files.Length + 2);
-                    Thread.Sleep(100);
-
-                    p++;
-                }
 
                 e.Result = downloaded;
                 log.Enqueue("Fim da verificação");
