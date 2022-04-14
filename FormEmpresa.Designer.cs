@@ -56,7 +56,10 @@
             this.campoMinDeleteInvalido = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.campoDiasDeleteAntigos = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.campoMinDeleteInvalido)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.campoDiasDeleteAntigos)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -430,11 +433,35 @@
             this.label9.TabIndex = 33;
             this.label9.Text = "0 = Nunca deletar";
             // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(184, 288);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(162, 13);
+            this.label10.TabIndex = 38;
+            this.label10.Text = "Deletar Arquivos Antigos (dias)";
+            // 
+            // campoDiasDeleteAntigos
+            // 
+            this.campoDiasDeleteAntigos.Location = new System.Drawing.Point(184, 304);
+            this.campoDiasDeleteAntigos.Maximum = new decimal(new int[] {
+            999,
+            0,
+            0,
+            0});
+            this.campoDiasDeleteAntigos.Name = "campoDiasDeleteAntigos";
+            this.campoDiasDeleteAntigos.Size = new System.Drawing.Size(166, 21);
+            this.campoDiasDeleteAntigos.TabIndex = 37;
+            this.campoDiasDeleteAntigos.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
             // FormEmpresa
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(363, 462);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.campoDiasDeleteAntigos);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.campoMinDeleteInvalido);
@@ -443,15 +470,15 @@
             this.Controls.Add(this.textBoxLogotipo);
             this.Controls.Add(this.buttonEnviarDados);
             this.Controls.Add(this.buttonBrowse7z);
-            this.Controls.Add(this.siColorInput3);
             this.Controls.Add(this.siColorInput2);
+            this.Controls.Add(this.siColorInput3);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.textBox7ZPath);
             this.Controls.Add(this.buttonImportar);
             this.Controls.Add(this.buttonTestarConexao);
-            this.Controls.Add(this.siColorInput1);
             this.Controls.Add(this.lblCodigo);
             this.Controls.Add(this.label5);
+            this.Controls.Add(this.siColorInput1);
             this.Controls.Add(this.txtPorta);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.txbSenha);
@@ -467,6 +494,7 @@
             this.Text = "Configurações";
             this.Load += new System.EventHandler(this.FormEmpresa_Load);
             ((System.ComponentModel.ISupportInitialize)(this.campoMinDeleteInvalido)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.campoDiasDeleteAntigos)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -502,5 +530,7 @@
         private System.Windows.Forms.NumericUpDown campoMinDeleteInvalido;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.NumericUpDown campoDiasDeleteAntigos;
     }
 }

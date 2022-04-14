@@ -1,4 +1,5 @@
-﻿using Miracle.FileZilla.Api;
+﻿using Microsoft.AppCenter.Analytics;
+using Miracle.FileZilla.Api;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -144,11 +145,29 @@ namespace FileZillaManager.Classes
 
                     if (dir.Exists)
                     {
+                        if (Empresa.DiasApagarAntigos > 0)
+                        {
+                            List<FileInfo> filesOld = dir.GetFiles("*", SearchOption.AllDirectories)?.Where(x => (DateTime.Now - x.LastWriteTime).Days >= Empresa.DiasApagarAntigos)?.ToList();
+                            if (filesOld!= null)
+                            {
+                                filesOld.ForEach(x =>
+                                {
+                                    try
+                                    {
+                                        x.Delete();
+                                    }
+                                    catch 
+                                    { }
+                                
+                                });
+                            }
+                        }
+
                         DateTime dataAux = this.DataRef == DateTime.MinValue ? DateTime.Now : this.DataRef;
                         dir.Refresh();
                         FileInfo[] files = dir.GetFiles("*.*", SubPastas ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
                         FileInfo file = files?.Where(x => x.LastWriteTime.Date <= dataAux.Date && !ignorarExtensoes.Contains(x.Extension.ToLower()))?.OrderByDescending(x => x.LastWriteTime)?.FirstOrDefault();
-
+                        
                         this.File = null;
 
                         if (file != null)
@@ -197,6 +216,9 @@ namespace FileZillaManager.Classes
                         AtualizarMonitor();
 
 
+                        
+
+
                     }
                     else
                     {
@@ -230,6 +252,7 @@ namespace FileZillaManager.Classes
                 }
             });
         }
+
 
         DateTime LastUpdateMonitor = DateTime.MinValue;
         public async Task AtualizarMonitor()
@@ -433,6 +456,15 @@ namespace FileZillaManager.Classes
                 //Watcher.EnableRaisingEvents = true;
 
                 AtualizarMonitor();
+
+                try
+                {
+                    Analytics.TrackEvent("VerificarIntegridade", new Dictionary<string, string> {
+    { "Status", this.Integridade.ToString() }
+});
+                }
+                catch { }
+
             });
 
         }

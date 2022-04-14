@@ -26,6 +26,7 @@ namespace FileZillaManager.Repositorio
             AddField(x => x.CorTerciaria, "COR3", FbDbType.VarChar);
             AddField(x => x.Logotipo, "LOGO", FbDbType.VarChar);
             AddField(x => x.MinDeleteInvalido, "MIN_DEL_INVALIDO", FbDbType.Integer);
+            AddField(x => x.DiasApagarAntigos, "DIAS_DEL_ANTIGOS", FbDbType.Integer);
         }
 
         public static string[] DDL()
@@ -59,7 +60,10 @@ ADD COR3 VARCHAR(7);",
 @"ALTER TABLE EMPRESA
 ADD LOGO VARCHAR(1024);",
 @"ALTER TABLE EMPRESA
-ADD MIN_DEL_INVALIDO INTEGER;"
+ADD MIN_DEL_INVALIDO INTEGER;",
+@"ALTER TABLE EMPRESA
+ADD DIAS_DEL_ANTIGOS INTEGER;",
+@"UPDATE EMPRESA SET DIAS_DEL_ANTIGOS = 0 WHERE DIAS_DEL_ANTIGOS IS NULL;",
             };
         }
 

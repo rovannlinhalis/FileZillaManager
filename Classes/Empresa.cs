@@ -23,5 +23,7 @@ namespace FileZillaManager.Classes
 
         public int MinDeleteInvalido { get; set; } = 0;
 
+        public int DiasApagarAntigos { get; set; } = 0;
+
     }
 }
